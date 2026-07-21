@@ -1,0 +1,967 @@
+[
+  {
+    "id": "f-1",
+    "name": "Diego B.",
+    "initials": "DB",
+    "rating": 4.8,
+    "reviewCount": 30,
+    "specialty": "Backend Developer",
+    "category": "Desarrollo Web",
+    "country": "Brasil",
+    "countryCode": "BR",
+    "skills": [
+      "JavaScript",
+      "PostgreSQL"
+    ],
+    "projectCount": 43,
+    "monthlyPriceFrom": 179
+  },
+  {
+    "id": "f-2",
+    "name": "Camila S.",
+    "initials": "CS",
+    "rating": 4.8,
+    "reviewCount": 23,
+    "specialty": "Diseñador Gráfico",
+    "category": "Diseño UI/UX",
+    "country": "Chile",
+    "countryCode": "CL",
+    "skills": [
+      "Prototyping",
+      "Design Systems",
+      "UI Design"
+    ],
+    "projectCount": 25,
+    "monthlyPriceFrom": 203
+  },
+  {
+    "id": "f-3",
+    "name": "Lucas L.",
+    "initials": "LL",
+    "rating": 4.8,
+    "reviewCount": 21,
+    "specialty": "Social Media Manager",
+    "category": "Marketing Digital",
+    "country": "Argentina",
+    "countryCode": "AR",
+    "skills": [
+      "Analytics",
+      "Email Marketing",
+      "Google Ads"
+    ],
+    "projectCount": 17,
+    "monthlyPriceFrom": 332
+  },
+  {
+    "id": "f-4",
+    "name": "Mariana G.",
+    "initials": "MG",
+    "rating": 4.8,
+    "reviewCount": 34,
+    "specialty": "Desarrollador Android",
+    "category": "Desarrollo Mobile",
+    "country": "Portugal",
+    "countryCode": "PT",
+    "skills": [
+      "React Native",
+      "Kotlin",
+      "Swift"
+    ],
+    "projectCount": 31,
+    "monthlyPriceFrom": 160
+  },
+  {
+    "id": "f-5",
+    "name": "Felipe B.",
+    "initials": "FB",
+    "rating": 4.7,
+    "reviewCount": 25,
+    "specialty": "DevOps Engineer",
+    "category": "DevOps",
+    "country": "México",
+    "countryCode": "MX",
+    "skills": [
+      "AWS",
+      "Docker",
+      "Kubernetes"
+    ],
+    "projectCount": 15,
+    "monthlyPriceFrom": 295
+  },
+  {
+    "id": "f-6",
+    "name": "Valentina S.",
+    "initials": "VS",
+    "rating": 4.9,
+    "reviewCount": 29,
+    "specialty": "ML Engineer",
+    "category": "Datos e IA",
+    "country": "Perú",
+    "countryCode": "PE",
+    "skills": [
+      "Python",
+      "Machine Learning"
+    ],
+    "projectCount": 44,
+    "monthlyPriceFrom": 328
+  },
+  {
+    "id": "f-7",
+    "name": "André L.",
+    "initials": "AL",
+    "rating": 4.9,
+    "reviewCount": 37,
+    "specialty": "Editor de Contenido",
+    "category": "Redacción",
+    "country": "España",
+    "countryCode": "ES",
+    "skills": [
+      "SEO Writing",
+      "Copywriting"
+    ],
+    "projectCount": 48,
+    "monthlyPriceFrom": 154
+  },
+  {
+    "id": "f-8",
+    "name": "Juliana G.",
+    "initials": "JG",
+    "rating": 4.8,
+    "reviewCount": 47,
+    "specialty": "Community Manager",
+    "category": "Community Management",
+    "country": "Uruguay",
+    "countryCode": "UY",
+    "skills": [
+      "Community Engagement",
+      "Content Calendar",
+      "Social Media"
+    ],
+    "projectCount": 31,
+    "monthlyPriceFrom": 289
+  },
+  {
+    "id": "f-9",
+    "name": "Santiago B.",
+    "initials": "SB",
+    "rating": 4.8,
+    "reviewCount": 41,
+    "specialty": "Full Stack Developer",
+    "category": "Desarrollo Web",
+    "country": "Colombia",
+    "countryCode": "CO",
+    "skills": [
+      "Next.js",
+      "TypeScript",
+      "JavaScript"
+    ],
+    "projectCount": 24,
+    "monthlyPriceFrom": 370
+  },
+  {
+    "id": "f-10",
+    "name": "Sofía S.",
+    "initials": "SS",
+    "rating": 4.7,
+    "reviewCount": 64,
+    "specialty": "Diseñador de Producto",
+    "category": "Diseño UI/UX",
+    "country": "Brasil",
+    "countryCode": "BR",
+    "skills": [
+      "UI Design",
+      "Design Systems"
+    ],
+    "projectCount": 35,
+    "monthlyPriceFrom": 151
+  },
+  {
+    "id": "f-11",
+    "name": "Mateo L.",
+    "initials": "ML",
+    "rating": 4.9,
+    "reviewCount": 44,
+    "specialty": "Especialista en Marketing Digital",
+    "category": "Marketing Digital",
+    "country": "Chile",
+    "countryCode": "CL",
+    "skills": [
+      "SEO",
+      "Google Ads",
+      "Analytics"
+    ],
+    "projectCount": 25,
+    "monthlyPriceFrom": 221
+  },
+  {
+    "id": "f-12",
+    "name": "Isabella G.",
+    "initials": "IG",
+    "rating": 4.9,
+    "reviewCount": 70,
+    "specialty": "Desarrollador iOS",
+    "category": "Desarrollo Mobile",
+    "country": "Argentina",
+    "countryCode": "AR",
+    "skills": [
+      "Flutter",
+      "React Native",
+      "Swift"
+    ],
+    "projectCount": 24,
+    "monthlyPriceFrom": 400
+  },
+  {
+    "id": "f-13",
+    "name": "Gabriel B.",
+    "initials": "GB",
+    "rating": 4.8,
+    "reviewCount": 37,
+    "specialty": "DevOps Engineer",
+    "category": "DevOps",
+    "country": "Portugal",
+    "countryCode": "PT",
+    "skills": [
+      "Terraform",
+      "CI/CD",
+      "Kubernetes"
+    ],
+    "projectCount": 65,
+    "monthlyPriceFrom": 174
+  },
+  {
+    "id": "f-14",
+    "name": "Renata S.",
+    "initials": "RS",
+    "rating": 4.8,
+    "reviewCount": 35,
+    "specialty": "Data Scientist",
+    "category": "Datos e IA",
+    "country": "México",
+    "countryCode": "MX",
+    "skills": [
+      "Python",
+      "Machine Learning"
+    ],
+    "projectCount": 32,
+    "monthlyPriceFrom": 223
+  },
+  {
+    "id": "f-15",
+    "name": "Joaquín L.",
+    "initials": "JL",
+    "rating": 4.8,
+    "reviewCount": 44,
+    "specialty": "Editor de Contenido",
+    "category": "Redacción",
+    "country": "Perú",
+    "countryCode": "PE",
+    "skills": [
+      "Content Strategy",
+      "WordPress"
+    ],
+    "projectCount": 36,
+    "monthlyPriceFrom": 358
+  },
+  {
+    "id": "f-16",
+    "name": "Antonella G.",
+    "initials": "AG",
+    "rating": 4.8,
+    "reviewCount": 27,
+    "specialty": "Social Media Specialist",
+    "category": "Community Management",
+    "country": "España",
+    "countryCode": "ES",
+    "skills": [
+      "Social Media",
+      "Community Engagement",
+      "Content Calendar"
+    ],
+    "projectCount": 49,
+    "monthlyPriceFrom": 191
+  },
+  {
+    "id": "f-17",
+    "name": "Emilio B.",
+    "initials": "EB",
+    "rating": 4.9,
+    "reviewCount": 58,
+    "specialty": "Frontend Developer",
+    "category": "Desarrollo Web",
+    "country": "Uruguay",
+    "countryCode": "UY",
+    "skills": [
+      "PostgreSQL",
+      "TypeScript"
+    ],
+    "projectCount": 70,
+    "monthlyPriceFrom": 251
+  },
+  {
+    "id": "f-18",
+    "name": "Fernanda S.",
+    "initials": "FS",
+    "rating": 4.8,
+    "reviewCount": 64,
+    "specialty": "Diseñador Gráfico",
+    "category": "Diseño UI/UX",
+    "country": "Colombia",
+    "countryCode": "CO",
+    "skills": [
+      "Figma",
+      "UI Design",
+      "Prototyping"
+    ],
+    "projectCount": 53,
+    "monthlyPriceFrom": 336
+  },
+  {
+    "id": "f-19",
+    "name": "Nicolás L.",
+    "initials": "NL",
+    "rating": 4.7,
+    "reviewCount": 53,
+    "specialty": "Growth Marketer",
+    "category": "Marketing Digital",
+    "country": "Brasil",
+    "countryCode": "BR",
+    "skills": [
+      "Email Marketing",
+      "SEO",
+      "Google Ads"
+    ],
+    "projectCount": 55,
+    "monthlyPriceFrom": 121
+  },
+  {
+    "id": "f-20",
+    "name": "Daniela G.",
+    "initials": "DG",
+    "rating": 4.8,
+    "reviewCount": 49,
+    "specialty": "Desarrollador Flutter",
+    "category": "Desarrollo Mobile",
+    "country": "Chile",
+    "countryCode": "CL",
+    "skills": [
+      "Flutter",
+      "React Native",
+      "Kotlin"
+    ],
+    "projectCount": 55,
+    "monthlyPriceFrom": 229
+  },
+  {
+    "id": "f-21",
+    "name": "Diego B.",
+    "initials": "DB",
+    "rating": 4.7,
+    "reviewCount": 45,
+    "specialty": "SRE",
+    "category": "DevOps",
+    "country": "Argentina",
+    "countryCode": "AR",
+    "skills": [
+      "Terraform",
+      "CI/CD",
+      "Docker"
+    ],
+    "projectCount": 29,
+    "monthlyPriceFrom": 331
+  },
+  {
+    "id": "f-22",
+    "name": "Camila S.",
+    "initials": "CS",
+    "rating": 5,
+    "reviewCount": 41,
+    "specialty": "ML Engineer",
+    "category": "Datos e IA",
+    "country": "Portugal",
+    "countryCode": "PT",
+    "skills": [
+      "SQL",
+      "Pandas",
+      "Python"
+    ],
+    "projectCount": 43,
+    "monthlyPriceFrom": 125
+  },
+  {
+    "id": "f-23",
+    "name": "Lucas L.",
+    "initials": "LL",
+    "rating": 4.9,
+    "reviewCount": 24,
+    "specialty": "Redactora SEO",
+    "category": "Redacción",
+    "country": "México",
+    "countryCode": "MX",
+    "skills": [
+      "Content Strategy",
+      "WordPress",
+      "Copywriting"
+    ],
+    "projectCount": 69,
+    "monthlyPriceFrom": 270
+  },
+  {
+    "id": "f-24",
+    "name": "Mariana G.",
+    "initials": "MG",
+    "rating": 4.8,
+    "reviewCount": 23,
+    "specialty": "Social Media Specialist",
+    "category": "Community Management",
+    "country": "Perú",
+    "countryCode": "PE",
+    "skills": [
+      "Social Media",
+      "Content Calendar",
+      "Community Engagement"
+    ],
+    "projectCount": 20,
+    "monthlyPriceFrom": 353
+  },
+  {
+    "id": "f-25",
+    "name": "Felipe B.",
+    "initials": "FB",
+    "rating": 4.9,
+    "reviewCount": 30,
+    "specialty": "Full Stack Developer",
+    "category": "Desarrollo Web",
+    "country": "España",
+    "countryCode": "ES",
+    "skills": [
+      "PostgreSQL",
+      "JavaScript"
+    ],
+    "projectCount": 67,
+    "monthlyPriceFrom": 186
+  },
+  {
+    "id": "f-26",
+    "name": "Valentina S.",
+    "initials": "VS",
+    "rating": 4.9,
+    "reviewCount": 61,
+    "specialty": "Diseñador Gráfico",
+    "category": "Diseño UI/UX",
+    "country": "Uruguay",
+    "countryCode": "UY",
+    "skills": [
+      "Figma",
+      "UI Design"
+    ],
+    "projectCount": 32,
+    "monthlyPriceFrom": 269
+  },
+  {
+    "id": "f-27",
+    "name": "André L.",
+    "initials": "AL",
+    "rating": 5,
+    "reviewCount": 70,
+    "specialty": "Growth Marketer",
+    "category": "Marketing Digital",
+    "country": "Colombia",
+    "countryCode": "CO",
+    "skills": [
+      "SEO",
+      "Google Ads",
+      "Analytics"
+    ],
+    "projectCount": 57,
+    "monthlyPriceFrom": 355
+  },
+  {
+    "id": "f-28",
+    "name": "Juliana G.",
+    "initials": "JG",
+    "rating": 4.8,
+    "reviewCount": 37,
+    "specialty": "Desarrollador iOS",
+    "category": "Desarrollo Mobile",
+    "country": "Brasil",
+    "countryCode": "BR",
+    "skills": [
+      "Swift",
+      "Kotlin",
+      "Flutter"
+    ],
+    "projectCount": 44,
+    "monthlyPriceFrom": 190
+  },
+  {
+    "id": "f-29",
+    "name": "Santiago B.",
+    "initials": "SB",
+    "rating": 4.9,
+    "reviewCount": 56,
+    "specialty": "SRE",
+    "category": "DevOps",
+    "country": "Chile",
+    "countryCode": "CL",
+    "skills": [
+      "AWS",
+      "Terraform",
+      "CI/CD"
+    ],
+    "projectCount": 25,
+    "monthlyPriceFrom": 277
+  },
+  {
+    "id": "f-30",
+    "name": "Sofía S.",
+    "initials": "SS",
+    "rating": 4.8,
+    "reviewCount": 51,
+    "specialty": "Data Analyst",
+    "category": "Datos e IA",
+    "country": "Argentina",
+    "countryCode": "AR",
+    "skills": [
+      "SQL",
+      "Python",
+      "Machine Learning"
+    ],
+    "projectCount": 55,
+    "monthlyPriceFrom": 343
+  },
+  {
+    "id": "f-31",
+    "name": "Mateo L.",
+    "initials": "ML",
+    "rating": 4.9,
+    "reviewCount": 62,
+    "specialty": "Copywriter",
+    "category": "Redacción",
+    "country": "Portugal",
+    "countryCode": "PT",
+    "skills": [
+      "Content Strategy",
+      "WordPress"
+    ],
+    "projectCount": 53,
+    "monthlyPriceFrom": 150
+  },
+  {
+    "id": "f-32",
+    "name": "Isabella G.",
+    "initials": "IG",
+    "rating": 4.8,
+    "reviewCount": 25,
+    "specialty": "Community Manager",
+    "category": "Community Management",
+    "country": "México",
+    "countryCode": "MX",
+    "skills": [
+      "Content Calendar",
+      "Community Engagement"
+    ],
+    "projectCount": 50,
+    "monthlyPriceFrom": 289
+  },
+  {
+    "id": "f-33",
+    "name": "Gabriel B.",
+    "initials": "GB",
+    "rating": 4.7,
+    "reviewCount": 22,
+    "specialty": "Full Stack Developer",
+    "category": "Desarrollo Web",
+    "country": "Perú",
+    "countryCode": "PE",
+    "skills": [
+      "React",
+      "TypeScript"
+    ],
+    "projectCount": 16,
+    "monthlyPriceFrom": 392
+  },
+  {
+    "id": "f-34",
+    "name": "Renata S.",
+    "initials": "RS",
+    "rating": 4.7,
+    "reviewCount": 57,
+    "specialty": "Diseñador de Producto",
+    "category": "Diseño UI/UX",
+    "country": "España",
+    "countryCode": "ES",
+    "skills": [
+      "UI Design",
+      "Figma"
+    ],
+    "projectCount": 59,
+    "monthlyPriceFrom": 171
+  },
+  {
+    "id": "f-35",
+    "name": "Joaquín L.",
+    "initials": "JL",
+    "rating": 5,
+    "reviewCount": 60,
+    "specialty": "Growth Marketer",
+    "category": "Marketing Digital",
+    "country": "Uruguay",
+    "countryCode": "UY",
+    "skills": [
+      "SEO",
+      "Email Marketing"
+    ],
+    "projectCount": 42,
+    "monthlyPriceFrom": 243
+  },
+  {
+    "id": "f-36",
+    "name": "Antonella G.",
+    "initials": "AG",
+    "rating": 4.7,
+    "reviewCount": 53,
+    "specialty": "Desarrollador Flutter",
+    "category": "Desarrollo Mobile",
+    "country": "Colombia",
+    "countryCode": "CO",
+    "skills": [
+      "Kotlin",
+      "Flutter"
+    ],
+    "projectCount": 48,
+    "monthlyPriceFrom": 325
+  },
+  {
+    "id": "f-37",
+    "name": "Emilio B.",
+    "initials": "EB",
+    "rating": 4.7,
+    "reviewCount": 36,
+    "specialty": "SRE",
+    "category": "DevOps",
+    "country": "Brasil",
+    "countryCode": "BR",
+    "skills": [
+      "AWS",
+      "Docker"
+    ],
+    "projectCount": 54,
+    "monthlyPriceFrom": 142
+  },
+  {
+    "id": "f-38",
+    "name": "Fernanda S.",
+    "initials": "FS",
+    "rating": 4.7,
+    "reviewCount": 26,
+    "specialty": "Data Analyst",
+    "category": "Datos e IA",
+    "country": "Chile",
+    "countryCode": "CL",
+    "skills": [
+      "Python",
+      "SQL"
+    ],
+    "projectCount": 70,
+    "monthlyPriceFrom": 286
+  },
+  {
+    "id": "f-39",
+    "name": "Nicolás L.",
+    "initials": "NL",
+    "rating": 4.9,
+    "reviewCount": 37,
+    "specialty": "Redactora SEO",
+    "category": "Redacción",
+    "country": "Argentina",
+    "countryCode": "AR",
+    "skills": [
+      "SEO Writing",
+      "Copywriting"
+    ],
+    "projectCount": 26,
+    "monthlyPriceFrom": 398
+  },
+  {
+    "id": "f-40",
+    "name": "Daniela G.",
+    "initials": "DG",
+    "rating": 4.7,
+    "reviewCount": 63,
+    "specialty": "Social Media Specialist",
+    "category": "Community Management",
+    "country": "Portugal",
+    "countryCode": "PT",
+    "skills": [
+      "Canva",
+      "Community Engagement",
+      "Content Calendar"
+    ],
+    "projectCount": 35,
+    "monthlyPriceFrom": 159
+  },
+  {
+    "id": "f-41",
+    "name": "Diego B.",
+    "initials": "DB",
+    "rating": 4.8,
+    "reviewCount": 46,
+    "specialty": "Backend Developer",
+    "category": "Desarrollo Web",
+    "country": "México",
+    "countryCode": "MX",
+    "skills": [
+      "JavaScript",
+      "Next.js"
+    ],
+    "projectCount": 41,
+    "monthlyPriceFrom": 255
+  },
+  {
+    "id": "f-42",
+    "name": "Camila S.",
+    "initials": "CS",
+    "rating": 5,
+    "reviewCount": 34,
+    "specialty": "Diseñador de Producto",
+    "category": "Diseño UI/UX",
+    "country": "Perú",
+    "countryCode": "PE",
+    "skills": [
+      "Design Systems",
+      "UI Design",
+      "Prototyping"
+    ],
+    "projectCount": 49,
+    "monthlyPriceFrom": 373
+  },
+  {
+    "id": "f-43",
+    "name": "Lucas L.",
+    "initials": "LL",
+    "rating": 4.9,
+    "reviewCount": 50,
+    "specialty": "Social Media Manager",
+    "category": "Marketing Digital",
+    "country": "España",
+    "countryCode": "ES",
+    "skills": [
+      "Analytics",
+      "Email Marketing"
+    ],
+    "projectCount": 67,
+    "monthlyPriceFrom": 129
+  },
+  {
+    "id": "f-44",
+    "name": "Mariana G.",
+    "initials": "MG",
+    "rating": 4.9,
+    "reviewCount": 63,
+    "specialty": "Desarrollador Flutter",
+    "category": "Desarrollo Mobile",
+    "country": "Uruguay",
+    "countryCode": "UY",
+    "skills": [
+      "Kotlin",
+      "Flutter"
+    ],
+    "projectCount": 52,
+    "monthlyPriceFrom": 256
+  },
+  {
+    "id": "f-45",
+    "name": "Felipe B.",
+    "initials": "FB",
+    "rating": 4.7,
+    "reviewCount": 70,
+    "specialty": "SRE",
+    "category": "DevOps",
+    "country": "Colombia",
+    "countryCode": "CO",
+    "skills": [
+      "AWS",
+      "Docker",
+      "Kubernetes"
+    ],
+    "projectCount": 16,
+    "monthlyPriceFrom": 316
+  },
+  {
+    "id": "f-46",
+    "name": "Valentina S.",
+    "initials": "VS",
+    "rating": 4.9,
+    "reviewCount": 32,
+    "specialty": "ML Engineer",
+    "category": "Datos e IA",
+    "country": "Brasil",
+    "countryCode": "BR",
+    "skills": [
+      "Python",
+      "Machine Learning",
+      "Pandas"
+    ],
+    "projectCount": 23,
+    "monthlyPriceFrom": 193
+  },
+  {
+    "id": "f-47",
+    "name": "André L.",
+    "initials": "AL",
+    "rating": 4.8,
+    "reviewCount": 52,
+    "specialty": "Copywriter",
+    "category": "Redacción",
+    "country": "Chile",
+    "countryCode": "CL",
+    "skills": [
+      "Content Strategy",
+      "WordPress",
+      "Copywriting"
+    ],
+    "projectCount": 69,
+    "monthlyPriceFrom": 262
+  },
+  {
+    "id": "f-48",
+    "name": "Juliana G.",
+    "initials": "JG",
+    "rating": 5,
+    "reviewCount": 43,
+    "specialty": "Community Manager",
+    "category": "Community Management",
+    "country": "Argentina",
+    "countryCode": "AR",
+    "skills": [
+      "Social Media",
+      "Content Calendar",
+      "Canva"
+    ],
+    "projectCount": 36,
+    "monthlyPriceFrom": 360
+  },
+  {
+    "id": "f-49",
+    "name": "Santiago B.",
+    "initials": "SB",
+    "rating": 4.9,
+    "reviewCount": 62,
+    "specialty": "Frontend Developer",
+    "category": "Desarrollo Web",
+    "country": "Portugal",
+    "countryCode": "PT",
+    "skills": [
+      "React",
+      "TypeScript",
+      "Next.js"
+    ],
+    "projectCount": 36,
+    "monthlyPriceFrom": 154
+  },
+  {
+    "id": "f-50",
+    "name": "Sofía S.",
+    "initials": "SS",
+    "rating": 4.9,
+    "reviewCount": 65,
+    "specialty": "Diseñador de Producto",
+    "category": "Diseño UI/UX",
+    "country": "México",
+    "countryCode": "MX",
+    "skills": [
+      "Figma",
+      "UI Design"
+    ],
+    "projectCount": 58,
+    "monthlyPriceFrom": 255
+  },
+  {
+    "id": "f-51",
+    "name": "Mateo L.",
+    "initials": "ML",
+    "rating": 4.9,
+    "reviewCount": 20,
+    "specialty": "Especialista en Marketing Digital",
+    "category": "Marketing Digital",
+    "country": "Perú",
+    "countryCode": "PE",
+    "skills": [
+      "Analytics",
+      "Google Ads"
+    ],
+    "projectCount": 37,
+    "monthlyPriceFrom": 375
+  },
+  {
+    "id": "f-52",
+    "name": "Isabella G.",
+    "initials": "IG",
+    "rating": 5,
+    "reviewCount": 49,
+    "specialty": "Desarrollador Flutter",
+    "category": "Desarrollo Mobile",
+    "country": "España",
+    "countryCode": "ES",
+    "skills": [
+      "Kotlin",
+      "Flutter"
+    ],
+    "projectCount": 38,
+    "monthlyPriceFrom": 167
+  },
+  {
+    "id": "f-53",
+    "name": "Gabriel B.",
+    "initials": "GB",
+    "rating": 4.9,
+    "reviewCount": 37,
+    "specialty": "SRE",
+    "category": "DevOps",
+    "country": "Uruguay",
+    "countryCode": "UY",
+    "skills": [
+      "AWS",
+      "Kubernetes"
+    ],
+    "projectCount": 52,
+    "monthlyPriceFrom": 243
+  },
+  {
+    "id": "f-54",
+    "name": "Renata S.",
+    "initials": "RS",
+    "rating": 4.7,
+    "reviewCount": 36,
+    "specialty": "Data Analyst",
+    "category": "Datos e IA",
+    "country": "Colombia",
+    "countryCode": "CO",
+    "skills": [
+      "Python",
+      "Machine Learning",
+      "SQL"
+    ],
+    "projectCount": 70,
+    "monthlyPriceFrom": 324
+  },
+  {
+    "id": "f-55",
+    "name": "Joaquín L.",
+    "initials": "JL",
+    "rating": 4.8,
+    "reviewCount": 68,
+    "specialty": "Copywriter",
+    "category": "Redacción",
+    "country": "Brasil",
+    "countryCode": "BR",
+    "skills": [
+      "Copywriting",
+      "SEO Writing",
+      "Content Strategy"
+    ],
+    "projectCount": 32,
+    "monthlyPriceFrom": 197
+  }
+]

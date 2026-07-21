@@ -1,0 +1,1005 @@
+[
+  {
+    "id": "r-1",
+    "reviewerName": "María Fernanda",
+    "reviewerInitials": "MF",
+    "countryCode": "BR",
+    "country": "Brasil",
+    "rating": 4,
+    "title": "Desarrollo de plataforma web",
+    "comment": "Gran capacidad para resolver problemas complejos. Siempre propuso la mejor solución técnica para cada caso.",
+    "tags": [
+      "Cumplimiento de plazos",
+      "Calidad del trabajo",
+      "Comunicación",
+      "Recomendado"
+    ],
+    "service": "Desarrollo Web",
+    "dateValue": "2024-12",
+    "relativeDate": "Hace 3 días"
+  },
+  {
+    "id": "r-2",
+    "reviewerName": "Ana Lucía",
+    "reviewerInitials": "AL",
+    "countryCode": "CO",
+    "country": "Colombia",
+    "rating": 5,
+    "title": "Aplicación móvil con React Native",
+    "comment": "Cumplió con todos los plazos acordados y el código quedó muy bien documentado. Sin dudas volvería a contratarlo.",
+    "tags": [
+      "Recomendado",
+      "Cumplimiento de plazos",
+      "Comunicación",
+      "Calidad del trabajo"
+    ],
+    "service": "Aplicación Móvil",
+    "dateValue": "2024-11",
+    "relativeDate": "Hace 1 semana"
+  },
+  {
+    "id": "r-3",
+    "reviewerName": "Pedro Almeida",
+    "reviewerInitials": "PA",
+    "countryCode": "PT",
+    "country": "Portugal",
+    "rating": 5,
+    "title": "API REST y panel administrativo",
+    "comment": "Gran capacidad para resolver problemas complejos. Siempre propuso la mejor solución técnica para cada caso.",
+    "tags": [
+      "Cumplimiento de plazos",
+      "Recomendado",
+      "Calidad del trabajo"
+    ],
+    "service": "API REST",
+    "dateValue": "2024-10",
+    "relativeDate": "Hace 2 semanas"
+  },
+  {
+    "id": "r-4",
+    "reviewerName": "Lucas Fernandes",
+    "reviewerInitials": "LF",
+    "countryCode": "BR",
+    "country": "Brasil",
+    "rating": 5,
+    "title": "Tienda online completa",
+    "comment": "Gran capacidad para resolver problemas complejos. Siempre propuso la mejor solución técnica para cada caso.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos",
+      "Recomendado"
+    ],
+    "service": "E-commerce",
+    "dateValue": "2024-09",
+    "relativeDate": "Hace 3 semanas"
+  },
+  {
+    "id": "r-5",
+    "reviewerName": "Valentina Cruz",
+    "reviewerInitials": "VC",
+    "countryCode": "PE",
+    "country": "Perú",
+    "rating": 5,
+    "title": "Dashboard administrativo",
+    "comment": "Cumplió con todos los plazos acordados y el código quedó muy bien documentado. Sin dudas volvería a contratarlo.",
+    "tags": [
+      "Recomendado",
+      "Cumplimiento de plazos",
+      "Comunicación"
+    ],
+    "service": "Dashboard",
+    "dateValue": "2024-08",
+    "relativeDate": "Hace 1 mes"
+  },
+  {
+    "id": "r-6",
+    "reviewerName": "María Fernanda",
+    "reviewerInitials": "MF",
+    "countryCode": "BR",
+    "country": "Brasil",
+    "rating": 5,
+    "title": "Desarrollo de plataforma web",
+    "comment": "Cumplió con todos los plazos acordados y el código quedó muy bien documentado. Sin dudas volvería a contratarlo.",
+    "tags": [
+      "Cumplimiento de plazos",
+      "Comunicación",
+      "Calidad del trabajo"
+    ],
+    "service": "Desarrollo Web",
+    "dateValue": "2024-07",
+    "relativeDate": "Hace 2 meses"
+  },
+  {
+    "id": "r-7",
+    "reviewerName": "Javier Torres",
+    "reviewerInitials": "JT",
+    "countryCode": "AR",
+    "country": "Argentina",
+    "rating": 5,
+    "title": "App de finanzas personales",
+    "comment": "Diego superó mis expectativas. Entregó el proyecto antes del plazo, con un código limpio y escalable. Comunicación excelente durante todo el proceso.",
+    "tags": [
+      "Recomendado",
+      "Calidad del trabajo",
+      "Cumplimiento de plazos"
+    ],
+    "service": "Aplicación Móvil",
+    "dateValue": "2024-06",
+    "relativeDate": "Hace 3 meses"
+  },
+  {
+    "id": "r-8",
+    "reviewerName": "Valentina Cruz",
+    "reviewerInitials": "VC",
+    "countryCode": "PE",
+    "country": "Perú",
+    "rating": 5,
+    "title": "API para app móvil",
+    "comment": "Excelente comunicación de principio a fin. El resultado final superó lo que teníamos en mente.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos",
+      "Recomendado"
+    ],
+    "service": "API REST",
+    "dateValue": "2024-05",
+    "relativeDate": "Hace 4 meses"
+  },
+  {
+    "id": "r-9",
+    "reviewerName": "Camila Rojas",
+    "reviewerInitials": "CR",
+    "countryCode": "UY",
+    "country": "Uruguay",
+    "rating": 5,
+    "title": "Checkout y pagos integrados",
+    "comment": "Gran capacidad para resolver problemas complejos. Siempre propuso la mejor solución técnica para cada caso.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos",
+      "Recomendado"
+    ],
+    "service": "E-commerce",
+    "dateValue": "2024-04",
+    "relativeDate": "Hace 6 meses"
+  },
+  {
+    "id": "r-10",
+    "reviewerName": "Camila Rojas",
+    "reviewerInitials": "CR",
+    "countryCode": "UY",
+    "country": "Uruguay",
+    "rating": 5,
+    "title": "Dashboard de analítica",
+    "comment": "Excelente comunicación de principio a fin. El resultado final superó lo que teníamos en mente.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos"
+    ],
+    "service": "Dashboard",
+    "dateValue": "2024-03",
+    "relativeDate": "Hace 3 días"
+  },
+  {
+    "id": "r-11",
+    "reviewerName": "Diego Herrera",
+    "reviewerInitials": "DH",
+    "countryCode": "ES",
+    "country": "España",
+    "rating": 5,
+    "title": "Rediseño de sitio corporativo",
+    "comment": "Cumplió con todos los plazos acordados y el código quedó muy bien documentado. Sin dudas volvería a contratarlo.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos"
+    ],
+    "service": "Desarrollo Web",
+    "dateValue": "2024-02",
+    "relativeDate": "Hace 1 semana"
+  },
+  {
+    "id": "r-12",
+    "reviewerName": "Javier Torres",
+    "reviewerInitials": "JT",
+    "countryCode": "AR",
+    "country": "Argentina",
+    "rating": 5,
+    "title": "Aplicación móvil con React Native",
+    "comment": "Diego superó mis expectativas. Entregó el proyecto antes del plazo, con un código limpio y escalable. Comunicación excelente durante todo el proceso.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos"
+    ],
+    "service": "Aplicación Móvil",
+    "dateValue": "2024-01",
+    "relativeDate": "Hace 2 semanas"
+  },
+  {
+    "id": "r-13",
+    "reviewerName": "María Fernanda",
+    "reviewerInitials": "MF",
+    "countryCode": "BR",
+    "country": "Brasil",
+    "rating": 5,
+    "title": "Integración de API de pagos",
+    "comment": "Excelente comunicación de principio a fin. El resultado final superó lo que teníamos en mente.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos",
+      "Recomendado"
+    ],
+    "service": "API REST",
+    "dateValue": "2024-12",
+    "relativeDate": "Hace 3 semanas"
+  },
+  {
+    "id": "r-14",
+    "reviewerName": "Valentina Cruz",
+    "reviewerInitials": "VC",
+    "countryCode": "PE",
+    "country": "Perú",
+    "rating": 5,
+    "title": "Checkout y pagos integrados",
+    "comment": "Diego superó mis expectativas. Entregó el proyecto antes del plazo, con un código limpio y escalable. Comunicación excelente durante todo el proceso.",
+    "tags": [
+      "Recomendado",
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos"
+    ],
+    "service": "E-commerce",
+    "dateValue": "2024-11",
+    "relativeDate": "Hace 1 mes"
+  },
+  {
+    "id": "r-15",
+    "reviewerName": "Camila Rojas",
+    "reviewerInitials": "CR",
+    "countryCode": "UY",
+    "country": "Uruguay",
+    "rating": 5,
+    "title": "Dashboard administrativo",
+    "comment": "Cumplió con todos los plazos acordados y el código quedó muy bien documentado. Sin dudas volvería a contratarlo.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos",
+      "Recomendado"
+    ],
+    "service": "Dashboard",
+    "dateValue": "2024-10",
+    "relativeDate": "Hace 2 meses"
+  },
+  {
+    "id": "r-16",
+    "reviewerName": "Diego Herrera",
+    "reviewerInitials": "DH",
+    "countryCode": "ES",
+    "country": "España",
+    "rating": 5,
+    "title": "Rediseño de sitio corporativo",
+    "comment": "Trabajar con Diego fue una gran experiencia. Entendió perfectamente los requerimientos y propuso mejoras que agregaron mucho valor al producto final.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Recomendado",
+      "Cumplimiento de plazos"
+    ],
+    "service": "Desarrollo Web",
+    "dateValue": "2024-09",
+    "relativeDate": "Hace 3 meses"
+  },
+  {
+    "id": "r-17",
+    "reviewerName": "Pedro Almeida",
+    "reviewerInitials": "PA",
+    "countryCode": "PT",
+    "country": "Portugal",
+    "rating": 5,
+    "title": "Aplicación móvil con React Native",
+    "comment": "Trabajar con Diego fue una gran experiencia. Entendió perfectamente los requerimientos y propuso mejoras que agregaron mucho valor al producto final.",
+    "tags": [
+      "Recomendado",
+      "Cumplimiento de plazos",
+      "Comunicación"
+    ],
+    "service": "Aplicación Móvil",
+    "dateValue": "2024-08",
+    "relativeDate": "Hace 4 meses"
+  },
+  {
+    "id": "r-18",
+    "reviewerName": "Carlos Méndez",
+    "reviewerInitials": "CM",
+    "countryCode": "MX",
+    "country": "México",
+    "rating": 5,
+    "title": "API REST y panel administrativo",
+    "comment": "Diego superó mis expectativas. Entregó el proyecto antes del plazo, con un código limpio y escalable. Comunicación excelente durante todo el proceso.",
+    "tags": [
+      "Cumplimiento de plazos",
+      "Recomendado",
+      "Calidad del trabajo",
+      "Comunicación"
+    ],
+    "service": "API REST",
+    "dateValue": "2024-07",
+    "relativeDate": "Hace 6 meses"
+  },
+  {
+    "id": "r-19",
+    "reviewerName": "Javier Torres",
+    "reviewerInitials": "JT",
+    "countryCode": "AR",
+    "country": "Argentina",
+    "rating": 5,
+    "title": "Migración de e-commerce",
+    "comment": "Cumplió con todos los plazos acordados y el código quedó muy bien documentado. Sin dudas volvería a contratarlo.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos",
+      "Recomendado"
+    ],
+    "service": "E-commerce",
+    "dateValue": "2023-06",
+    "relativeDate": "Hace 3 días"
+  },
+  {
+    "id": "r-20",
+    "reviewerName": "Sofía Ramírez",
+    "reviewerInitials": "SR",
+    "countryCode": "CL",
+    "country": "Chile",
+    "rating": 5,
+    "title": "Panel de reportes en tiempo real",
+    "comment": "Trabajar con Diego fue una gran experiencia. Entendió perfectamente los requerimientos y propuso mejoras que agregaron mucho valor al producto final.",
+    "tags": [
+      "Calidad del trabajo",
+      "Cumplimiento de plazos",
+      "Comunicación",
+      "Recomendado"
+    ],
+    "service": "Dashboard",
+    "dateValue": "2023-05",
+    "relativeDate": "Hace 1 semana"
+  },
+  {
+    "id": "r-21",
+    "reviewerName": "Sofía Ramírez",
+    "reviewerInitials": "SR",
+    "countryCode": "CL",
+    "country": "Chile",
+    "rating": 5,
+    "title": "Rediseño de sitio corporativo",
+    "comment": "Gran capacidad para resolver problemas complejos. Siempre propuso la mejor solución técnica para cada caso.",
+    "tags": [
+      "Cumplimiento de plazos",
+      "Recomendado",
+      "Comunicación"
+    ],
+    "service": "Desarrollo Web",
+    "dateValue": "2023-04",
+    "relativeDate": "Hace 2 semanas"
+  },
+  {
+    "id": "r-22",
+    "reviewerName": "Pedro Almeida",
+    "reviewerInitials": "PA",
+    "countryCode": "PT",
+    "country": "Portugal",
+    "rating": 5,
+    "title": "App de finanzas personales",
+    "comment": "Muy profesional, atento a los detalles y siempre disponible para resolver dudas. Altamente recomendado.",
+    "tags": [
+      "Comunicación",
+      "Calidad del trabajo",
+      "Cumplimiento de plazos",
+      "Recomendado"
+    ],
+    "service": "Aplicación Móvil",
+    "dateValue": "2023-03",
+    "relativeDate": "Hace 3 semanas"
+  },
+  {
+    "id": "r-23",
+    "reviewerName": "Sofía Ramírez",
+    "reviewerInitials": "SR",
+    "countryCode": "CL",
+    "country": "Chile",
+    "rating": 5,
+    "title": "Integración de API de pagos",
+    "comment": "Cumplió con todos los plazos acordados y el código quedó muy bien documentado. Sin dudas volvería a contratarlo.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Recomendado",
+      "Cumplimiento de plazos"
+    ],
+    "service": "API REST",
+    "dateValue": "2023-02",
+    "relativeDate": "Hace 1 mes"
+  },
+  {
+    "id": "r-24",
+    "reviewerName": "Valentina Cruz",
+    "reviewerInitials": "VC",
+    "countryCode": "PE",
+    "country": "Perú",
+    "rating": 5,
+    "title": "Checkout y pagos integrados",
+    "comment": "Muy profesional, atento a los detalles y siempre disponible para resolver dudas. Altamente recomendado.",
+    "tags": [
+      "Comunicación",
+      "Calidad del trabajo",
+      "Recomendado"
+    ],
+    "service": "E-commerce",
+    "dateValue": "2023-01",
+    "relativeDate": "Hace 2 meses"
+  },
+  {
+    "id": "r-25",
+    "reviewerName": "Ana Lucía",
+    "reviewerInitials": "AL",
+    "countryCode": "CO",
+    "country": "Colombia",
+    "rating": 5,
+    "title": "Dashboard de analítica",
+    "comment": "Cumplió con todos los plazos acordados y el código quedó muy bien documentado. Sin dudas volvería a contratarlo.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos",
+      "Recomendado"
+    ],
+    "service": "Dashboard",
+    "dateValue": "2023-12",
+    "relativeDate": "Hace 3 meses"
+  },
+  {
+    "id": "r-26",
+    "reviewerName": "Ana Lucía",
+    "reviewerInitials": "AL",
+    "countryCode": "CO",
+    "country": "Colombia",
+    "rating": 5,
+    "title": "Landing page de alto impacto",
+    "comment": "Trabajar con Diego fue una gran experiencia. Entendió perfectamente los requerimientos y propuso mejoras que agregaron mucho valor al producto final.",
+    "tags": [
+      "Comunicación",
+      "Calidad del trabajo",
+      "Cumplimiento de plazos",
+      "Recomendado"
+    ],
+    "service": "Desarrollo Web",
+    "dateValue": "2023-11",
+    "relativeDate": "Hace 4 meses"
+  },
+  {
+    "id": "r-27",
+    "reviewerName": "Valentina Cruz",
+    "reviewerInitials": "VC",
+    "countryCode": "PE",
+    "country": "Perú",
+    "rating": 5,
+    "title": "App de finanzas personales",
+    "comment": "Trabajar con Diego fue una gran experiencia. Entendió perfectamente los requerimientos y propuso mejoras que agregaron mucho valor al producto final.",
+    "tags": [
+      "Cumplimiento de plazos",
+      "Recomendado",
+      "Comunicación",
+      "Calidad del trabajo"
+    ],
+    "service": "Aplicación Móvil",
+    "dateValue": "2023-10",
+    "relativeDate": "Hace 6 meses"
+  },
+  {
+    "id": "r-28",
+    "reviewerName": "Pedro Almeida",
+    "reviewerInitials": "PA",
+    "countryCode": "PT",
+    "country": "Portugal",
+    "rating": 4,
+    "title": "API para app móvil",
+    "comment": "Gran capacidad para resolver problemas complejos. Siempre propuso la mejor solución técnica para cada caso.",
+    "tags": [
+      "Cumplimiento de plazos",
+      "Recomendado",
+      "Comunicación"
+    ],
+    "service": "API REST",
+    "dateValue": "2023-09",
+    "relativeDate": "Hace 3 días"
+  },
+  {
+    "id": "r-29",
+    "reviewerName": "Camila Rojas",
+    "reviewerInitials": "CR",
+    "countryCode": "UY",
+    "country": "Uruguay",
+    "rating": 5,
+    "title": "Migración de e-commerce",
+    "comment": "Gran capacidad para resolver problemas complejos. Siempre propuso la mejor solución técnica para cada caso.",
+    "tags": [
+      "Comunicación",
+      "Calidad del trabajo",
+      "Recomendado"
+    ],
+    "service": "E-commerce",
+    "dateValue": "2023-08",
+    "relativeDate": "Hace 1 semana"
+  },
+  {
+    "id": "r-30",
+    "reviewerName": "Diego Herrera",
+    "reviewerInitials": "DH",
+    "countryCode": "ES",
+    "country": "España",
+    "rating": 5,
+    "title": "Dashboard administrativo",
+    "comment": "Gran capacidad para resolver problemas complejos. Siempre propuso la mejor solución técnica para cada caso.",
+    "tags": [
+      "Cumplimiento de plazos",
+      "Comunicación",
+      "Recomendado"
+    ],
+    "service": "Dashboard",
+    "dateValue": "2023-07",
+    "relativeDate": "Hace 2 semanas"
+  },
+  {
+    "id": "r-31",
+    "reviewerName": "Pedro Almeida",
+    "reviewerInitials": "PA",
+    "countryCode": "PT",
+    "country": "Portugal",
+    "rating": 5,
+    "title": "Desarrollo de plataforma web",
+    "comment": "Cumplió con todos los plazos acordados y el código quedó muy bien documentado. Sin dudas volvería a contratarlo.",
+    "tags": [
+      "Recomendado",
+      "Cumplimiento de plazos",
+      "Comunicación",
+      "Calidad del trabajo"
+    ],
+    "service": "Desarrollo Web",
+    "dateValue": "2023-06",
+    "relativeDate": "Hace 3 semanas"
+  },
+  {
+    "id": "r-32",
+    "reviewerName": "Javier Torres",
+    "reviewerInitials": "JT",
+    "countryCode": "AR",
+    "country": "Argentina",
+    "rating": 5,
+    "title": "Rediseño de app móvil",
+    "comment": "Cumplió con todos los plazos acordados y el código quedó muy bien documentado. Sin dudas volvería a contratarlo.",
+    "tags": [
+      "Recomendado",
+      "Cumplimiento de plazos",
+      "Comunicación"
+    ],
+    "service": "Aplicación Móvil",
+    "dateValue": "2023-05",
+    "relativeDate": "Hace 1 mes"
+  },
+  {
+    "id": "r-33",
+    "reviewerName": "Sofía Ramírez",
+    "reviewerInitials": "SR",
+    "countryCode": "CL",
+    "country": "Chile",
+    "rating": 5,
+    "title": "Integración de API de pagos",
+    "comment": "Trabajar con Diego fue una gran experiencia. Entendió perfectamente los requerimientos y propuso mejoras que agregaron mucho valor al producto final.",
+    "tags": [
+      "Recomendado",
+      "Comunicación",
+      "Calidad del trabajo",
+      "Cumplimiento de plazos"
+    ],
+    "service": "API REST",
+    "dateValue": "2023-04",
+    "relativeDate": "Hace 2 meses"
+  },
+  {
+    "id": "r-34",
+    "reviewerName": "Lucas Fernandes",
+    "reviewerInitials": "LF",
+    "countryCode": "BR",
+    "country": "Brasil",
+    "rating": 5,
+    "title": "Checkout y pagos integrados",
+    "comment": "Trabajar con Diego fue una gran experiencia. Entendió perfectamente los requerimientos y propuso mejoras que agregaron mucho valor al producto final.",
+    "tags": [
+      "Cumplimiento de plazos",
+      "Calidad del trabajo",
+      "Comunicación",
+      "Recomendado"
+    ],
+    "service": "E-commerce",
+    "dateValue": "2023-03",
+    "relativeDate": "Hace 3 meses"
+  },
+  {
+    "id": "r-35",
+    "reviewerName": "Ana Lucía",
+    "reviewerInitials": "AL",
+    "countryCode": "CO",
+    "country": "Colombia",
+    "rating": 5,
+    "title": "Panel de reportes en tiempo real",
+    "comment": "Diego superó mis expectativas. Entregó el proyecto antes del plazo, con un código limpio y escalable. Comunicación excelente durante todo el proceso.",
+    "tags": [
+      "Recomendado",
+      "Comunicación",
+      "Cumplimiento de plazos",
+      "Calidad del trabajo"
+    ],
+    "service": "Dashboard",
+    "dateValue": "2023-02",
+    "relativeDate": "Hace 4 meses"
+  },
+  {
+    "id": "r-36",
+    "reviewerName": "Ana Lucía",
+    "reviewerInitials": "AL",
+    "countryCode": "CO",
+    "country": "Colombia",
+    "rating": 5,
+    "title": "Landing page de alto impacto",
+    "comment": "Diego superó mis expectativas. Entregó el proyecto antes del plazo, con un código limpio y escalable. Comunicación excelente durante todo el proceso.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos"
+    ],
+    "service": "Desarrollo Web",
+    "dateValue": "2023-01",
+    "relativeDate": "Hace 6 meses"
+  },
+  {
+    "id": "r-37",
+    "reviewerName": "Carlos Méndez",
+    "reviewerInitials": "CM",
+    "countryCode": "MX",
+    "country": "México",
+    "rating": 5,
+    "title": "App de finanzas personales",
+    "comment": "Diego superó mis expectativas. Entregó el proyecto antes del plazo, con un código limpio y escalable. Comunicación excelente durante todo el proceso.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Recomendado",
+      "Cumplimiento de plazos"
+    ],
+    "service": "Aplicación Móvil",
+    "dateValue": "2022-12",
+    "relativeDate": "Hace 3 días"
+  },
+  {
+    "id": "r-38",
+    "reviewerName": "María Fernanda",
+    "reviewerInitials": "MF",
+    "countryCode": "BR",
+    "country": "Brasil",
+    "rating": 5,
+    "title": "API para app móvil",
+    "comment": "Trabajar con Diego fue una gran experiencia. Entendió perfectamente los requerimientos y propuso mejoras que agregaron mucho valor al producto final.",
+    "tags": [
+      "Cumplimiento de plazos",
+      "Comunicación",
+      "Calidad del trabajo"
+    ],
+    "service": "API REST",
+    "dateValue": "2022-11",
+    "relativeDate": "Hace 1 semana"
+  },
+  {
+    "id": "r-39",
+    "reviewerName": "Lucas Fernandes",
+    "reviewerInitials": "LF",
+    "countryCode": "BR",
+    "country": "Brasil",
+    "rating": 5,
+    "title": "Checkout y pagos integrados",
+    "comment": "Gran capacidad para resolver problemas complejos. Siempre propuso la mejor solución técnica para cada caso.",
+    "tags": [
+      "Calidad del trabajo",
+      "Recomendado",
+      "Comunicación",
+      "Cumplimiento de plazos"
+    ],
+    "service": "E-commerce",
+    "dateValue": "2022-10",
+    "relativeDate": "Hace 2 semanas"
+  },
+  {
+    "id": "r-40",
+    "reviewerName": "Javier Torres",
+    "reviewerInitials": "JT",
+    "countryCode": "AR",
+    "country": "Argentina",
+    "rating": 5,
+    "title": "Dashboard de analítica",
+    "comment": "Muy profesional, atento a los detalles y siempre disponible para resolver dudas. Altamente recomendado.",
+    "tags": [
+      "Calidad del trabajo",
+      "Recomendado",
+      "Comunicación",
+      "Cumplimiento de plazos"
+    ],
+    "service": "Dashboard",
+    "dateValue": "2022-09",
+    "relativeDate": "Hace 3 semanas"
+  },
+  {
+    "id": "r-41",
+    "reviewerName": "Pedro Almeida",
+    "reviewerInitials": "PA",
+    "countryCode": "PT",
+    "country": "Portugal",
+    "rating": 5,
+    "title": "Rediseño de sitio corporativo",
+    "comment": "Muy profesional, atento a los detalles y siempre disponible para resolver dudas. Altamente recomendado.",
+    "tags": [
+      "Comunicación",
+      "Calidad del trabajo",
+      "Cumplimiento de plazos",
+      "Recomendado"
+    ],
+    "service": "Desarrollo Web",
+    "dateValue": "2022-08",
+    "relativeDate": "Hace 1 mes"
+  },
+  {
+    "id": "r-42",
+    "reviewerName": "María Fernanda",
+    "reviewerInitials": "MF",
+    "countryCode": "BR",
+    "country": "Brasil",
+    "rating": 5,
+    "title": "App de finanzas personales",
+    "comment": "Gran capacidad para resolver problemas complejos. Siempre propuso la mejor solución técnica para cada caso.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Recomendado",
+      "Cumplimiento de plazos"
+    ],
+    "service": "Aplicación Móvil",
+    "dateValue": "2022-07",
+    "relativeDate": "Hace 2 meses"
+  },
+  {
+    "id": "r-43",
+    "reviewerName": "Lucas Fernandes",
+    "reviewerInitials": "LF",
+    "countryCode": "BR",
+    "country": "Brasil",
+    "rating": 5,
+    "title": "Integración de API de pagos",
+    "comment": "Trabajar con Diego fue una gran experiencia. Entendió perfectamente los requerimientos y propuso mejoras que agregaron mucho valor al producto final.",
+    "tags": [
+      "Comunicación",
+      "Calidad del trabajo",
+      "Cumplimiento de plazos"
+    ],
+    "service": "API REST",
+    "dateValue": "2022-06",
+    "relativeDate": "Hace 3 meses"
+  },
+  {
+    "id": "r-44",
+    "reviewerName": "Carlos Méndez",
+    "reviewerInitials": "CM",
+    "countryCode": "MX",
+    "country": "México",
+    "rating": 5,
+    "title": "Migración de e-commerce",
+    "comment": "Trabajar con Diego fue una gran experiencia. Entendió perfectamente los requerimientos y propuso mejoras que agregaron mucho valor al producto final.",
+    "tags": [
+      "Recomendado",
+      "Calidad del trabajo",
+      "Comunicación"
+    ],
+    "service": "E-commerce",
+    "dateValue": "2022-05",
+    "relativeDate": "Hace 4 meses"
+  },
+  {
+    "id": "r-45",
+    "reviewerName": "Valentina Cruz",
+    "reviewerInitials": "VC",
+    "countryCode": "PE",
+    "country": "Perú",
+    "rating": 5,
+    "title": "Dashboard de analítica",
+    "comment": "Excelente comunicación de principio a fin. El resultado final superó lo que teníamos en mente.",
+    "tags": [
+      "Recomendado",
+      "Comunicación",
+      "Calidad del trabajo",
+      "Cumplimiento de plazos"
+    ],
+    "service": "Dashboard",
+    "dateValue": "2022-04",
+    "relativeDate": "Hace 6 meses"
+  },
+  {
+    "id": "r-46",
+    "reviewerName": "Valentina Cruz",
+    "reviewerInitials": "VC",
+    "countryCode": "PE",
+    "country": "Perú",
+    "rating": 5,
+    "title": "Desarrollo de plataforma web",
+    "comment": "Excelente comunicación de principio a fin. El resultado final superó lo que teníamos en mente.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos"
+    ],
+    "service": "Desarrollo Web",
+    "dateValue": "2022-03",
+    "relativeDate": "Hace 3 días"
+  },
+  {
+    "id": "r-47",
+    "reviewerName": "Pedro Almeida",
+    "reviewerInitials": "PA",
+    "countryCode": "PT",
+    "country": "Portugal",
+    "rating": 5,
+    "title": "Rediseño de app móvil",
+    "comment": "Excelente comunicación de principio a fin. El resultado final superó lo que teníamos en mente.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos",
+      "Recomendado"
+    ],
+    "service": "Aplicación Móvil",
+    "dateValue": "2022-02",
+    "relativeDate": "Hace 1 semana"
+  },
+  {
+    "id": "r-48",
+    "reviewerName": "Valentina Cruz",
+    "reviewerInitials": "VC",
+    "countryCode": "PE",
+    "country": "Perú",
+    "rating": 5,
+    "title": "API para app móvil",
+    "comment": "Cumplió con todos los plazos acordados y el código quedó muy bien documentado. Sin dudas volvería a contratarlo.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos",
+      "Recomendado"
+    ],
+    "service": "API REST",
+    "dateValue": "2022-01",
+    "relativeDate": "Hace 2 semanas"
+  },
+  {
+    "id": "r-49",
+    "reviewerName": "Carlos Méndez",
+    "reviewerInitials": "CM",
+    "countryCode": "MX",
+    "country": "México",
+    "rating": 5,
+    "title": "Tienda online completa",
+    "comment": "Gran capacidad para resolver problemas complejos. Siempre propuso la mejor solución técnica para cada caso.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos"
+    ],
+    "service": "E-commerce",
+    "dateValue": "2022-12",
+    "relativeDate": "Hace 3 semanas"
+  },
+  {
+    "id": "r-50",
+    "reviewerName": "Ana Lucía",
+    "reviewerInitials": "AL",
+    "countryCode": "CO",
+    "country": "Colombia",
+    "rating": 5,
+    "title": "Dashboard de analítica",
+    "comment": "Trabajar con Diego fue una gran experiencia. Entendió perfectamente los requerimientos y propuso mejoras que agregaron mucho valor al producto final.",
+    "tags": [
+      "Cumplimiento de plazos",
+      "Calidad del trabajo",
+      "Recomendado",
+      "Comunicación"
+    ],
+    "service": "Dashboard",
+    "dateValue": "2022-11",
+    "relativeDate": "Hace 1 mes"
+  },
+  {
+    "id": "r-51",
+    "reviewerName": "Carlos Méndez",
+    "reviewerInitials": "CM",
+    "countryCode": "MX",
+    "country": "México",
+    "rating": 5,
+    "title": "Desarrollo de plataforma web",
+    "comment": "Cumplió con todos los plazos acordados y el código quedó muy bien documentado. Sin dudas volvería a contratarlo.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos"
+    ],
+    "service": "Desarrollo Web",
+    "dateValue": "2022-10",
+    "relativeDate": "Hace 2 meses"
+  },
+  {
+    "id": "r-52",
+    "reviewerName": "Valentina Cruz",
+    "reviewerInitials": "VC",
+    "countryCode": "PE",
+    "country": "Perú",
+    "rating": 5,
+    "title": "App de finanzas personales",
+    "comment": "Cumplió con todos los plazos acordados y el código quedó muy bien documentado. Sin dudas volvería a contratarlo.",
+    "tags": [
+      "Comunicación",
+      "Calidad del trabajo",
+      "Cumplimiento de plazos"
+    ],
+    "service": "Aplicación Móvil",
+    "dateValue": "2022-09",
+    "relativeDate": "Hace 3 meses"
+  },
+  {
+    "id": "r-53",
+    "reviewerName": "Javier Torres",
+    "reviewerInitials": "JT",
+    "countryCode": "AR",
+    "country": "Argentina",
+    "rating": 5,
+    "title": "Integración de API de pagos",
+    "comment": "Trabajar con Diego fue una gran experiencia. Entendió perfectamente los requerimientos y propuso mejoras que agregaron mucho valor al producto final.",
+    "tags": [
+      "Recomendado",
+      "Cumplimiento de plazos",
+      "Comunicación"
+    ],
+    "service": "API REST",
+    "dateValue": "2022-08",
+    "relativeDate": "Hace 4 meses"
+  },
+  {
+    "id": "r-54",
+    "reviewerName": "María Fernanda",
+    "reviewerInitials": "MF",
+    "countryCode": "BR",
+    "country": "Brasil",
+    "rating": 5,
+    "title": "Migración de e-commerce",
+    "comment": "Gran capacidad para resolver problemas complejos. Siempre propuso la mejor solución técnica para cada caso.",
+    "tags": [
+      "Calidad del trabajo",
+      "Comunicación",
+      "Cumplimiento de plazos",
+      "Recomendado"
+    ],
+    "service": "E-commerce",
+    "dateValue": "2022-07",
+    "relativeDate": "Hace 6 meses"
+  }
+]
