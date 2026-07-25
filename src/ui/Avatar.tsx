@@ -7,6 +7,7 @@ const AVATAR_COLORS = [
 ];
 
 const SIZE_CLASSES = {
+  sm: "h-10 w-10 text-sm",
   md: "h-14 w-14 text-lg",
   lg: "h-20 w-20 text-2xl",
 };

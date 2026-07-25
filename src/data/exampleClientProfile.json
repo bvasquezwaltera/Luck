@@ -1,0 +1,55 @@
+{
+  "id": "c-1",
+  "name": "María C.",
+  "email": "maria.c@example.com",
+  "initials": "MC",
+  "rating": 4.9,
+  "reviewCount": 26,
+  "specialty": "Cliente/Comprador",
+  "category": "Gestión de proyectos",
+  "country": "México",
+  "countryCode": "MX",
+  "timezone": "GMT-6 (Ciudad de México)",
+  "online": true,
+  "languages": [
+    { "name": "Español", "level": "Nativo" },
+    { "name": "English", "level": "Intermediate" }
+  ],
+  "skills": ["Estrategia", "Contratación", "Seguimiento", "Presupuesto"],
+  "badges": {
+    "successRate": 94,
+    "topRated": true,
+    "avgResponseTime": "<2 horas"
+  },
+  "stats": {
+    "completedProjects": 16,
+    "hoursWorked": 420,
+    "repeatClients": 8,
+    "memberSince": "Marzo 2023",
+    "lastDelivery": "Hace 1 día"
+  },
+  "bio": "Gestiono proyectos digitales y contrato talento para acelerar ejecuciones.",
+  "differentiators": ["Contratos claros", "Comunicaciones rápidas", "Presupuesto ordenado"],
+  "experience": [
+    {
+      "period": "2021 – Presente",
+      "role": "Product Owner",
+      "company": "Studio Digital",
+      "description": "Coordino entregas entre equipos de diseño y desarrollo."
+    }
+  ],
+  "education": [
+    {
+      "period": "2017 – 2021",
+      "degree": "Licenciatura en Administración",
+      "institution": "Universidad Anáhuac"
+    }
+  ],
+  "tools": ["Notion", "Slack", "Jira", "Figma"],
+  "availabilityStatus": "Activa",
+  "workMethods": {
+    "communication": ["Slack", "Google Meet"],
+    "projectManagement": ["Jira", "Notion"],
+    "versionControl": ["GitHub"]
+  }
+}

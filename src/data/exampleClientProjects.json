@@ -1,0 +1,14 @@
+[
+  {
+    "id": "contract-1",
+    "name": "Contratación de landing page",
+    "category": "Marketing",
+    "description": "Proyecto de marketing con diseño y desarrollo web.",
+    "techStack": ["Next.js", "Tailwind CSS"],
+    "date": "May 2024",
+    "dateValue": "2024-05",
+    "duration": "2 semanas",
+    "url": "https://example.com/landing-page",
+    "bannerClassName": "bg-sky-900"
+  }
+]

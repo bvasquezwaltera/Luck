@@ -1,0 +1,98 @@
+[
+  {
+    "id": "pf-1",
+    "name": "Dashboard Analytics",
+    "category": "SaaS",
+    "description": "Plataforma de analítica con métricas en tiempo real, reportes personalizados y gestión de usuarios.",
+    "techStack": ["Next.js", "TypeScript", "Tailwind CSS", "Chart.js"],
+    "date": "May 2024",
+    "dateValue": "2024-05",
+    "duration": "3 semanas",
+    "url": "https://example.com/dashboard-analytics",
+    "bannerClassName": "bg-indigo-900"
+  },
+  {
+    "id": "pf-2",
+    "name": "E-commerce Fashion",
+    "category": "Tienda Online",
+    "description": "Tienda online moderna con catálogo, carrito, pagos y panel administrativo.",
+    "techStack": ["React", "Node.js", "MongoDB", "Stripe"],
+    "date": "Abr 2024",
+    "dateValue": "2024-04",
+    "duration": "5 semanas",
+    "url": "https://example.com/ecommerce-fashion",
+    "bannerClassName": "bg-gray-200"
+  },
+  {
+    "id": "pf-3",
+    "name": "TaskFlow",
+    "category": "Aplicación Web",
+    "description": "Aplicación colaborativa para gestión de proyectos, tareas y seguimiento de equipos.",
+    "techStack": ["React", "TypeScript", "Firebase", "Tailwind CSS"],
+    "date": "Mar 2024",
+    "dateValue": "2024-03",
+    "duration": "4 semanas",
+    "url": "https://example.com/taskflow",
+    "bannerClassName": "bg-slate-300"
+  },
+  {
+    "id": "pf-4",
+    "name": "FinTrack App",
+    "category": "Aplicación Móvil",
+    "description": "Aplicación móvil para finanzas personales con reportes, presupuestos y metas.",
+    "techStack": ["React Native", "TypeScript", "Expo", "UI Kitten"],
+    "date": "Feb 2024",
+    "dateValue": "2024-02",
+    "duration": "6 semanas",
+    "url": "https://example.com/fintrack-app",
+    "bannerClassName": "bg-indigo-950"
+  },
+  {
+    "id": "pf-5",
+    "name": "MedConnect",
+    "category": "SaaS",
+    "description": "Plataforma de telemedicina con videollamadas, historial clínico y agendamiento.",
+    "techStack": ["Next.js", "PostgreSQL", "WebRTC", "AWS"],
+    "date": "Ene 2024",
+    "dateValue": "2024-01",
+    "duration": "8 semanas",
+    "url": "https://example.com/medconnect",
+    "bannerClassName": "bg-emerald-100"
+  },
+  {
+    "id": "pf-6",
+    "name": "ShopBot",
+    "category": "Desarrollo Web",
+    "description": "Bot de ventas automatizado con integración a WhatsApp, catálogo y pagos.",
+    "techStack": ["Node.js", "PostgreSQL", "Docker", "Twilio"],
+    "date": "Dic 2023",
+    "dateValue": "2023-12",
+    "duration": "3 semanas",
+    "url": "https://example.com/shopbot",
+    "bannerClassName": "bg-orange-100"
+  },
+  {
+    "id": "pf-7",
+    "name": "LMS Educativo",
+    "category": "Aplicación Web",
+    "description": "Sistema de gestión de aprendizaje con cursos, evaluaciones y certificados.",
+    "techStack": ["React", "Node.js", "MongoDB", "AWS S3"],
+    "date": "Nov 2023",
+    "dateValue": "2023-11",
+    "duration": "10 semanas",
+    "url": "https://example.com/lms-educativo",
+    "bannerClassName": "bg-violet-700"
+  },
+  {
+    "id": "pf-8",
+    "name": "RealEstate Pro",
+    "category": "Desarrollo Web",
+    "description": "Portal inmobiliario con búsqueda avanzada, mapa interactivo y CRM integrado.",
+    "techStack": ["Next.js", "PostgreSQL", "Mapbox", "Stripe"],
+    "date": "Oct 2023",
+    "dateValue": "2023-10",
+    "duration": "7 semanas",
+    "url": "https://example.com/realestate-pro",
+    "bannerClassName": "bg-gray-900"
+  }
+]

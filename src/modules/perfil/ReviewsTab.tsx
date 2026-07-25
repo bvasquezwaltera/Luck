@@ -19,9 +19,13 @@ const PAGE_SIZE = 6;
 export function ReviewsTab({
   reviews,
   rating,
+  showSummary = true,
+  showFilters = true,
 }: {
   reviews: ReviewEntry[];
   rating: number;
+  showSummary?: boolean;
+  showFilters?: boolean;
 }) {
   const [ratingFilter, setRatingFilter] = useState<ReviewRatingFilter>("all");
   const [serviceFilter, setServiceFilter] = useState("all");
@@ -61,19 +65,23 @@ export function ReviewsTab({
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[240px_1fr]">
-      <ReviewsSummary rating={rating} reviewCount={reviews.length} breakdown={breakdown} />
+    <div className={`grid grid-cols-1 gap-6 ${showSummary ? "lg:grid-cols-[240px_1fr]" : ""}`}>
+      {showSummary && (
+        <ReviewsSummary rating={rating} reviewCount={reviews.length} breakdown={breakdown} />
+      )}
 
       <div className="flex flex-col gap-4">
-        <ReviewsFilters
-          services={services}
-          ratingFilter={ratingFilter}
-          onRatingChange={handleRatingChange}
-          serviceFilter={serviceFilter}
-          onServiceChange={handleServiceChange}
-          sortOrder={sortOrder}
-          onSortOrderChange={handleSortOrderChange}
-        />
+        {showFilters && (
+          <ReviewsFilters
+            services={services}
+            ratingFilter={ratingFilter}
+            onRatingChange={handleRatingChange}
+            serviceFilter={serviceFilter}
+            onServiceChange={handleServiceChange}
+            sortOrder={sortOrder}
+            onSortOrderChange={handleSortOrderChange}
+          />
+        )}
 
         <Card className="flex flex-col">
           {pageReviews.map((review) => (
