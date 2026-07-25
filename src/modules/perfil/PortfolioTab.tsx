@@ -10,9 +10,11 @@ import { PortfolioContactBanner } from "@/modules/perfil/PortfolioContactBanner"
 export function PortfolioTab({
   projects,
   email,
+  showContactBanner = true,
 }: {
   projects: PortfolioProject[];
   email: string;
+  showContactBanner?: boolean;
 }) {
   const [activeCategory, setActiveCategory] = useState("all");
   const [sortOrder, setSortOrder] = useState<PortfolioSortOrder>("recent");
@@ -50,7 +52,7 @@ export function PortfolioTab({
         ))}
       </div>
 
-      <PortfolioContactBanner email={email} />
+      {showContactBanner && <PortfolioContactBanner email={email} />}
     </div>
   );
 }

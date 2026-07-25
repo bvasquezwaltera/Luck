@@ -9,4 +9,5 @@ export interface PortfolioProject {
   duration: string;
   url: string;
   bannerClassName: string; // Tailwind background classes for the card banner
+  imageUrl?: string; // optional real image; falls back to bannerClassName color when absent
 }

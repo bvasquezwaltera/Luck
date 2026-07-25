@@ -14,8 +14,16 @@ const CATEGORY_TEXT_CLASSES: Record<string, string> = {
 export function PortfolioProjectCard({ project }: { project: PortfolioProject }) {
   return (
     <Card className="flex h-full flex-col gap-3 !p-0 overflow-hidden">
-      <div className={`relative flex h-28 items-center justify-center px-4 ${project.bannerClassName}`}>
-        <p className="text-center text-sm font-semibold text-white/90">{project.name}</p>
+      <div
+        className={`relative flex h-28 items-center justify-center overflow-hidden px-4 ${
+          project.imageUrl ? "" : project.bannerClassName
+        }`}
+      >
+        {project.imageUrl ? (
+          <img src={project.imageUrl} alt={project.name} className="absolute inset-0 h-full w-full object-cover" />
+        ) : (
+          <p className="text-center text-sm font-semibold text-white/90">{project.name}</p>
+        )}
         <a
           href={project.url}
           target="_blank"

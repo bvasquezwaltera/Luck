@@ -1,0 +1,13 @@
+[
+  {
+    "id": "plan-cliente",
+    "name": "Cliente Pro",
+    "tier": "premium",
+    "description": "Gestiona contratos, pagos y entregas con mayor control.",
+    "price": 1200,
+    "activeProjects": "3 proyectos activos",
+    "revisions": "Revisiones ilimitadas",
+    "support": "Soporte prioritario",
+    "deliveryTime": "Entrega en 3 días"
+  }
+]

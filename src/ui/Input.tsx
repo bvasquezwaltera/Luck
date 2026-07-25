@@ -2,6 +2,7 @@ import type { InputHTMLAttributes, ReactNode } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
+  hideLabel?: boolean;
   error?: string;
   leftIcon?: ReactNode;
   rightSlot?: ReactNode;
@@ -9,6 +10,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export function Input({
   label,
+  hideLabel = false,
   error,
   leftIcon,
   rightSlot,
@@ -21,8 +23,8 @@ export function Input({
   const inputId = id ?? name ?? label;
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={inputId} className="text-xs font-semibold text-gray-900">
+    <div className={`flex flex-col gap-1.5 ${className}`}>
+      <label htmlFor={inputId} className={hideLabel ? "sr-only" : "text-xs font-semibold text-gray-900"}>
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="relative">
@@ -35,7 +37,7 @@ export function Input({
           id={inputId}
           name={name}
           required={required}
-          className={`w-full rounded-lg border py-2.5 text-xs outline-none ${leftIcon ? "pl-9" : "pl-3"} ${rightSlot ? "pr-9" : "pr-3"} ${error ? "border-red-400" : "border-gray-200"} ${className}`}
+          className={`w-full rounded-lg border py-2.5 text-xs outline-none ${leftIcon ? "pl-9" : "pl-3"} ${rightSlot ? "pr-9" : "pr-3"} ${error ? "border-red-400" : "border-gray-200"}`}
           {...props}
         />
         {rightSlot && (

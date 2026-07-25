@@ -1,0 +1,35 @@
+[
+  {
+    "id": "plan-basico",
+    "name": "Básico",
+    "tier": "basico",
+    "description": "Solución perfecta para MVPs o funcionalidades específicas.",
+    "price": 800,
+    "activeProjects": "1 proyecto activo",
+    "revisions": "2 revisiones",
+    "support": "Soporte por email",
+    "deliveryTime": "Entrega en 2 semanas"
+  },
+  {
+    "id": "plan-estandar",
+    "name": "Estándar",
+    "tier": "estandar",
+    "description": "Desarrollo completo de aplicaciones web con funcionalidades avanzadas.",
+    "price": 2000,
+    "activeProjects": "3 proyectos activos",
+    "revisions": "5 revisiones",
+    "support": "Soporte por email y chat",
+    "deliveryTime": "Entrega en 1 semana"
+  },
+  {
+    "id": "plan-premium",
+    "name": "Premium",
+    "tier": "premium",
+    "description": "Aplicaciones completas, escalables y optimizadas para rendimiento.",
+    "price": 4000,
+    "activeProjects": "Proyectos ilimitados",
+    "revisions": "Revisiones ilimitadas",
+    "support": "Soporte prioritario 24/7",
+    "deliveryTime": "Entrega en 3 días"
+  }
+]
