@@ -1,11 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { FolderOpen } from "lucide-react";
 import type { PortfolioProject } from "@/types/portfolioProject";
 import { filterPortfolioProjects, type PortfolioSortOrder } from "@/lib/filterPortfolioProjects";
 import { PortfolioFilters } from "@/modules/perfil/PortfolioFilters";
 import { PortfolioProjectCard } from "@/modules/perfil/PortfolioProjectCard";
 import { PortfolioContactBanner } from "@/modules/perfil/PortfolioContactBanner";
+import { Card } from "@/ui/Card";
 
 export function PortfolioTab({
   projects,
@@ -16,18 +18,21 @@ export function PortfolioTab({
   email: string;
   showContactBanner?: boolean;
 }) {
-  const [activeCategory, setActiveCategory] = useState("all");
   const [sortOrder, setSortOrder] = useState<PortfolioSortOrder>("recent");
 
-  const categories = useMemo(
-    () => Array.from(new Set(projects.map((p) => p.category))),
-    [projects],
+  const visibleProjects = useMemo(
+    () => filterPortfolioProjects(projects, "all", sortOrder),
+    [projects, sortOrder],
   );
 
-  const visibleProjects = useMemo(
-    () => filterPortfolioProjects(projects, activeCategory, sortOrder),
-    [projects, activeCategory, sortOrder],
-  );
+  if (projects.length === 0) {
+    return (
+      <Card className="flex flex-col items-center justify-center gap-2 py-12 text-center">
+        <FolderOpen className="h-8 w-8 text-gray-300" />
+        <p className="text-sm text-gray-500">Aún no hay proyectos en el portafolio.</p>
+      </Card>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -38,13 +43,7 @@ export function PortfolioTab({
         </p>
       </div>
 
-      <PortfolioFilters
-        categories={categories}
-        activeCategory={activeCategory}
-        onCategoryChange={setActiveCategory}
-        sortOrder={sortOrder}
-        onSortOrderChange={setSortOrder}
-      />
+      <PortfolioFilters sortOrder={sortOrder} onSortOrderChange={setSortOrder} />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {visibleProjects.map((project) => (

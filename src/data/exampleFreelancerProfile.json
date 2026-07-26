@@ -96,9 +96,9 @@
     "Nginx"
   ],
   "availabilityStatus": "Nuevos proyectos",
-  "workMethods": {
-    "communication": ["Slack", "WhatsApp", "Google Meet"],
-    "projectManagement": ["Jira", "Trello", "Notion"],
-    "versionControl": ["Git", "GitHub", "GitLab"]
-  }
+  "workMethods": [
+    { "label": "Comunicación", "items": ["Slack", "WhatsApp", "Google Meet"] },
+    { "label": "Gestión de proyectos", "items": ["Jira", "Trello", "Notion"] },
+    { "label": "Control de versiones", "items": ["Git", "GitHub", "GitLab"] }
+  ]
 }

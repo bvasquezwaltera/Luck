@@ -47,9 +47,8 @@
   ],
   "tools": ["Notion", "Slack", "Jira", "Figma"],
   "availabilityStatus": "Activa",
-  "workMethods": {
-    "communication": ["Slack", "Google Meet"],
-    "projectManagement": ["Jira", "Notion"],
-    "versionControl": ["GitHub"]
-  }
+  "workMethods": [
+    { "label": "Comunicación", "items": ["Slack", "Google Meet"] },
+    { "label": "Gestión de proyectos", "items": ["Jira", "Notion"] }
+  ]
 }

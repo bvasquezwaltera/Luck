@@ -30,11 +30,12 @@ export interface EducationEntry {
   institution: string;
 }
 
-export interface WorkMethods {
-  communication: string[];
-  projectManagement: string[];
-  versionControl: string[];
+export interface WorkMethodCategory {
+  label: string;
+  items: string[];
 }
+
+export type WorkMethods = WorkMethodCategory[];
 
 export interface FreelancerProfile {
   id: string;

@@ -4,6 +4,8 @@ import { Card } from "@/ui/Card";
 import { Input } from "@/ui/Input";
 import { Select } from "@/ui/Select";
 import { Textarea } from "@/ui/Textarea";
+import categories from "@/data/categories.json";
+import countries from "@/data/countries.json";
 import timezones from "@/data/timezones.json";
 
 export function EditProfileSection({
@@ -18,7 +20,7 @@ export function EditProfileSection({
       <h3 className="text-lg font-semibold text-gray-900">Información personal</h3>
 
       <div className="rounded-lg border border-gray-200 p-3">
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
           <Input
             label="Nombre"
             value={draftProfile.name}
@@ -26,6 +28,23 @@ export function EditProfileSection({
               setDraftProfile((current) => ({ ...current, name: event.target.value }))
             }
           />
+
+          <Select
+            label="Categoría"
+            value={draftProfile.category}
+            onChange={(event) =>
+              setDraftProfile((current) => ({ ...current, category: event.target.value }))
+            }
+          >
+            <option value="" disabled>
+              Selecciona una categoría
+            </option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </Select>
 
           <Input
             label="Especialidad"
@@ -35,13 +54,27 @@ export function EditProfileSection({
             }
           />
 
-          <Input
+          <Select
             label="País"
-            value={draftProfile.country}
-            onChange={(event) =>
-              setDraftProfile((current) => ({ ...current, country: event.target.value }))
-            }
-          />
+            value={draftProfile.countryCode}
+            onChange={(event) => {
+              const country = countries.find((value) => value.code === event.target.value);
+              setDraftProfile((current) => ({
+                ...current,
+                countryCode: event.target.value,
+                country: country?.name ?? "",
+              }));
+            }}
+          >
+            <option value="" disabled>
+              Selecciona un país
+            </option>
+            {countries.map((country) => (
+              <option key={country.code} value={country.code}>
+                {country.name}
+              </option>
+            ))}
+          </Select>
 
           <Select
             label="Zona horaria"

@@ -5,16 +5,34 @@ import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Input } from "@/ui/Input";
 import { Button } from "@/ui/Button";
 import { GoogleIcon } from "@/modules/autenticacion/GoogleIcon";
+import { signIn } from "@/server/auth/actions";
 import { validateLoginForm, type LoginFormErrors } from "@/validators/authValidation";
 
 export function LoginForm() {
   const [values, setValues] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<LoginFormErrors>({});
+  const [formError, setFormError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    setErrors(validateLoginForm(values));
+    const validationErrors = validateLoginForm(values);
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) return;
+
+    setFormError("");
+    setIsSubmitting(true);
+
+    const formData = new FormData();
+    formData.set("email", values.email);
+    formData.set("password", values.password);
+
+    const result = await signIn(formData);
+    setIsSubmitting(false);
+    if (result?.error) {
+      setFormError(result.error);
+    }
   }
 
   return (
@@ -66,8 +84,10 @@ export function LoginForm() {
           </div>
         </div>
 
-        <Button type="submit" variant="primary" className="w-full min-w-0">
-          Iniciar sesión
+        {formError && <p className="text-center text-xs text-red-500">{formError}</p>}
+
+        <Button type="submit" variant="primary" disabled={isSubmitting} className="w-full min-w-0">
+          {isSubmitting ? "Ingresando..." : "Iniciar sesión"}
         </Button>
       </form>
 

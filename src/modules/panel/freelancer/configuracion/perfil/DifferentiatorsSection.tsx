@@ -17,7 +17,7 @@ export function DifferentiatorsSection({
 
       <div className="space-y-3">
         {draftProfile.differentiators.map((item, index) => (
-          <div key={`${item}-${index}`} className="rounded-lg border border-gray-200 p-3">
+          <div key={index} className="rounded-lg border border-gray-200 p-3">
             <Input
               label="Diferenciador"
               value={item}

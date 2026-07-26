@@ -17,7 +17,7 @@ export function ToolsSection({
 
       <div className="space-y-3">
         {draftProfile.tools.map((tool, index) => (
-          <div key={`${tool}-${index}`} className="rounded-lg border border-gray-200 p-3">
+          <div key={index} className="rounded-lg border border-gray-200 p-3">
             <Input
               label="Herramienta"
               value={tool}

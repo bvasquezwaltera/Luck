@@ -1,8 +1,20 @@
-import { ShieldCheck, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, CheckCircle2, PackageOpen } from "lucide-react";
 import type { SubscriptionPlan } from "@/types/subscriptionPlan";
 import { SubscriptionPlanCard } from "@/modules/perfil/SubscriptionPlanCard";
+import { Card } from "@/ui/Card";
 
 export function SubscriptionsTab({ plans }: { plans: SubscriptionPlan[] }) {
+  const activePlans = plans.filter((plan) => plan.active);
+
+  if (activePlans.length === 0) {
+    return (
+      <Card className="flex flex-col items-center justify-center gap-2 py-12 text-center">
+        <PackageOpen className="h-8 w-8 text-gray-300" />
+        <p className="text-sm text-gray-500">Aún no hay planes de suscripción disponibles.</p>
+      </Card>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -13,7 +25,7 @@ export function SubscriptionsTab({ plans }: { plans: SubscriptionPlan[] }) {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        {plans.map((plan) => (
+        {activePlans.map((plan) => (
           <SubscriptionPlanCard key={plan.id} plan={plan} />
         ))}
       </div>

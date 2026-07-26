@@ -7,7 +7,10 @@
     "price": 1200,
     "activeProjects": "3 proyectos activos",
     "revisions": "Revisiones ilimitadas",
-    "support": "Soporte prioritario",
-    "deliveryTime": "Entrega en 3 días"
+    "features": [
+      { "id": "plan-cliente-support", "label": "Soporte", "value": "Soporte prioritario" },
+      { "id": "plan-cliente-delivery", "label": "Tiempo de entrega", "value": "Entrega en 3 días" }
+    ],
+    "active": true
   }
 ]

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Star } from "lucide-react";
 import type { ReviewEntry } from "@/types/review";
 import {
   filterReviews,
@@ -28,20 +29,14 @@ export function ReviewsTab({
   showFilters?: boolean;
 }) {
   const [ratingFilter, setRatingFilter] = useState<ReviewRatingFilter>("all");
-  const [serviceFilter, setServiceFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState<ReviewSortOrder>("recent");
   const [currentPage, setCurrentPage] = useState(1);
-
-  const services = useMemo(
-    () => Array.from(new Set(reviews.map((r) => r.service))),
-    [reviews],
-  );
 
   const breakdown = useMemo(() => computeRatingBreakdown(reviews), [reviews]);
 
   const filtered = useMemo(
-    () => filterReviews(reviews, ratingFilter, serviceFilter, sortOrder),
-    [reviews, ratingFilter, serviceFilter, sortOrder],
+    () => filterReviews(reviews, ratingFilter, "all", sortOrder),
+    [reviews, ratingFilter, sortOrder],
   );
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
@@ -54,14 +49,18 @@ export function ReviewsTab({
     setCurrentPage(1);
   }
 
-  function handleServiceChange(next: string) {
-    setServiceFilter(next);
-    setCurrentPage(1);
-  }
-
   function handleSortOrderChange(next: ReviewSortOrder) {
     setSortOrder(next);
     setCurrentPage(1);
+  }
+
+  if (reviews.length === 0) {
+    return (
+      <Card className="flex flex-col items-center justify-center gap-2 py-12 text-center">
+        <Star className="h-8 w-8 text-gray-300" />
+        <p className="text-sm text-gray-500">Aún no hay reseñas.</p>
+      </Card>
+    );
   }
 
   return (
@@ -73,11 +72,8 @@ export function ReviewsTab({
       <div className="flex flex-col gap-4">
         {showFilters && (
           <ReviewsFilters
-            services={services}
             ratingFilter={ratingFilter}
             onRatingChange={handleRatingChange}
-            serviceFilter={serviceFilter}
-            onServiceChange={handleServiceChange}
             sortOrder={sortOrder}
             onSortOrderChange={handleSortOrderChange}
           />

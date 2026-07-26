@@ -7,8 +7,11 @@
     "price": 800,
     "activeProjects": "1 proyecto activo",
     "revisions": "2 revisiones",
-    "support": "Soporte por email",
-    "deliveryTime": "Entrega en 2 semanas"
+    "features": [
+      { "id": "plan-basico-support", "label": "Soporte", "value": "Soporte por email" },
+      { "id": "plan-basico-delivery", "label": "Tiempo de entrega", "value": "Entrega en 2 semanas" }
+    ],
+    "active": true
   },
   {
     "id": "plan-estandar",
@@ -18,8 +21,11 @@
     "price": 2000,
     "activeProjects": "3 proyectos activos",
     "revisions": "5 revisiones",
-    "support": "Soporte por email y chat",
-    "deliveryTime": "Entrega en 1 semana"
+    "features": [
+      { "id": "plan-estandar-support", "label": "Soporte", "value": "Soporte por email y chat" },
+      { "id": "plan-estandar-delivery", "label": "Tiempo de entrega", "value": "Entrega en 1 semana" }
+    ],
+    "active": true
   },
   {
     "id": "plan-premium",
@@ -29,7 +35,10 @@
     "price": 4000,
     "activeProjects": "Proyectos ilimitados",
     "revisions": "Revisiones ilimitadas",
-    "support": "Soporte prioritario 24/7",
-    "deliveryTime": "Entrega en 3 días"
+    "features": [
+      { "id": "plan-premium-support", "label": "Soporte", "value": "Soporte prioritario 24/7" },
+      { "id": "plan-premium-delivery", "label": "Tiempo de entrega", "value": "Entrega en 3 días" }
+    ],
+    "active": true
   }
 ]

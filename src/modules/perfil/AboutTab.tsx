@@ -1,9 +1,25 @@
-import { BookOpen, Star, Briefcase, GraduationCap, Code2, CheckCircle2 } from "lucide-react";
+import { BookOpen, Star, Briefcase, GraduationCap, Code2, CheckCircle2, UserCircle } from "lucide-react";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import { Card } from "@/ui/Card";
 import { Badge } from "@/ui/Badge";
 
 export function AboutTab({ profile }: { profile: FreelancerProfile }) {
+  const isEmpty =
+    !profile.bio &&
+    profile.differentiators.length === 0 &&
+    profile.experience.length === 0 &&
+    profile.education.length === 0 &&
+    profile.tools.length === 0;
+
+  if (isEmpty) {
+    return (
+      <Card className="flex flex-col items-center justify-center gap-2 py-12 text-center">
+        <UserCircle className="h-8 w-8 text-gray-300" />
+        <p className="text-sm text-gray-500">Este freelancer aún no completó su perfil.</p>
+      </Card>
+    );
+  }
+
   return (
     <Card className="flex flex-col gap-6">
       <h2 className="text-lg font-bold text-gray-900">Sobre mí</h2>

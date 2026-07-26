@@ -1,5 +1,6 @@
 import { LogOut, type LucideIcon } from "lucide-react";
 import { PanelBrandHeader } from "@/modules/panel/PanelBrandHeader";
+import { signOut } from "@/server/auth/actions";
 
 export interface PanelMenuItem<T extends string = string> {
   id: T;
@@ -49,6 +50,7 @@ export function PanelSidebar<T extends string>({
         <div className="border-t border-slate-200 px-3 py-4">
           <button
             type="button"
+            onClick={() => signOut()}
             className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-xs font-medium text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
           >
             <LogOut className="h-4 w-4" />

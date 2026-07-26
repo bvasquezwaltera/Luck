@@ -1,9 +1,12 @@
 import { ClientDashboard } from "@/modules/panel/client/ClientDashboard";
+import { requireRole } from "@/server/auth/requireRole";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import exampleProfileData from "@/data/exampleClientProfile.json";
 
 const exampleProfile = exampleProfileData as FreelancerProfile;
 
-export default function ClientPanelPage() {
-  return <ClientDashboard profile={exampleProfile} />;
+export default async function ClientPanelPage() {
+  const profile = await requireRole("client");
+
+  return <ClientDashboard profile={{ ...exampleProfile, name: profile.nombre_completo }} />;
 }

@@ -7,6 +7,7 @@ import { Button } from "@/ui/Button";
 import { Checkbox } from "@/ui/Checkbox";
 import { GoogleIcon } from "@/modules/autenticacion/GoogleIcon";
 import { RoleToggle, type Role } from "@/modules/autenticacion/RoleToggle";
+import { signUp } from "@/server/auth/actions";
 import {
   validateRegisterForm,
   type RegisterFormErrors,
@@ -21,13 +22,32 @@ export function RegisterForm() {
     confirmPassword: "",
   });
   const [errors, setErrors] = useState<RegisterFormErrors>({});
+  const [formError, setFormError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    setErrors(validateRegisterForm(values));
+    const validationErrors = validateRegisterForm(values);
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) return;
+
+    setFormError("");
+    setIsSubmitting(true);
+
+    const formData = new FormData();
+    formData.set("fullName", values.fullName);
+    formData.set("email", values.email);
+    formData.set("password", values.password);
+    formData.set("role", role === "cliente" ? "client" : "freelancer");
+
+    const result = await signUp(formData);
+    setIsSubmitting(false);
+    if (result?.error) {
+      setFormError(result.error);
+    }
   }
 
   return (
@@ -130,13 +150,15 @@ export function RegisterForm() {
           .
         </Checkbox>
 
+        {formError && <p className="text-center text-xs text-red-500">{formError}</p>}
+
         <Button
           type="submit"
           variant="primary"
-          disabled={!acceptedTerms}
+          disabled={!acceptedTerms || isSubmitting}
           className={`w-full min-w-0 ${!acceptedTerms ? "!bg-indigo-300 hover:!bg-indigo-300" : ""}`}
         >
-          Crear cuenta
+          {isSubmitting ? "Creando cuenta..." : "Crear cuenta"}
         </Button>
       </form>
 

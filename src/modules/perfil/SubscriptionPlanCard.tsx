@@ -18,8 +18,7 @@ export function SubscriptionPlanCard({ plan }: { plan: SubscriptionPlan }) {
   const features = [
     plan.activeProjects,
     plan.revisions,
-    plan.support,
-    plan.deliveryTime,
+    ...plan.features.map((feature) => `${feature.label}: ${feature.value}`),
   ];
 
   return (

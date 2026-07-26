@@ -17,7 +17,7 @@ export function SkillsSection({
 
       <div className="space-y-3">
         {draftProfile.skills.map((skill, index) => (
-          <div key={`${skill}-${index}`} className="rounded-lg border border-gray-200 p-3">
+          <div key={index} className="rounded-lg border border-gray-200 p-3">
             <Input
               label="Habilidad"
               value={skill}

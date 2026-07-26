@@ -1,12 +1,14 @@
 import { FreelancerDashboard } from "@/modules/panel/freelancer/FreelancerDashboard";
-import type { FreelancerProfile } from "@/types/freelancerProfile";
-import type { ReviewEntry } from "@/types/review";
-import exampleProfileData from "@/data/exampleFreelancerProfile.json";
-import reviewsData from "@/data/reviews.json";
+import { requireRole } from "@/server/auth/requireRole";
+import { getFreelancerProfile } from "@/server/profile/actions";
+import { getReviews } from "@/server/reviews/actions";
 
-const exampleProfile = exampleProfileData as FreelancerProfile;
-const exampleReviews = reviewsData as ReviewEntry[];
+export default async function FreelancerPanelPage() {
+  const authProfile = await requireRole("freelancer");
+  const [profile, reviews] = await Promise.all([
+    getFreelancerProfile(authProfile.id),
+    getReviews(authProfile.id),
+  ]);
 
-export default function FreelancerPanelPage() {
-  return <FreelancerDashboard profile={exampleProfile} reviews={exampleReviews} />;
+  return <FreelancerDashboard profile={profile ?? undefined} reviews={reviews} />;
 }

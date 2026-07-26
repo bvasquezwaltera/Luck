@@ -1,5 +1,11 @@
 export type PlanTier = "basico" | "estandar" | "premium";
 
+export interface SubscriptionPlanFeature {
+  id: string;
+  label: string;
+  value: string;
+}
+
 export interface SubscriptionPlan {
   id: string;
   name: string;
@@ -8,6 +14,6 @@ export interface SubscriptionPlan {
   price: number;
   activeProjects: string;
   revisions: string;
-  support: string;
-  deliveryTime: string;
+  features: SubscriptionPlanFeature[];
+  active: boolean;
 }
