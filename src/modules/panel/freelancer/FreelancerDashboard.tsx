@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import {
   BarChart3,
   CreditCard,
+  Inbox,
   LayoutGrid,
   MessageCircle,
   Settings,
@@ -17,6 +18,7 @@ import { DeliveriesSection } from "@/modules/panel/freelancer/deliveries/Deliver
 import { HomeSection } from "@/modules/panel/freelancer/home/HomeSection";
 import { MessagesSection } from "@/modules/panel/freelancer/messages/MessagesSection";
 import { PaymentsSection } from "@/modules/panel/freelancer/payments/PaymentsSection";
+import { SolicitudesSection } from "@/modules/panel/freelancer/solicitudes/SolicitudesSection";
 import { StatisticsSection } from "@/modules/panel/freelancer/statistics/StatisticsSection";
 import { ReviewsSection } from "@/modules/panel/freelancer/reviews/ReviewsSection";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
@@ -27,6 +29,7 @@ import fallbackProfileData from "@/data/exampleFreelancerProfile.json";
 
 const menuItems: Array<{ id: FreelancerSectionId; label: string; icon: typeof LayoutGrid }> = [
   { id: "inicio", label: "Inicio", icon: LayoutGrid },
+  { id: "solicitudes", label: "Solicitudes", icon: Inbox },
   { id: "mensajes", label: "Mensajes", icon: MessageCircle },
   { id: "entregas", label: "Entregas", icon: Truck },
   { id: "pagos", label: "Pagos", icon: CreditCard },
@@ -55,6 +58,8 @@ export function FreelancerDashboard({
     switch (activeSection) {
       case "inicio":
         return <HomeSection profile={safeProfile} />;
+      case "solicitudes":
+        return <SolicitudesSection />;
       case "mensajes":
         return <MessagesSection />;
       case "entregas":
