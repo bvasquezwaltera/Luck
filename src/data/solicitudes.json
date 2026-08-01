@@ -2,33 +2,61 @@
   "solicitudes": [
     {
       "id": "sol-1",
-      "titulo": "Rediseño de identidad de marca",
+      "titulo": "Rediseño de sitio web corporativo",
       "clienteName": "Diego B.",
       "clienteInitials": "DB",
       "planName": "Plan Estándar",
-      "description": "Necesito un rediseño completo de mi identidad visual. Busco un enfoque moderno, coherente y fácil de aplicar en distintos formatos.",
+      "category": "desarrollo",
+      "description": "Necesito modernizar el sitio corporativo para presentar nuestros servicios y facilitar el contacto con nuevos clientes.",
+      "characteristics": [
+        "Página de inicio y hasta 3 páginas internas",
+        "Diseño responsive para móvil y escritorio",
+        "Formulario de contacto conectado al correo",
+        "Entrega de archivos editables y guía de uso"
+      ],
+      "attachments": [
+        { "id": "att-1", "name": "referencia-sitio.pdf", "type": "pdf", "size": "2.4 MB" },
+        { "id": "att-2", "name": "inspiracion-web.jpg", "type": "image", "size": "860 KB" }
+      ],
       "status": "nueva",
-      "presupuesto": 2100,
-      "tiempoEntrega": 10,
       "enviado": "Hace 1 hora",
-      "propuestas": 3,
       "revisiones": 2,
-      "entregatimeString": "Entrega en hasta 10 días"
+      "requestedDeliveries": 3,
+      "requestedMilestones": [
+        { "id": "m-1", "title": "Estructura y propuesta visual", "description": "Mapa del sitio y primera propuesta de diseño." },
+        { "id": "m-2", "title": "Desarrollo de páginas", "description": "Construcción de las páginas aprobadas." },
+        { "id": "m-3", "title": "Pruebas y publicación", "description": "Revisión responsive, ajustes finales y publicación." }
+      ]
     },
     {
       "id": "sol-2",
-      "titulo": "Planos de remodelación de vivienda",
+      "titulo": "Desarrollo de aplicación móvil",
       "clienteName": "Laura G.",
       "clienteInitials": "LG",
       "planName": "Plan Premium",
-      "description": "Remodelación de una casa de 2 pisos, incluye planos estructurales y de distribución con visado municipal.",
+      "category": "movil",
+      "description": "Busco desarrollar una aplicación móvil para iOS y Android con panel de administración para gestionar usuarios y contenido.",
+      "characteristics": [
+        "Registro e inicio de sesión de usuarios",
+        "Panel de administración",
+        "Notificaciones y gestión de contenido",
+        "Prototipo navegable antes del desarrollo"
+      ],
+      "attachments": [
+        { "id": "att-3", "name": "flujo-de-usuarios.pdf", "type": "pdf", "size": "1.8 MB" },
+        { "id": "att-4", "name": "referencia-app.png", "type": "image", "size": "1.1 MB" }
+      ],
       "status": "nueva",
-      "presupuesto": 3800,
-      "tiempoEntrega": 15,
       "enviado": "Hace 3 horas",
-      "propuestas": 5,
       "revisiones": 3,
-      "entregatimeString": "Entrega en hasta 15 días"
+      "requestedDeliveries": 5,
+      "requestedMilestones": [
+        { "id": "m-4", "title": "Definición y prototipo", "description": "Flujos principales y prototipo de la aplicación." },
+        { "id": "m-5", "title": "Aplicación móvil", "description": "Desarrollo de las funciones para iOS y Android." },
+        { "id": "m-6", "title": "Panel de administración", "description": "Panel para gestionar usuarios y contenido." },
+        { "id": "m-7", "title": "Integraciones", "description": "Notificaciones y servicios externos." },
+        { "id": "m-8", "title": "Pruebas y entrega", "description": "Pruebas finales y preparación para publicación." }
+      ]
     },
     {
       "id": "sol-3",
@@ -36,44 +64,77 @@
       "clienteName": "Andrés T.",
       "clienteInitials": "AT",
       "planName": "Plan Estándar",
+      "category": "desarrollo",
       "description": "Requiero soporte para mi sitio actual: optimización de rendimiento y nuevas funcionalidades.",
+      "characteristics": [
+        "Auditoría de rendimiento",
+        "Corrección de errores prioritarios",
+        "Optimización de carga",
+        "Reporte de cambios realizados"
+      ],
+      "attachments": [
+        { "id": "att-5", "name": "requerimientos-mantenimiento.pdf", "type": "pdf", "size": "920 KB" }
+      ],
       "status": "sin_responder",
-      "presupuesto": 1200,
-      "tiempoEntrega": 7,
       "enviado": "Hace 5 horas",
-      "propuestas": 2,
       "revisiones": 2,
-      "entregatimeString": "Entrega en hasta 7 días"
+      "requestedDeliveries": 2,
+      "requestedMilestones": [
+        { "id": "m-9", "title": "Auditoría y diagnóstico", "description": "Revisión técnica y lista de mejoras." },
+        { "id": "m-10", "title": "Implementación y reporte", "description": "Aplicación de mejoras y documentación." }
+      ]
     },
     {
       "id": "sol-4",
-      "titulo": "Campaña de marketing digital",
+      "titulo": "Landing page para campaña",
       "clienteName": "Sofía V.",
       "clienteInitials": "SV",
       "planName": "Plan Básico",
-      "description": "Necesito una estrategia y piezas gráficas para lanzar una campaña en redes sociales.",
+      "category": "marketing",
+      "description": "Necesito una landing page clara y persuasiva para lanzar una campaña de marketing en redes sociales.",
+      "characteristics": [
+        "Sección hero con llamada a la acción",
+        "Integración de formulario de registro",
+        "Diseño alineado a la identidad de marca",
+        "Versión optimizada para dispositivos móviles"
+      ],
+      "attachments": [
+        { "id": "att-6", "name": "guia-de-marca.pdf", "type": "pdf", "size": "3.2 MB" }
+      ],
       "status": "sin_responder",
-      "presupuesto": 750,
-      "tiempoEntrega": 5,
       "enviado": "Hace 1 día",
-      "propuestas": 1,
       "revisiones": 1,
-      "entregatimeString": "Entrega en hasta 5 días"
+      "requestedDeliveries": 1,
+      "requestedMilestones": [
+        { "id": "m-11", "title": "Landing page publicada", "description": "Diseño, desarrollo y publicación de la página." }
+      ]
     },
     {
       "id": "sol-5",
-      "titulo": "Integración de pasarela de pagos",
+      "titulo": "Integración de API y pasarelas de pago",
       "clienteName": "Javier R.",
       "clienteInitials": "JR",
       "planName": "Plan Estándar",
-      "description": "Integración de pasarela de pago y API de terceros en plataforma existente.",
+      "category": "desarrollo",
+      "description": "Integración de una API de terceros y actualización del flujo de pagos en una plataforma existente.",
+      "characteristics": [
+        "Integración con API documentada",
+        "Manejo de errores y estados de pago",
+        "Pruebas en ambiente sandbox",
+        "Documentación técnica de la integración"
+      ],
+      "attachments": [
+        { "id": "att-7", "name": "documentacion-api.pdf", "type": "pdf", "size": "1.5 MB" },
+        { "id": "att-8", "name": "diagrama-flujo.png", "type": "image", "size": "640 KB" }
+      ],
       "status": "respondida",
-      "presupuesto": 1600,
-      "tiempoEntrega": 8,
       "enviado": "Hace 2 días",
-      "propuestas": 2,
       "revisiones": 2,
-      "entregatimeString": "Entrega en hasta 8 días"
+      "requestedDeliveries": 2,
+      "requestedMilestones": [
+        { "id": "m-12", "title": "Configuración y conexión", "description": "Configuración de credenciales y conexión con la API." },
+        { "id": "m-13", "title": "Pruebas y documentación", "description": "Pruebas del flujo y documentación técnica." }
+      ]
     },
     {
       "id": "sol-6",
@@ -81,14 +142,26 @@
       "clienteName": "María P.",
       "clienteInitials": "MP",
       "planName": "Plan Premium",
-      "description": "Necesito el diseño completo (UI/UX) de una aplicación móvil para iOS y Android.",
+      "category": "diseno",
+      "description": "Necesito el diseño completo de una aplicación móvil para iOS y Android, desde los wireframes hasta el sistema visual.",
+      "characteristics": [
+        "Wireframes de los flujos principales",
+        "Sistema visual y componentes",
+        "Prototipo navegable en Figma",
+        "Entrega de recursos exportados"
+      ],
+      "attachments": [
+        { "id": "att-9", "name": "referencias-visuales.zip", "type": "link", "size": "Enlace externo" }
+      ],
       "status": "respondida",
-      "presupuesto": 5000,
-      "tiempoEntrega": 21,
       "enviado": "Hace 3 días",
-      "propuestas": 4,
       "revisiones": 5,
-      "entregatimeString": "Entrega en hasta 21 días"
+      "requestedDeliveries": 3,
+      "requestedMilestones": [
+        { "id": "m-14", "title": "Wireframes", "description": "Estructura y navegación de las pantallas." },
+        { "id": "m-15", "title": "Diseño visual", "description": "Aplicación de estilos y componentes." },
+        { "id": "m-16", "title": "Prototipo final", "description": "Prototipo navegable y entrega de recursos." }
+      ]
     },
     {
       "id": "sol-7",
@@ -96,14 +169,24 @@
       "clienteName": "Carlos M.",
       "clienteInitials": "CM",
       "planName": "Plan Básico",
-      "description": "Necesito textos persuasivos para mi landing page de producto SaaS.",
+      "category": "marketing",
+      "description": "Necesito textos persuasivos para una landing page de producto SaaS, con enfoque en conversión.",
+      "characteristics": [
+        "Titular y propuesta de valor",
+        "Beneficios y llamados a la acción",
+        "Preguntas frecuentes",
+        "Dos alternativas de tono"
+      ],
+      "attachments": [
+        { "id": "att-10", "name": "brief-producto.pdf", "type": "pdf", "size": "780 KB" }
+      ],
       "status": "archivada",
-      "presupuesto": 400,
-      "tiempoEntrega": 3,
       "enviado": "Hace 2 semanas",
-      "propuestas": 1,
       "revisiones": 1,
-      "entregatimeString": "Entrega en hasta 3 días"
+      "requestedDeliveries": 1,
+      "requestedMilestones": [
+        { "id": "m-17", "title": "Textos finales", "description": "Entrega de textos revisados para la landing page." }
+      ]
     }
   ]
 }
