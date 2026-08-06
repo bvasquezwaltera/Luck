@@ -1,6 +1,6 @@
 export type ClientSectionId =
   | "inicio"
-  | "contratos"
+  | "solicitudes"
   | "mensajes"
   | "entregas"
   | "pagos"

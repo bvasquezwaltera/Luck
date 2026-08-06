@@ -94,22 +94,35 @@ export function SolicitudDetailsModal({
         <section>
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-slate-900">Entregables solicitados</h3>
-            <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-medium text-indigo-600">
-              {solicitud.requestedDeliveries} {solicitud.requestedDeliveries === 1 ? "entrega" : "entregas"}
-            </span>
+            {solicitud.desiredDate ? (
+              <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-medium text-indigo-600">Fecha fija</span>
+            ) : (
+              <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-medium text-indigo-600">
+                {solicitud.requestedDeliveries} {solicitud.requestedDeliveries === 1 ? "entrega" : "entregas"}
+              </span>
+            )}
           </div>
+
           <div className="space-y-2">
-            {solicitud.requestedMilestones.map((milestone, index) => (
-              <div key={milestone.id} className="flex gap-3 rounded-lg border border-slate-100 p-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600">
-                  {index + 1}
-                </span>
-                <div>
-                  <p className="text-xs font-semibold text-slate-800">{milestone.title}</p>
-                  <p className="mt-1 text-xs leading-5 text-slate-500">{milestone.description}</p>
-                </div>
+            {solicitud.desiredDate ? (
+              <div className="rounded-lg border border-slate-100 p-3">
+                <p className="text-sm font-semibold text-slate-800">Fecha solicitada</p>
+                <p className="mt-1 text-xs text-slate-500">{new Date(solicitud.desiredDate).toLocaleDateString()}</p>
+                <p className="mt-2 text-xs text-slate-500">El cliente requiere que el servicio se entregue en esta fecha. Propón un plan de entregas o acepta según tu disponibilidad.</p>
               </div>
-            ))}
+            ) : (
+              solicitud.requestedMilestones.map((milestone, index) => (
+                <div key={milestone.id} className="flex gap-3 rounded-lg border border-slate-100 p-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600">
+                    {index + 1}
+                  </span>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-800">{milestone.title}</p>
+                    <p className="mt-1 text-xs leading-5 text-slate-500">{milestone.description}</p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </section>
 

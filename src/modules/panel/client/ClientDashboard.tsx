@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import {
   BarChart3,
-  BriefcaseBusiness,
   CreditCard,
+  Inbox,
   LayoutGrid,
   MessageCircle,
   Settings,
@@ -17,7 +17,7 @@ import { DeliveriesSection } from "@/modules/panel/client/deliveries/DeliveriesS
 import { HomeSection } from "@/modules/panel/client/home/HomeSection";
 import { MessagesSection } from "@/modules/panel/client/messages/MessagesSection";
 import { PaymentsSection } from "@/modules/panel/client/payments/PaymentsSection";
-import { ProjectsSection } from "@/modules/panel/client/projects/ProjectsSection";
+import { SolicitudesSection } from "@/modules/panel/client/projects/ProjectsSection";
 import { StatisticsSection } from "@/modules/panel/client/statistics/StatisticsSection";
 import type { ClientSectionId } from "@/types/clientSection";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
@@ -26,7 +26,7 @@ import fallbackProfileData from "@/data/exampleClientProfile.json";
 
 const menuItems: Array<{ id: ClientSectionId; label: string; icon: typeof LayoutGrid }> = [
   { id: "inicio", label: "Inicio", icon: LayoutGrid },
-  { id: "contratos", label: "Contratos", icon: BriefcaseBusiness },
+  { id: "solicitudes", label: "Solicitudes", icon: Inbox },
   { id: "mensajes", label: "Mensajes", icon: MessageCircle },
   { id: "entregas", label: "Entregas", icon: Truck },
   { id: "pagos", label: "Pagos", icon: CreditCard },
@@ -52,8 +52,8 @@ export function ClientDashboard({
     switch (activeSection) {
       case "inicio":
         return <HomeSection profile={safeProfile} />;
-      case "contratos":
-        return <ProjectsSection />;
+      case "solicitudes":
+        return <SolicitudesSection />;
       case "mensajes":
         return <MessagesSection />;
       case "entregas":
