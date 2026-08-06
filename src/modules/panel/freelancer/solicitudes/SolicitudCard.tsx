@@ -26,6 +26,11 @@ const categoryConfig: Record<
   diseno: { icon: Palette, label: "Diseño", className: "bg-violet-100 text-violet-600" },
   marketing: { icon: Megaphone, label: "Marketing", className: "bg-amber-100 text-amber-600" },
   arquitectura: { icon: Building2, label: "Arquitectura", className: "bg-sky-100 text-sky-600" },
+  hogar: { icon: Building2, label: "Hogar", className: "bg-slate-100 text-slate-700" },
+  restaurantes: { icon: Building2, label: "Restaurantes", className: "bg-rose-100 text-rose-600" },
+  moda: { icon: Palette, label: "Moda", className: "bg-pink-100 text-pink-600" },
+  reposteria: { icon: Palette, label: "Repostería", className: "bg-amber-50 text-amber-600" },
+  servicios_generales: { icon: Building2, label: "Servicios", className: "bg-slate-50 text-slate-600" },
 };
 
 const statusConfig = {
@@ -76,9 +81,15 @@ export function SolicitudCard({ solicitud }: { solicitud: Solicitud }) {
             <p className="mt-3 line-clamp-2 text-xs leading-5 text-slate-600">{solicitud.description}</p>
 
             <div className="mt-3 flex flex-wrap gap-2">
-              <span className="rounded-md bg-slate-50 px-2.5 py-1 text-[11px] text-slate-500">
-                {solicitud.requestedDeliveries} {solicitud.requestedDeliveries === 1 ? "entrega" : "entregas"}
-              </span>
+              {solicitud.desiredDate ? (
+                <span className="rounded-md bg-slate-50 px-2.5 py-1 text-[11px] text-slate-500">
+                  Fecha solicitada: {new Date(solicitud.desiredDate).toLocaleDateString()}
+                </span>
+              ) : (
+                <span className="rounded-md bg-slate-50 px-2.5 py-1 text-[11px] text-slate-500">
+                  {solicitud.requestedDeliveries} {solicitud.requestedDeliveries === 1 ? "entrega" : "entregas"}
+                </span>
+              )}
               <span className="rounded-md bg-slate-50 px-2.5 py-1 text-[11px] text-slate-500">
                 {solicitud.revisiones} {solicitud.revisiones === 1 ? "revisión" : "revisiones"}
               </span>
@@ -92,7 +103,7 @@ export function SolicitudCard({ solicitud }: { solicitud: Solicitud }) {
                 </span>
               )}
             </div>
-
+ 
             <p className="mt-4 text-[11px] text-slate-400">Enviado: {solicitud.enviado}</p>
           </div>
 
@@ -100,7 +111,11 @@ export function SolicitudCard({ solicitud }: { solicitud: Solicitud }) {
             <div className="flex-1 lg:flex-none">
               <p className="text-[11px] text-slate-400">Plan contratado</p>
               <p className="mt-1 text-sm font-semibold text-slate-900">{solicitud.planName}</p>
-              <p className="mt-1 text-[11px] text-slate-500">{solicitud.requestedDeliveries} entregas solicitadas</p>
+              {solicitud.desiredDate ? (
+                <p className="mt-1 text-[11px] text-slate-500">Fecha solicitada: {new Date(solicitud.desiredDate).toLocaleDateString()}</p>
+              ) : (
+                <p className="mt-1 text-[11px] text-slate-500">{solicitud.requestedDeliveries} entregas solicitadas</p>
+              )}
             </div>
             <div className="flex flex-col gap-2 sm:flex-row lg:flex-col">
               <Button

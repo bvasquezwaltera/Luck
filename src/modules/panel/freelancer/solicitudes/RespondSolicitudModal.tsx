@@ -36,7 +36,14 @@ export function RespondSolicitudModal({
   solicitud: Solicitud;
 }) {
   const [message, setMessage] = useState("");
-  const [deliveryDays, setDeliveryDays] = useState(() => getInitialDays(solicitud.requestedDeliveries));
+  const [deliveryDays, setDeliveryDays] = useState(() => {
+    if (solicitud.desiredDate) {
+      const target = new Date(solicitud.desiredDate);
+      const deltaDays = Math.ceil((target.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+      return [Math.max(1, deltaDays)];
+    }
+    return getInitialDays(solicitud.requestedDeliveries);
+  });
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -68,6 +75,9 @@ export function RespondSolicitudModal({
         <div className="min-w-0 pr-4">
           <h2 className="text-xl font-bold text-slate-900">Responder solicitud</h2>
           <p className="mt-1 truncate text-xs text-slate-500">{solicitud.titulo} · {solicitud.planName}</p>
+        {solicitud.desiredDate && (
+          <p className="mt-1 text-sm font-semibold text-rose-600">Fecha solicitada por el cliente: {new Date(solicitud.desiredDate).toLocaleDateString()}</p>
+        )}
         </div>
         <button type="button" aria-label="Cerrar respuesta" onClick={onClose} disabled={isSubmitting} className="text-slate-400 transition hover:text-slate-700 disabled:opacity-50">
           <X className="h-5 w-5" />
@@ -102,12 +112,12 @@ export function RespondSolicitudModal({
 
             <div>
               <label className="mb-2 block text-sm font-semibold text-slate-900">
-                Mensaje para el cliente <span className="text-red-500">*</span>
+                Propuesta para el cliente <span className="text-red-500">*</span>
               </label>
               <Textarea
-                label="Mensaje para el cliente"
+                label="Propuesta para el cliente"
                 hideLabel
-                placeholder="Explica cómo abordarás el proyecto, qué necesitas para comenzar y cualquier consideración importante..."
+                placeholder="Explica tu enfoque, qué necesitas para comenzar y cómo propones manejar las fechas de entrega..."
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
                 className="min-h-32"
@@ -121,7 +131,7 @@ export function RespondSolicitudModal({
               <div className="mb-3 flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-semibold text-slate-900">Calendario de entregas</h3>
-                  <p className="mt-1 text-xs text-slate-500">Indica cuántos días necesitas para cada parte.</p>
+                  <p className="mt-1 text-xs text-slate-500">Ajusta los días para cada entrega y propón una fecha realista al cliente.</p>
                 </div>
                 <div className="text-right">
                   <p className="text-[11px] text-slate-400">Duración total</p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Filter, SlidersHorizontal } from "lucide-react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
 import { SolicitudCard } from "@/modules/panel/freelancer/solicitudes/SolicitudCard";
@@ -10,8 +10,9 @@ import { Search } from "@/ui/Search";
 import { Select } from "@/ui/Select";
 import type { Solicitud, SolicitudCategory, SolicitudStatus } from "@/types/solicitud";
 import solicitudesData from "@/data/solicitudes.json";
+import { loadStoredSolicitudes } from "@/lib/solicitudStorage";
 
-const solicitudes = solicitudesData.solicitudes as Solicitud[];
+const defaultSolicitudes = solicitudesData.solicitudes as Solicitud[];
 const ITEMS_PER_PAGE = 5;
 type TabType = SolicitudStatus | "todas";
 
@@ -32,7 +33,7 @@ const categoryOptions: Array<{ value: SolicitudCategory | ""; label: string }> =
   { value: "arquitectura", label: "Arquitectura" },
 ];
 
-function countByStatus(status: SolicitudStatus) {
+function countByStatus(solicitudes: Solicitud[], status: SolicitudStatus) {
   return solicitudes.filter((solicitud) => solicitud.status === status).length;
 }
 
@@ -42,10 +43,17 @@ export function SolicitudesSection() {
   const [category, setCategory] = useState<SolicitudCategory | "">("");
   const [plan, setPlan] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [storedSolicitudes, setStoredSolicitudes] = useState<Solicitud[]>([]);
+
+  useEffect(() => {
+    setStoredSolicitudes(loadStoredSolicitudes());
+  }, []);
+
+  const combinedSolicitudes = useMemo(() => [...storedSolicitudes, ...defaultSolicitudes], [storedSolicitudes]);
 
   const filteredSolicitudes = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    return solicitudes.filter((solicitud) => {
+    return combinedSolicitudes.filter((solicitud) => {
       const matchesTab = activeTab === "todas" || solicitud.status === activeTab;
       const matchesCategory = !category || solicitud.category === category;
       const matchesPlan = !plan || solicitud.planName === plan;
@@ -57,7 +65,7 @@ export function SolicitudesSection() {
           .includes(query);
       return matchesTab && matchesCategory && matchesPlan && matchesSearch;
     });
-  }, [activeTab, category, plan, searchQuery]);
+  }, [activeTab, category, plan, searchQuery, combinedSolicitudes]);
 
   const totalPages = Math.max(1, Math.ceil(filteredSolicitudes.length / ITEMS_PER_PAGE));
   const paginatedSolicitudes = filteredSolicitudes.slice(
@@ -94,7 +102,7 @@ export function SolicitudesSection() {
         <div className="rounded-2xl bg-white shadow-sm">
           <div className="flex gap-6 overflow-x-auto border-b border-slate-200 px-5 sm:px-6">
             {tabs.map((tab) => {
-              const count = tab.id === "todas" ? solicitudes.length : countByStatus(tab.id);
+              const count = tab.id === "todas" ? combinedSolicitudes.length : countByStatus(combinedSolicitudes, tab.id);
               const active = activeTab === tab.id;
               return (
                 <button
