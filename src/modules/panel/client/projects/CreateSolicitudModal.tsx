@@ -262,17 +262,17 @@ export function CreateSolicitudModal({
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="mt-6 space-y-6">
-            <div className="grid gap-4 lg:grid-cols-[1fr_1.2fr]">
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
+            <div className="space-y-4">
+              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                  <div className="min-w-0">
                     <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Freelancer seleccionado</p>
-                    <p className="mt-1 text-sm font-semibold text-slate-900">{freelancer.name}</p>
-                    <p className="text-xs text-slate-500">{freelancer.role}</p>
+                    <h3 className="mt-2 text-lg font-semibold text-slate-900">{freelancer.name}</h3>
+                    <p className="mt-1 text-sm text-slate-600">{freelancer.role}</p>
+                    <p className="mt-3 text-sm leading-6 text-slate-600">{freelancer.description}</p>
                   </div>
                   <Button type="button" variant="soft" className="text-indigo-600" onClick={() => setStep("selectFreelancer")}>Cambiar</Button>
                 </div>
-                <p className="mt-4 text-sm text-slate-600">{freelancer.description}</p>
               </div>
 
               <div className="space-y-4 rounded-3xl border border-slate-200 bg-slate-50 p-4">
@@ -291,64 +291,6 @@ export function CreateSolicitudModal({
                   rows={5}
                   required
                 />
-              </div>
-            </div>
-
-            <div className="grid gap-4 lg:grid-cols-[1fr_1fr_1fr]">
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-                <label className="text-sm font-semibold text-slate-900">Plan que respalda la solicitud</label>
-                <p className="mt-3 text-sm font-semibold text-slate-900">{planName}</p>
-                <p className="mt-1 text-xs text-slate-500">(El cliente ya cuenta con este plan; no es editable)</p>
-              </div>
-
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-                <label className="text-sm font-semibold text-slate-900" htmlFor="category">
-                  Categoría
-                </label>
-                <select
-                  id="category"
-                  value={category}
-                  onChange={(event) => setCategory(event.target.value as SolicitudCategory)}
-                  className="mt-3 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none"
-                >
-                  {categoryOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-                <div className="flex items-center justify-between gap-4">
-                  <label className="text-sm font-semibold text-slate-900" htmlFor="requestedDeliveries">
-                    Entregas solicitadas
-                  </label>
-                  <span className="text-xs text-slate-500">Incluye el número de partes del proyecto</span>
-                </div>
-
-                {fixedDateCategories.includes(category) ? (
-                  <div className="mt-3">
-                    <label className="text-xs text-slate-500">Fecha deseada</label>
-                    <input
-                      type="date"
-                      value={desiredDate ?? ""}
-                      onChange={(e) => setDesiredDate(e.target.value)}
-                      className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none"
-                    />
-                    <p className="mt-2 text-xs text-slate-500">Para servicios físicos (repostería, hogar, restaurantes) ingresa la fecha en la que necesitas el servicio.</p>
-                  </div>
-                ) : (
-                  <input
-                    id="requestedDeliveries"
-                    type="number"
-                    min={1}
-                    max={10}
-                    value={requestedDeliveries}
-                    onChange={(event) => setRequestedDeliveries(Number(event.target.value) || 1)}
-                    className="mt-3 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none"
-                  />
-                )}
               </div>
             </div>
 

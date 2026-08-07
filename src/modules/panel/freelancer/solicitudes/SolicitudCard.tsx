@@ -103,7 +103,7 @@ export function SolicitudCard({ solicitud }: { solicitud: Solicitud }) {
                 </span>
               )}
             </div>
- 
+
             <p className="mt-4 text-[11px] text-slate-400">Enviado: {solicitud.enviado}</p>
           </div>
 

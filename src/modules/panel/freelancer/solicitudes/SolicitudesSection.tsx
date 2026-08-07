@@ -31,6 +31,11 @@ const categoryOptions: Array<{ value: SolicitudCategory | ""; label: string }> =
   { value: "diseno", label: "Diseño" },
   { value: "marketing", label: "Marketing" },
   { value: "arquitectura", label: "Arquitectura" },
+  { value: "hogar", label: "Hogar" },
+  { value: "restaurantes", label: "Restaurantes" },
+  { value: "moda", label: "Moda" },
+  { value: "reposteria", label: "Repostería" },
+  { value: "servicios_generales", label: "Servicios generales" },
 ];
 
 function countByStatus(solicitudes: Solicitud[], status: SolicitudStatus) {
@@ -178,11 +183,11 @@ export function SolicitudesSection() {
 
         {paginatedSolicitudes.length > 0 ? (
           <>
-            <Card className="overflow-hidden">
+           <Card className="overflow-hidden">
               {paginatedSolicitudes.map((solicitud) => (
                 <SolicitudCard key={solicitud.id} solicitud={solicitud} />
               ))}
-            </Card>
+           </Card>
             {totalPages > 1 && (
               <div className="flex justify-center">
                 <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
