@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Filter, SlidersHorizontal } from "lucide-react";
+import { Filter } from "lucide-react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
 import { SolicitudCard } from "@/modules/panel/freelancer/solicitudes/SolicitudCard";
 import { Pagination } from "@/ui/Pagination";
@@ -91,16 +91,10 @@ export function SolicitudesSection() {
   return (
     <div className="space-y-4">
       <div className="rounded-2xl bg-white p-5 shadow-sm sm:p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <PanelSectionHeader
-            subtitle="Revisa el alcance, los anexos y responde con un calendario que puedas cumplir."
-            title="Solicitudes"
-          />
-          <div className="hidden items-center gap-2 rounded-lg border border-indigo-100 bg-indigo-50 px-3 py-2 text-[11px] font-medium text-indigo-600 sm:flex">
-            <SlidersHorizontal className="h-3.5 w-3.5" />
-            Preferencias de solicitudes
-          </div>
-        </div>
+        <PanelSectionHeader
+          subtitle="Revisa el alcance, los anexos y responde con un calendario que puedas cumplir."
+          title="Solicitudes"
+        />
       </div>
 
       <div className="space-y-4">

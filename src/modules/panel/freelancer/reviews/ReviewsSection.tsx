@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowUpDown, Calendar } from "lucide-react";
+import { ArrowUpDown, Calendar, Star } from "lucide-react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
 import { ReviewCard } from "@/modules/panel/freelancer/reviews/ReviewCard";
 import type { ReviewEntry } from "@/types/review";
@@ -39,6 +39,20 @@ export function ReviewsSection({ reviews }: { reviews: ReviewEntry[] }) {
     const sorted = [...filtered].sort((a, b) => a.dateValue.localeCompare(b.dateValue));
     return sortOrder === "recent" ? sorted.reverse() : sorted;
   }, [reviews, sortOrder, dateFrom, dateTo]);
+
+  if (reviews.length === 0) {
+    return (
+      <div className="space-y-4">
+        <div className="rounded-2xl bg-white p-5 shadow-sm">
+          <PanelSectionHeader subtitle="Bienvenido de nuevo" title="Reseñas" />
+        </div>
+        <Card className="flex flex-col items-center justify-center gap-2 py-12 text-center">
+          <Star className="h-8 w-8 text-gray-300" />
+          <p className="text-sm text-gray-500">Aún no tienes reseñas.</p>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

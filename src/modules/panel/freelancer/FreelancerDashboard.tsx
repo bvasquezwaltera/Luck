@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import {
-  BarChart3,
   Inbox,
   LayoutGrid,
   MessageCircle,
@@ -17,7 +16,6 @@ import { DeliveriesSection } from "@/modules/panel/freelancer/deliveries/Deliver
 import { HomeSection } from "@/modules/panel/freelancer/home/HomeSection";
 import { MessagesSection } from "@/modules/panel/freelancer/messages/MessagesSection";
 import { SolicitudesSection } from "@/modules/panel/freelancer/solicitudes/SolicitudesSection";
-import { StatisticsSection } from "@/modules/panel/freelancer/statistics/StatisticsSection";
 import { ReviewsSection } from "@/modules/panel/freelancer/reviews/ReviewsSection";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import type { FreelancerSectionId } from "@/types/freelancerSection";
@@ -30,7 +28,6 @@ const menuItems: Array<{ id: FreelancerSectionId; label: string; icon: typeof La
   { id: "solicitudes", label: "Solicitudes", icon: Inbox },
   { id: "mensajes", label: "Mensajes", icon: MessageCircle },
   { id: "entregas", label: "Entregas", icon: Truck },
-  { id: "estadisticas", label: "Estadísticas", icon: BarChart3 },
   { id: "reseñas", label: "Reseñas", icon: Star },
   { id: "configuracion", label: "Configuración", icon: Settings },
 ];
@@ -61,8 +58,6 @@ export function FreelancerDashboard({
         return <MessagesSection />;
       case "entregas":
         return <DeliveriesSection />;
-      case "estadisticas":
-        return <StatisticsSection />;
       case "reseñas":
         return <ReviewsSection reviews={reviews} />;
       case "configuracion":

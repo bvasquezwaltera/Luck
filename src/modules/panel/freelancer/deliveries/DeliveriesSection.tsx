@@ -1,224 +1,209 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
-import { ArrowRight, BookOpen, CalendarDays, CheckCircle2, Clock3, Sparkles, UploadCloud } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ArrowLeft, BookOpen } from "lucide-react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
-import { Button } from "@/ui/Button";
-import { Modal } from "@/ui/Modal";
-import { Textarea } from "@/ui/Textarea";
+import { DeliveryClientGroup } from "@/modules/panel/freelancer/deliveries/DeliveryClientGroup";
+import { DeliveryModuleDetailsModal } from "@/modules/panel/freelancer/deliveries/DeliveryModuleDetailsModal";
+import { DeliveryProjectCard } from "@/modules/panel/freelancer/deliveries/DeliveryProjectCard";
+import type { DeliveryModule } from "@/types/deliveryModule";
+import { Input } from "@/ui/Input";
+import { Search } from "@/ui/Search";
+import { Select } from "@/ui/Select";
+import deliveryModulesData from "@/data/deliveryModules.json";
 
-interface DeliveryModule {
-  id: string;
-  title: string;
-  clientName: string;
-  requestTitle: string;
-  category: string;
-  progress: number;
-  status: "En curso" | "Pendiente" | "Listo para revisión";
-  dueDate: string;
-  nextMilestone: string;
-  objectives: string[];
-}
+const deliveryModules = deliveryModulesData as DeliveryModule[];
 
-const deliveryModules: DeliveryModule[] = [
-  {
-    id: "modulo-1",
-    title: "Módulo 1 · Diseño de interfaz",
-    clientName: "María López",
-    requestTitle: "Landing page corporativa",
-    category: "Diseño",
-    progress: 72,
-    status: "En curso",
-    dueDate: "12 ago",
-    nextMilestone: "Entrega visual inicial y sistema de colores",
-    objectives: ["Definir estructura visual", "Aplicar branding", "Preparar versión mobile"],
-  },
-  {
-    id: "modulo-2",
-    title: "Módulo 2 · Desarrollo web",
-    clientName: "Carlos Ruiz",
-    requestTitle: "Portal de reservas",
-    category: "Desarrollo",
-    progress: 45,
-    status: "Pendiente",
-    dueDate: "18 ago",
-    nextMilestone: "Integrar flujo de reserva y validaciones",
-    objectives: ["Construir vistas principales", "Conectar formulario", "Preparar demo interna"],
-  },
-  {
-    id: "modulo-3",
-    title: "Módulo 3 · Marketing digital",
-    clientName: "Ana Torres",
-    requestTitle: "Campaña de lanzamiento",
-    category: "Marketing",
-    progress: 88,
-    status: "Listo para revisión",
-    dueDate: "09 ago",
-    nextMilestone: "Publicar contenido final y revisar métricas",
-    objectives: ["Ajustar mensajes", "Preparar calendario", "Enviar propuesta final"],
-  },
-];
+type StatusTab = "Todas" | DeliveryModule["status"];
+
+const statusTabs: StatusTab[] = ["Todas", "Nueva", "En proceso", "Culminado"];
 
 export function DeliveriesSection() {
   const [selectedModule, setSelectedModule] = useState<DeliveryModule | null>(null);
-  const [advanceText, setAdvanceText] = useState("");
-  const [submittedMessage, setSubmittedMessage] = useState("");
+  const [selectedClient, setSelectedClient] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<StatusTab>("Todas");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [category, setCategory] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
-  const summary = useMemo(() => {
-    const completed = deliveryModules.filter((module) => module.progress >= 80).length;
-    const inProgress = deliveryModules.filter((module) => module.progress < 80 && module.progress > 0).length;
-    return { completed, inProgress, total: deliveryModules.length };
-  }, []);
+  const categories = useMemo(
+    () => Array.from(new Set(deliveryModules.map((module) => module.category))).sort(),
+    [],
+  );
 
-  function openModule(module: DeliveryModule) {
-    setSelectedModule(module);
-    setAdvanceText("");
-    setSubmittedMessage("");
+  const hasActiveFilters = Boolean(
+    searchQuery || category || dateFrom || dateTo || activeTab !== "Todas",
+  );
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setCategory("");
+    setDateFrom("");
+    setDateTo("");
+    setActiveTab("Todas");
+  };
+
+  function countByStatus(status: DeliveryModule["status"]) {
+    return deliveryModules.filter((module) => module.status === status).length;
   }
 
-  function handleSubmitAdvance(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!selectedModule) return;
-    setSubmittedMessage(`Tu avance para “${selectedModule.title}” quedó registrado y listo para compartir con el cliente.`);
+  const filteredModules = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    return deliveryModules.filter((module) => {
+      const matchesTab = activeTab === "Todas" || module.status === activeTab;
+      const matchesQuery =
+        !query ||
+        [module.title, module.clientName, module.requestTitle].join(" ").toLowerCase().includes(query);
+      const matchesCategory = !category || module.category === category;
+      const matchesFrom = !dateFrom || module.dueDateValue >= dateFrom;
+      const matchesTo = !dateTo || module.dueDateValue <= dateTo;
+      return matchesTab && matchesQuery && matchesCategory && matchesFrom && matchesTo;
+    });
+  }, [activeTab, searchQuery, category, dateFrom, dateTo]);
+
+  function groupByClient(modules: DeliveryModule[]) {
+    const groups = new Map<string, DeliveryModule[]>();
+    for (const deliveryModule of modules) {
+      const existing = groups.get(deliveryModule.clientName) ?? [];
+      groups.set(deliveryModule.clientName, [...existing, deliveryModule]);
+    }
+    return Array.from(groups.entries());
   }
+
+  const groupedByClient = useMemo(() => groupByClient(filteredModules), [filteredModules]);
+
+  // Los filtros solo deciden qué proyectos aparecen en la lista; una vez que un
+  // proyecto califica, su tarjeta muestra las estadísticas reales de TODAS sus
+  // entregas (no solo las que coinciden con el filtro).
+  const visibleClientNames = useMemo(
+    () => new Set(filteredModules.map((module) => module.clientName)),
+    [filteredModules],
+  );
+  const allGroupedByClient = useMemo(() => groupByClient(deliveryModules), []);
+  const visibleProjects = useMemo(
+    () => allGroupedByClient.filter(([clientName]) => visibleClientNames.has(clientName)),
+    [allGroupedByClient, visibleClientNames],
+  );
+
+  const activeGroup = groupedByClient.find(([clientName]) => clientName === selectedClient);
 
   return (
     <div className="space-y-4">
       <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-600">
-              <Sparkles className="h-3.5 w-3.5" />
-              Avances y entregables
-            </div>
-            <PanelSectionHeader subtitle="Gestiona tus entregas por módulo y mantén al cliente informado de cada avance." title="Entregas" />
+        <PanelSectionHeader subtitle="Gestiona tus entregas y mantén al cliente informado de cada avance." title="Entregas" />
+      </div>
+
+      <div className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="flex gap-6 overflow-x-auto border-b border-slate-100 px-1 pb-3">
+          {statusTabs.map((tab) => {
+            const count = tab === "Todas" ? deliveryModules.length : countByStatus(tab);
+            const active = activeTab === tab;
+            return (
+              <button
+                type="button"
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex shrink-0 items-center gap-1.5 border-b-2 px-1 py-2 text-xs font-semibold transition ${
+                  active ? "border-indigo-600 text-indigo-600" : "border-transparent text-slate-500 hover:text-slate-800"
+                }`}
+              >
+                {tab}
+                <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${active ? "bg-indigo-100" : "bg-slate-100"}`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="mt-3 flex flex-col gap-3 lg:flex-row lg:items-center">
+          <div className="flex-1">
+            <Search
+              aria-label="Buscar entregas"
+              placeholder={activeGroup ? "Buscar por entrega..." : "Buscar por entrega, cliente o solicitud..."}
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+            />
           </div>
-          <div className="grid gap-2 sm:grid-cols-3">
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
-              <p className="text-[10px] uppercase tracking-[0.24em] text-slate-500">Total</p>
-              <p className="mt-1 text-lg font-semibold text-slate-900">{summary.total}</p>
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
-              <p className="text-[10px] uppercase tracking-[0.24em] text-slate-500">En curso</p>
-              <p className="mt-1 text-lg font-semibold text-slate-900">{summary.inProgress}</p>
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
-              <p className="text-[10px] uppercase tracking-[0.24em] text-slate-500">Listos</p>
-              <p className="mt-1 text-lg font-semibold text-slate-900">{summary.completed}</p>
-            </div>
-          </div>
+          {!activeGroup && (
+            <Select
+              aria-label="Categoría"
+              className="lg:w-48"
+              value={category}
+              onChange={(event) => setCategory(event.target.value)}
+            >
+              <option value="">Todas las categorías</option>
+              {categories.map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </Select>
+          )}
+          <Input
+            label="Desde"
+            hideLabel
+            aria-label="Desde"
+            type="date"
+            className="lg:w-40"
+            value={dateFrom}
+            onChange={(event) => setDateFrom(event.target.value)}
+          />
+          <Input
+            label="Hasta"
+            hideLabel
+            aria-label="Hasta"
+            type="date"
+            className="lg:w-40"
+            value={dateTo}
+            onChange={(event) => setDateTo(event.target.value)}
+          />
+          <button
+            type="button"
+            onClick={clearFilters}
+            disabled={!hasActiveFilters}
+            className="shrink-0 text-xs font-medium text-indigo-600 transition hover:text-indigo-700 disabled:cursor-not-allowed disabled:text-slate-300 disabled:hover:text-slate-300"
+          >
+            Limpiar filtros
+          </button>
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        {deliveryModules.map((module) => (
+      {activeGroup ? (
+        <div className="space-y-4">
           <button
-            key={module.id}
             type="button"
-            onClick={() => openModule(module)}
-            className="rounded-[24px] border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-indigo-50/40 p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+            onClick={() => setSelectedClient(null)}
+            className="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
           >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
-                <BookOpen className="h-5 w-5" />
-              </div>
-              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600">{module.category}</span>
-            </div>
-
-            <p className="mt-4 text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">{module.requestTitle}</p>
-            <h3 className="mt-2 text-lg font-semibold text-slate-900">{module.title}</h3>
-            <p className="mt-2 text-sm text-slate-600">Cliente: {module.clientName}</p>
-
-            <div className="mt-4 h-2 rounded-full bg-slate-100">
-              <div className="h-2 rounded-full bg-gradient-to-r from-indigo-600 to-violet-500" style={{ width: `${module.progress}%` }} />
-            </div>
-            <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
-              <span>{module.progress}% completado</span>
-              <span>{module.status}</span>
-            </div>
-
-            <div className="mt-4 flex items-center justify-between rounded-2xl bg-slate-50 p-3 text-sm text-slate-600">
-              <div className="flex items-center gap-2">
-                <CalendarDays className="h-4 w-4 text-indigo-500" />
-                Próxima fecha: {module.dueDate}
-              </div>
-              <ArrowRight className="h-4 w-4 text-slate-400" />
-            </div>
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Volver a proyectos
           </button>
+          <DeliveryClientGroup modules={activeGroup[1]} onSelectModule={setSelectedModule} />
+        </div>
+      ) : filteredModules.length === 0 ? (
+        <div className="rounded-[24px] border border-slate-200 bg-white p-10 text-center shadow-sm">
+          <BookOpen className="mx-auto h-8 w-8 text-slate-300" />
+          <p className="mt-3 text-sm text-slate-500">No se encontraron entregas con esos filtros.</p>
+        </div>
+      ) : (
+      <div className="grid gap-4 lg:grid-cols-3">
+        {visibleProjects.map(([clientName, modules]) => (
+          <DeliveryProjectCard
+            key={clientName}
+            clientName={clientName}
+            modules={modules}
+            onClick={() => setSelectedClient(clientName)}
+          />
         ))}
       </div>
+      )}
 
-      <Modal open={Boolean(selectedModule)} onClose={() => setSelectedModule(null)}>
-        {selectedModule ? (
-          <div className="space-y-6 p-5 sm:p-6">
-            <div className="flex flex-col gap-4 rounded-[24px] border border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Módulo activo</p>
-                <h3 className="mt-2 text-xl font-semibold text-slate-900">{selectedModule.title}</h3>
-                <p className="mt-2 text-sm text-slate-600">{selectedModule.requestTitle} · {selectedModule.clientName}</p>
-              </div>
-              <div className="rounded-2xl bg-white px-3 py-2 text-sm font-semibold text-indigo-600 shadow-sm">
-                {selectedModule.status}
-              </div>
-            </div>
-
-            <div className="grid gap-4 lg:grid-cols-[1fr_0.9fr]">
-              <div className="rounded-[24px] border border-slate-200 bg-white p-4">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                  <h4 className="text-sm font-semibold text-slate-900">Objetivos del módulo</h4>
-                </div>
-                <ul className="mt-3 space-y-2 text-sm text-slate-600">
-                  {selectedModule.objectives.map((objective) => (
-                    <li key={objective} className="rounded-xl bg-slate-50 px-3 py-2">
-                      {objective}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="rounded-[24px] border border-slate-200 bg-white p-4">
-                <div className="flex items-center gap-2">
-                  <Clock3 className="h-4 w-4 text-amber-500" />
-                  <h4 className="text-sm font-semibold text-slate-900">Próximo avance</h4>
-                </div>
-                <p className="mt-3 text-sm leading-6 text-slate-600">{selectedModule.nextMilestone}</p>
-                <div className="mt-4 flex items-center gap-2 rounded-2xl bg-amber-50 p-3 text-sm text-amber-700">
-                  <CalendarDays className="h-4 w-4" />
-                  Fecha estimada: {selectedModule.dueDate}
-                </div>
-              </div>
-            </div>
-
-            <form onSubmit={handleSubmitAdvance} className="rounded-[24px] border border-slate-200 bg-white p-4">
-              <div className="flex items-center gap-2">
-                <UploadCloud className="h-4 w-4 text-indigo-500" />
-                <h4 className="text-sm font-semibold text-slate-900">Registrar avance o entrega</h4>
-              </div>
-
-              <Textarea
-                label="Describe el avance"
-                value={advanceText}
-                onChange={(event) => setAdvanceText(event.target.value)}
-                placeholder="Ejemplo: subí el prototipo inicial, ajusté los colores y preparé la primera revisión para el cliente."
-                rows={5}
-                className="mt-4"
-              />
-
-              {submittedMessage ? (
-                <div className="mt-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-3 py-3 text-sm text-emerald-700">
-                  {submittedMessage}
-                </div>
-              ) : null}
-
-              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-xs text-slate-500">Puedes usar este bloque para dejar un avance, subir una nota o preparar la entrega del módulo.</p>
-                <Button type="submit" variant="primary" className="!min-w-0">Guardar avance</Button>
-              </div>
-            </form>
-          </div>
-        ) : null}
-      </Modal>
+      <DeliveryModuleDetailsModal
+        key={selectedModule?.id ?? "none"}
+        module={selectedModule}
+        onClose={() => setSelectedModule(null)}
+      />
     </div>
   );
 }

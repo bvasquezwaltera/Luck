@@ -4,5 +4,4 @@ export type ClientSectionId =
   | "mensajes"
   | "entregas"
   | "pagos"
-  | "estadisticas"
   | "configuracion";

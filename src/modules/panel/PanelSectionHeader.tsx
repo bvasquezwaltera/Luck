@@ -14,12 +14,12 @@ export function PanelSectionHeader({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <p className="text-sm text-slate-500">{subtitle}</p>
         {size === "xl" ? (
-          <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+          <h2 className="text-xl font-bold text-slate-900">{title}</h2>
         ) : (
-          <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+          <h3 className="text-lg font-bold text-slate-900">{title}</h3>
         )}
+        <p className="mt-0.5 text-sm text-slate-500">{subtitle}</p>
       </div>
       {actions && <div className="flex items-center gap-2">{actions}</div>}
     </div>

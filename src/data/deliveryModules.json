@@ -1,0 +1,90 @@
+[
+  {
+    "id": "modulo-1",
+    "title": "Entrega 1 · Diseño de interfaz",
+    "description": "Diseño visual completo de la landing page: estructura, paleta de colores, tipografía y adaptación a dispositivos móviles, listo para pasar a desarrollo.",
+    "clientName": "María López",
+    "freelancerName": "Camila S.",
+    "requestTitle": "Landing page corporativa",
+    "category": "Diseño Web",
+    "progress": 100,
+    "status": "Culminado",
+    "dueDate": "05 ago",
+    "dueDateValue": "2026-08-05",
+    "nextMilestone": "Entrega visual inicial y sistema de colores",
+    "objectives": ["Definir estructura visual", "Aplicar branding", "Preparar versión mobile"],
+    "advanceHistory": [
+      {
+        "id": "adv-1-1",
+        "note": "Subí el diseño final de la landing en Figma, con la paleta de colores aprobada y la versión adaptada a mobile. Queda lista para pasar a desarrollo.",
+        "attachments": [
+          { "id": "adj-1-1", "name": "Diseño-landing-final.fig", "size": "8.4 MB" },
+          { "id": "adj-1-2", "name": "Guía de estilos.pdf", "size": "1.2 MB" },
+          { "id": "adj-1-3", "name": "Prototipo en Figma", "url": "https://figma.com/proto/landing-corporativa" }
+        ],
+        "timestamp": "05 ago, 11:10"
+      }
+    ],
+    "clientFeedback": [
+      {
+        "id": "fb-1-1",
+        "type": "approved",
+        "comment": "Me encantó el resultado, el diseño quedó tal cual lo imaginaba. Pueden pasar a desarrollo.",
+        "attachments": [],
+        "timestamp": "05 ago, 16:20"
+      }
+    ]
+  },
+  {
+    "id": "modulo-2",
+    "title": "Entrega 2 · Desarrollo web",
+    "description": "Implementación en código del diseño aprobado: construcción de las vistas principales, conexión del formulario de contacto y validaciones antes de la demo.",
+    "clientName": "María López",
+    "freelancerName": "Camila S.",
+    "requestTitle": "Landing page corporativa",
+    "category": "Diseño Web",
+    "progress": 45,
+    "status": "En proceso",
+    "dueDate": "12 ago",
+    "dueDateValue": "2026-08-12",
+    "nextMilestone": "Integrar formulario de contacto y validaciones",
+    "objectives": ["Construir vistas principales", "Conectar formulario", "Preparar demo interna"],
+    "advanceHistory": [
+      {
+        "id": "adv-2-1",
+        "note": "Ya construí las vistas principales del sitio con el diseño aprobado. Me falta conectar el formulario de contacto y dejar todo listo para la demo interna.",
+        "attachments": [
+          { "id": "adj-2-1", "name": "Demo-vistas-principales.mp4", "size": "14.6 MB" },
+          { "id": "adj-2-2", "name": "Vista previa en Vercel", "url": "https://landing-corporativa-preview.vercel.app" }
+        ],
+        "timestamp": "09 ago, 17:30"
+      }
+    ],
+    "clientFeedback": [
+      {
+        "id": "fb-2-1",
+        "type": "changes-requested",
+        "comment": "Se ve muy bien, pero el botón principal debería ir en el color de la marca en vez de azul genérico. También revisen el espaciado en mobile.",
+        "attachments": [
+          { "id": "fb-2-1-adj-1", "name": "Captura-boton-mobile.png", "size": "640 KB" }
+        ],
+        "timestamp": "10 ago, 09:45"
+      }
+    ]
+  },
+  {
+    "id": "modulo-3",
+    "title": "Entrega 3 · Publicación y ajustes finales",
+    "description": "Revisión final del sitio, ajustes de detalle, pruebas en distintos dispositivos y navegadores, y publicación en el dominio de producción del cliente.",
+    "clientName": "María López",
+    "freelancerName": "Camila S.",
+    "requestTitle": "Landing page corporativa",
+    "category": "Diseño Web",
+    "progress": 0,
+    "status": "Nueva",
+    "dueDate": "18 ago",
+    "dueDateValue": "2026-08-18",
+    "nextMilestone": "Revisión final, pruebas responsive y publicación",
+    "objectives": ["Ajustar detalles visuales", "Probar en distintos dispositivos", "Publicar en producción"]
+  }
+]

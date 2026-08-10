@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import {
-  BarChart3,
   CreditCard,
   Inbox,
   LayoutGrid,
@@ -18,7 +17,6 @@ import { HomeSection } from "@/modules/panel/client/home/HomeSection";
 import { MessagesSection } from "@/modules/panel/client/messages/MessagesSection";
 import { PaymentsSection } from "@/modules/panel/client/payments/PaymentsSection";
 import { SolicitudesSection } from "@/modules/panel/client/projects/ProjectsSection";
-import { StatisticsSection } from "@/modules/panel/client/statistics/StatisticsSection";
 import type { ClientSectionId } from "@/types/clientSection";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import { useDraftProfile } from "@/hooks/useDraftProfile";
@@ -30,7 +28,6 @@ const menuItems: Array<{ id: ClientSectionId; label: string; icon: typeof Layout
   { id: "mensajes", label: "Mensajes", icon: MessageCircle },
   { id: "entregas", label: "Entregas", icon: Truck },
   { id: "pagos", label: "Pagos", icon: CreditCard },
-  { id: "estadisticas", label: "Estadísticas", icon: BarChart3 },
   { id: "configuracion", label: "Configuración", icon: Settings },
 ];
 
@@ -60,8 +57,6 @@ export function ClientDashboard({
         return <DeliveriesSection />;
       case "pagos":
         return <PaymentsSection />;
-      case "estadisticas":
-        return <StatisticsSection />;
       case "configuracion":
         return <ConfigurationSection draftProfile={draftProfile} setDraftProfile={setDraftProfile} />;
       default:

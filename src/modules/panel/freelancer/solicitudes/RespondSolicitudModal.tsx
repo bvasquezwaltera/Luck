@@ -1,15 +1,20 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarDays, Clock3, Send, X } from "lucide-react";
+import { CalendarDays, Clock3, Info, Plus, Send, ShieldCheck, Trash2, X } from "lucide-react";
 import { Modal } from "@/ui/Modal";
+import { Badge } from "@/ui/Badge";
 import { Button } from "@/ui/Button";
 import { Textarea } from "@/ui/Textarea";
 import { Input } from "@/ui/Input";
 import type { Solicitud } from "@/types/solicitud";
 
-function getInitialDays(deliveries: number) {
-  return Array.from({ length: deliveries }, (_, index) => (index + 1) * 3);
+interface DeliveryMilestone {
+  id: string;
+  title: string;
+  description: string;
+  characteristics: string;
+  days: number;
 }
 
 function addDays(date: Date, days: number) {
@@ -36,23 +41,36 @@ export function RespondSolicitudModal({
   solicitud: Solicitud;
 }) {
   const [message, setMessage] = useState("");
-  const [deliveryDays, setDeliveryDays] = useState(() => {
-    if (solicitud.desiredDate) {
-      const target = new Date(solicitud.desiredDate);
-      const deltaDays = Math.ceil((target.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-      return [Math.max(1, deltaDays)];
-    }
-    return getInitialDays(solicitud.requestedDeliveries);
-  });
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [milestones, setMilestones] = useState<DeliveryMilestone[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const totalDays = deliveryDays.reduce((total, days) => total + days, 0);
+  const totalDays = milestones.reduce((total, milestone) => total + milestone.days, 0);
   const finalDate = useMemo(() => addDays(new Date(), totalDays), [totalDays]);
 
+  function addMilestone() {
+    setMilestones((current) => [
+      ...current,
+      { id: crypto.randomUUID(), title: "", description: "", characteristics: "", days: 1 },
+    ]);
+  }
+
+  function updateMilestone(id: string, changes: Partial<DeliveryMilestone>) {
+    setMilestones((current) =>
+      current.map((milestone) => (milestone.id === id ? { ...milestone, ...changes } : milestone)),
+    );
+  }
+
+  function removeMilestone(id: string) {
+    setMilestones((current) => current.filter((milestone) => milestone.id !== id));
+  }
+
+  const hasInvalidMilestone = milestones.some(
+    (milestone) => !milestone.title.trim() || milestone.days < 1,
+  );
+
   const handleSubmit = () => {
-    if (!message.trim() || deliveryDays.some((days) => days < 1)) return;
+    if (!message.trim() || hasInvalidMilestone) return;
     setIsSubmitting(true);
 
     // Simulación temporal hasta conectar la respuesta con Supabase.
@@ -63,23 +81,38 @@ export function RespondSolicitudModal({
         onClose();
         setSubmitted(false);
         setMessage("");
-        setDeliveryDays(getInitialDays(solicitud.requestedDeliveries));
-        setAcceptedTerms(false);
+        setMilestones([]);
       }, 1800);
     }, 1000);
   };
 
   return (
     <Modal open={open} onClose={isSubmitting ? () => undefined : onClose}>
-      <div className="flex items-start justify-between border-b border-slate-200 p-5 sm:p-6">
+      <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-slate-200 bg-white p-5 sm:p-6">
         <div className="min-w-0 pr-4">
-          <h2 className="text-xl font-bold text-slate-900">Responder solicitud</h2>
-          <p className="mt-1 truncate text-xs text-slate-500">{solicitud.titulo} · {solicitud.planName}</p>
-        {solicitud.desiredDate && (
-          <p className="mt-1 text-sm font-semibold text-rose-600">Fecha solicitada por el cliente: {new Date(solicitud.desiredDate).toLocaleDateString()}</p>
-        )}
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100">
+              <Send className="h-4 w-4 text-indigo-600" />
+            </div>
+            <h2 className="text-xl font-bold text-slate-900">Responder solicitud</h2>
+          </div>
+          <p className="mt-2 truncate text-xs text-slate-500">
+            {solicitud.titulo} <span className="mx-1 text-slate-300">·</span> {solicitud.planName}
+          </p>
+          {solicitud.desiredDate && (
+            <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-semibold text-rose-600">
+              <CalendarDays className="h-3.5 w-3.5" />
+              Fecha solicitada: {new Date(solicitud.desiredDate).toLocaleDateString()}
+            </div>
+          )}
         </div>
-        <button type="button" aria-label="Cerrar respuesta" onClick={onClose} disabled={isSubmitting} className="text-slate-400 transition hover:text-slate-700 disabled:opacity-50">
+        <button
+          type="button"
+          aria-label="Cerrar respuesta"
+          onClick={onClose}
+          disabled={isSubmitting}
+          className="shrink-0 rounded-full p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 disabled:opacity-50"
+        >
           <X className="h-5 w-5" />
         </button>
       </div>
@@ -97,17 +130,23 @@ export function RespondSolicitudModal({
       ) : (
         <>
           <div className="space-y-6 p-5 sm:p-6">
-            <div className="rounded-xl border border-indigo-100 bg-indigo-50/60 p-4">
-              <p className="text-[11px] font-medium uppercase tracking-wide text-indigo-500">Solicitud cubierta por</p>
-              <div className="mt-2 flex items-center justify-between gap-3">
-                <p className="text-base font-semibold text-slate-900">{solicitud.planName}</p>
-                <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-indigo-600">
-                  {solicitud.requestedDeliveries} {solicitud.requestedDeliveries === 1 ? "entrega" : "entregas"}
-                </span>
+            <div className="rounded-xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-violet-50 p-4">
+              <div className="flex items-center gap-1.5">
+                <ShieldCheck className="h-3.5 w-3.5 text-indigo-500" />
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-indigo-500">Solicitud cubierta por</p>
               </div>
-              <p className="mt-2 text-xs leading-5 text-indigo-700">
-                No necesitas indicar presupuesto ni método de pago. Define tu enfoque y los tiempos que puedes cumplir.
-              </p>
+              <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                <p className="text-lg font-bold text-slate-900">{solicitud.planName}</p>
+                <Badge className="!bg-white !text-indigo-600 shadow-sm">
+                  {solicitud.requestedDeliveries} {solicitud.requestedDeliveries === 1 ? "entrega" : "entregas"}
+                </Badge>
+              </div>
+              <div className="mt-3 flex items-start gap-2 border-t border-indigo-100/80 pt-3">
+                <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-indigo-400" />
+                <p className="text-xs leading-5 text-indigo-700">
+                  No necesitas indicar presupuesto ni método de pago. Define tu enfoque y los tiempos que puedes cumplir.
+                </p>
+              </div>
             </div>
 
             <div>
@@ -131,7 +170,7 @@ export function RespondSolicitudModal({
               <div className="mb-3 flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-semibold text-slate-900">Calendario de entregas</h3>
-                  <p className="mt-1 text-xs text-slate-500">Ajusta los días para cada entrega y propón una fecha realista al cliente.</p>
+                  <p className="mt-1 text-xs text-slate-500">Agrega las entregas que propones y sus días.</p>
                 </div>
                 <div className="text-right">
                   <p className="text-[11px] text-slate-400">Duración total</p>
@@ -140,69 +179,121 @@ export function RespondSolicitudModal({
               </div>
 
               <div className="space-y-2">
-                {solicitud.requestedMilestones.map((milestone, index) => {
-                  const daysUntilDelivery = deliveryDays.slice(0, index + 1).reduce((sum, days) => sum + days, 0);
+                {milestones.map((milestone, index) => {
+                  const daysUntilDelivery = milestones
+                    .slice(0, index + 1)
+                    .reduce((sum, item) => sum + item.days, 0);
                   return (
-                    <div key={milestone.id} className="grid gap-3 rounded-xl border border-slate-200 p-3 sm:grid-cols-[1fr_100px_130px] sm:items-center">
-                      <div className="flex min-w-0 items-start gap-2">
-                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600">
-                          {index + 1}
-                        </span>
-                        <div className="min-w-0">
-                          <p className="truncate text-xs font-semibold text-slate-800">{milestone.title}</p>
-                          <p className="mt-1 line-clamp-1 text-[11px] text-slate-500">{milestone.description}</p>
+                    <div key={milestone.id} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                      <div className="space-y-3">
+                        <div>
+                          <label className="mb-1 block text-xs font-semibold text-slate-700">Título</label>
+                          <Input
+                            label={`Título de la entrega ${index + 1}`}
+                            hideLabel
+                            placeholder="Ej. Diseño de la página de inicio"
+                            value={milestone.title}
+                            onChange={(event) => updateMilestone(milestone.id, { title: event.target.value })}
+                            className="h-9 text-sm"
+                          />
                         </div>
-                      </div>
-                      <label className="flex items-center gap-2">
-                        <Input
-                          label={`Días para ${milestone.title}`}
-                          hideLabel
-                          aria-label={`Días para ${milestone.title}`}
-                          type="number"
-                          min="1"
-                          max="90"
-                          value={deliveryDays[index]}
-                          onChange={(event) => {
-                            const next = [...deliveryDays];
-                            next[index] = Number(event.target.value);
-                            setDeliveryDays(next);
-                          }}
-                          className="h-8 px-2 text-center"
-                        />
-                        <span className="text-[11px] text-slate-500">días</span>
-                      </label>
-                      <div className="flex items-center gap-2 text-[11px] text-slate-500">
-                        <Clock3 className="h-3.5 w-3.5 text-indigo-500" />
-                        Día {daysUntilDelivery}
+                        <div>
+                          <label className="mb-1 block text-xs font-semibold text-slate-700">Descripción</label>
+                          <Input
+                            label={`Descripción de la entrega ${index + 1}`}
+                            hideLabel
+                            placeholder="Describe brevemente esta entrega"
+                            value={milestone.description}
+                            onChange={(event) => updateMilestone(milestone.id, { description: event.target.value })}
+                            className="h-9 text-sm"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="mb-1 block text-xs font-semibold text-slate-700">Características</label>
+                          <Textarea
+                            label={`Características de la entrega ${index + 1}`}
+                            hideLabel
+                            placeholder="Ej. Página de inicio y hasta 3 páginas internas, diseño responsive..."
+                            value={milestone.characteristics}
+                            onChange={(event) => updateMilestone(milestone.id, { characteristics: event.target.value })}
+                            rows={3}
+                            className="text-sm"
+                          />
+                        </div>
+
+                        <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                          <div>
+                            <label className="mb-1 block text-xs font-semibold text-slate-700">Días</label>
+                            <Input
+                              label={`Días para la entrega ${index + 1}`}
+                              hideLabel
+                              aria-label={`Días para la entrega ${index + 1}`}
+                              type="number"
+                              min={1}
+                              max={90}
+                              value={milestone.days}
+                              onChange={(event) =>
+                                updateMilestone(milestone.id, {
+                                  days: Math.max(1, Number(event.target.value) || 1),
+                                })
+                              }
+                              className="h-9 w-10 text-center"
+                            />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge className="!bg-violet-50 !text-violet-600">
+                              Entrega {index + 1}
+                            </Badge>
+                            <Badge className="!bg-blue-50 flex items-center gap-1.5 !text-blue-600">
+                              <Clock3 className="h-3.5 w-3.5" />
+                              Día {daysUntilDelivery}
+                            </Badge>
+                            <button
+                              type="button"
+                              aria-label="Quitar entrega"
+                              onClick={() => removeMilestone(milestone.id)}
+                              className="shrink-0 rounded-lg border border-red-200 p-1.5 text-red-600 transition hover:bg-red-50"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   );
                 })}
               </div>
+
+              <Button
+                type="button"
+                variant="outline-neutral"
+                className="mt-3 !min-w-0 !px-3"
+                onClick={addMilestone}
+              >
+                <Plus className="mr-1.5 h-3.5 w-3.5" />
+                Añadir entrega
+              </Button>
             </section>
 
-            <div className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 p-4">
-              <CalendarDays className="h-5 w-5 shrink-0 text-blue-600" />
+            <div className="inline-flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100">
+                <CalendarDays className="h-4 w-4 text-blue-600" />
+              </div>
               <div>
-                <p className="text-xs font-semibold text-blue-900">Fecha estimada de finalización</p>
-                <p className="mt-1 text-sm font-bold text-blue-700">{formatDate(finalDate)}</p>
+                <p className="text-[11px] font-medium uppercase tracking-wide text-blue-500">Fecha estimada de finalización</p>
+                <p className="text-sm font-bold text-blue-700">{formatDate(finalDate)}</p>
               </div>
             </div>
-
-            <label className="flex items-start gap-2 text-xs leading-5 text-slate-600">
-              <input
-                type="checkbox"
-                className="mt-1 rounded"
-                checked={acceptedTerms}
-                onChange={(event) => setAcceptedTerms(event.target.checked)}
-              />
-              <span>Confirmo que revisé el alcance y puedo cumplir el calendario indicado.</span>
-            </label>
           </div>
 
-          <div className="flex gap-3 border-t border-slate-200 bg-slate-50 p-5 sm:p-6">
+          <div className="sticky bottom-0 z-10 flex gap-3 border-t border-slate-200 bg-slate-50 p-5 sm:p-6">
             <Button variant="outline-neutral" onClick={onClose} disabled={isSubmitting} className="flex-1">Cancelar</Button>
-            <Button onClick={handleSubmit} disabled={isSubmitting || !message.trim() || !acceptedTerms || deliveryDays.some((days) => days < 1)} className="flex-1">
+            <Button
+              onClick={handleSubmit}
+              disabled={isSubmitting || !message.trim() || hasInvalidMilestone}
+              className="flex-1"
+            >
               {isSubmitting ? "Enviando..." : "Enviar respuesta"}
             </Button>
           </div>

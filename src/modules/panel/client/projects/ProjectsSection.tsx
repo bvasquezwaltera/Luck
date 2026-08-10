@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CalendarDays, FolderOpen, MessageSquareText, Sparkles, UploadCloud } from "lucide-react";
+import { CalendarDays, FolderOpen, MessageSquareText, UploadCloud } from "lucide-react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
 import { Button } from "@/ui/Button";
 import { Card } from "@/ui/Card";
@@ -35,25 +35,21 @@ export function SolicitudesSection() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-[28px] border border-slate-200 bg-[#f8f7ff] p-5 shadow-sm">
+      <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-600">
-              <Sparkles className="h-3.5 w-3.5" />
-              Mis solicitudes
-            </div>
-            <PanelSectionHeader
-              subtitle="Gestiona tus pedidos y mantén visible el avance de cada solicitud."
-              title="Solicitudes"
-            />
-          </div>
-          <Button
-            variant="primary"
-            className="!min-w-0 !px-4 bg-indigo-600 hover:bg-indigo-700"
-            onClick={() => setShowCreateModal(true)}
-          >
-            Nueva solicitud
-          </Button>
+          <PanelSectionHeader
+            subtitle="Gestiona tus pedidos y mantén visible el avance de cada solicitud."
+            title="Solicitudes"
+          />
+          {solicitudes.length > 0 && (
+            <Button
+              variant="primary"
+              className="!min-w-0 !px-4 bg-indigo-600 hover:bg-indigo-700"
+              onClick={() => setShowCreateModal(true)}
+            >
+              Nueva solicitud
+            </Button>
+          )}
         </div>
       </div>
 

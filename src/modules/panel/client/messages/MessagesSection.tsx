@@ -60,9 +60,9 @@ export function MessagesSection() {
           onBack={() => setActiveContact(null)}
         />
       ) : (
-        <Card className="flex min-h-[calc(100vh-160px)] flex-col !p-0">
+        <Card className="flex flex-col !p-0">
           {conversations.length === 0 ? (
-            <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
+            <div className="flex min-h-[calc(100vh-160px)] flex-1 flex-col items-center justify-center gap-2 text-center">
               <MessageCircle className="h-8 w-8 text-gray-300" />
               <p className="text-sm text-gray-500">Aún no tienes mensajes.</p>
             </div>
@@ -70,16 +70,16 @@ export function MessagesSection() {
             conversations.map((conversation) => (
               <div
                 key={conversation.name}
-                className="flex items-center gap-4 border-b border-gray-100 px-5 py-4 transition-colors last:border-b-0 hover:bg-gray-50"
+                className="flex items-center gap-4 border-b border-gray-100 px-5 py-4 transition-colors last:border-b-0 hover:bg-indigo-50/40"
               >
                 <Avatar initials={conversation.initials} name={conversation.name} size="sm" />
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 shrink-0 rounded-full bg-indigo-600" />
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-600" />
                     <p className="text-sm font-semibold text-gray-900">{conversation.name}</p>
                   </div>
-                  <p className="truncate text-xs text-gray-600">{conversation.body}</p>
+                  <p className="mt-0.5 truncate text-xs text-gray-500">{conversation.body}</p>
                 </div>
 
                 <div className="flex shrink-0 flex-col items-end gap-2">
