@@ -107,7 +107,7 @@ export function PaymentsSection() {
                         setSelectedService(null);
                       }}
                     >
-                      Ver
+                      Ver detalle
                     </button>
                   </td>
                 </tr>
