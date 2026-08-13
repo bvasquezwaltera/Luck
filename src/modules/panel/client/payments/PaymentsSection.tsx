@@ -18,18 +18,32 @@ type Invoice = {
   services: Service[];
 };
 
+import plansData from "@/data/clientSubscriptionPlans.json";
+
+const plans = plansData as Array<any>;
+const PLAN_MAP = plans.reduce<Record<string, any>>((acc, p) => {
+  acc[p.id] = p;
+  return acc;
+}, {});
+
+// Sample invoices now reference a subscription plan when appropriate. Totals
+// are derived from the plan price to reflect "monto fijo dependiendo de la suscripción".
 const SAMPLE_INVOICES: Invoice[] = [
   {
     id: "inv_001",
     date: "14 jul 2026",
-    total: 23.6,
+    total: PLAN_MAP["plan-cliente"] ? PLAN_MAP["plan-cliente"].price : 23.6,
     status: "Paid",
     freelancerName: "María González",
     services: [
       { id: "s1", name: "Diseño de logo", price: 10, description: "Logo principal + variantes" },
       { id: "s2", name: "Entrega final", price: 13.6, description: "Archivos en vectores y PNG" },
     ],
-  },
+    // link invoice to a plan
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    planId: "plan-cliente",
+  } as Invoice & { planId?: string },
   {
     id: "inv_002",
     date: "5 may 2026",
@@ -49,7 +63,15 @@ const SAMPLE_INVOICES: Invoice[] = [
 ];
 
 export function PaymentsSection() {
-  const [invoices] = useState<Invoice[]>(SAMPLE_INVOICES);
+  // derive invoices totals from plan when planId present to keep UI consistent
+  const invoicesWithPlan = SAMPLE_INVOICES.map((inv: any) => {
+    if (inv.planId && PLAN_MAP[inv.planId]) {
+      return { ...inv, total: PLAN_MAP[inv.planId].price, planName: PLAN_MAP[inv.planId].name };
+    }
+    return inv;
+  });
+
+  const [invoices] = useState<Invoice[]>(invoicesWithPlan);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
 
