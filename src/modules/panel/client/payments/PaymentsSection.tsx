@@ -77,47 +77,48 @@ export function PaymentsSection() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl bg-white p-5 shadow-sm">
+      <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
         <PanelSectionHeader subtitle="Bienvenido de nuevo" title="Pagos" />
+      </div>
 
-        <div className="mt-6">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="text-sm text-slate-500">
-                  <th className="pb-3">Fecha</th>
-                  <th className="pb-3">Total</th>
-                  <th className="pb-3">Estado</th>
-                  <th className="pb-3">Acciones</th>
+      <div className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="text-sm text-slate-500">
+                <th className="pb-3 font-medium">Fecha</th>
+                <th className="pb-3 font-medium">Total</th>
+                <th className="pb-3 font-medium">Estado</th>
+                <th className="pb-3 font-medium">Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-slate-200">
+              {invoices.map((inv) => (
+                <tr key={inv.id} className="h-16">
+                  <td className="align-middle text-base text-slate-700">{inv.date}</td>
+                  <td className="align-middle text-base font-medium text-slate-800">${inv.total.toFixed(2)}</td>
+                  <td className="align-middle text-base text-slate-600">{inv.status}</td>
+                  <td className="align-middle text-base">
+                    <button
+                      className="font-medium text-indigo-600 hover:text-indigo-700 hover:underline"
+                      onClick={() => {
+                        setSelectedInvoice(inv);
+                        setSelectedService(null);
+                      }}
+                    >
+                      Ver
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-
-              <tbody className="divide-y">
-                {invoices.map((inv) => (
-                  <tr key={inv.id} className="h-16">
-                    <td className="align-middle text-base text-slate-700">{inv.date}</td>
-                    <td className="align-middle text-base font-medium">${inv.total.toFixed(2)}</td>
-                    <td className="align-middle text-base text-slate-600">{inv.status}</td>
-                    <td className="align-middle text-base">
-                      <button
-                        className="text-indigo-600 hover:underline"
-                        onClick={() => {
-                          setSelectedInvoice(inv);
-                          setSelectedService(null);
-                        }}
-                      >
-                        Ver
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
+      </div>
 
-        {/* Invoice modal */}
-        {selectedInvoice && (
+      {/* Invoice modal */}
+      {selectedInvoice && (
           <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black/40" onClick={() => setSelectedInvoice(null)} />
 
@@ -210,8 +211,7 @@ export function PaymentsSection() {
               )}
             </div>
           </div>
-        )}
-      </div>
-    </div>
+       )}
+   </div>
   );
 }
