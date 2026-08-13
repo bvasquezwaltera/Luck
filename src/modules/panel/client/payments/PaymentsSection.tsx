@@ -171,7 +171,6 @@ export function PaymentsSection() {
                           className="text-indigo-600 hover:underline"
                           onClick={() => setSelectedService(svc)}
                         >
-                          Ver
                         </button>
                       </div>
                     </li>
