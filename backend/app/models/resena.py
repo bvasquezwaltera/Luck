@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import ARRAY, DateTime, ForeignKey, Numeric, Text
+from sqlalchemy import ARRAY, DateTime, ForeignKey, Numeric, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -22,4 +22,4 @@ class Resena(Base):
     comentario: Mapped[str] = mapped_column(Text)
     etiquetas: Mapped[list[str] | None] = mapped_column(ARRAY(Text), nullable=True)
     servicio: Mapped[str] = mapped_column(Text)
-    creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

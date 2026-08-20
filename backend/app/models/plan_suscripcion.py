@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Numeric, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Numeric, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -20,5 +20,7 @@ class PlanSuscripcion(Base):
     proyectos_activos: Mapped[str] = mapped_column(Text)
     revisiones: Mapped[str] = mapped_column(Text)
     activo: Mapped[bool] = mapped_column(Boolean)
-    creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    actualizado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    actualizado_en: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )

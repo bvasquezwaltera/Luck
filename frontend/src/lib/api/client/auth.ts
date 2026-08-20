@@ -1,8 +1,11 @@
 import { apiFetch } from "@/lib/api/httpClient";
+import { clearAuthTokenCookie, setAuthTokenCookie } from "@/lib/api/token";
 
 export interface AuthActionResult {
   error?: string;
   role?: "freelancer" | "client";
+  accessToken?: string;
+  refreshToken?: string;
 }
 
 export async function signUp(params: {
@@ -15,7 +18,9 @@ export async function signUp(params: {
     method: "POST",
     body: JSON.stringify(params),
   });
-  return response.json();
+  const result: AuthActionResult = await response.json();
+  if (result.accessToken) setAuthTokenCookie(result.accessToken);
+  return result;
 }
 
 export async function signIn(params: { email: string; password: string }): Promise<AuthActionResult> {
@@ -23,9 +28,11 @@ export async function signIn(params: { email: string; password: string }): Promi
     method: "POST",
     body: JSON.stringify(params),
   });
-  return response.json();
+  const result: AuthActionResult = await response.json();
+  if (result.accessToken) setAuthTokenCookie(result.accessToken);
+  return result;
 }
 
 export async function signOut(): Promise<void> {
-  await apiFetch("/api/auth/sign-out", { method: "POST" });
+  clearAuthTokenCookie();
 }

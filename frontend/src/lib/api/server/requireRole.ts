@@ -15,11 +15,8 @@ export async function requireRole(role: "freelancer" | "client"): Promise<AuthPr
     redirect("/login");
   }
 
-  const { profile } = (await response.json()) as { profile: AuthProfile | null };
-
-  if (!profile) {
-    redirect("/login");
-  }
+  // El backend devuelve el perfil directo (no envuelto en { profile }).
+  const profile = (await response.json()) as AuthProfile;
 
   if (profile.rol !== role) {
     redirect(profile.rol === "freelancer" ? "/panel/freelancer" : "/panel/cliente");

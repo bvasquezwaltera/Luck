@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Numeric, Text
+from sqlalchemy import DateTime, ForeignKey, Numeric, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -20,4 +20,6 @@ class PerfilFreelancer(Base):
     estado_disponibilidad: Mapped[str | None] = mapped_column(Text, nullable=True)
     calificacion: Mapped[float] = mapped_column(Numeric)
     cantidad_resenas: Mapped[int]
-    actualizado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    actualizado_en: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
