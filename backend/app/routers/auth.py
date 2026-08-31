@@ -4,7 +4,14 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import get_current_profile
 from app.models.perfil import Perfil
-from app.schemas.auth import AuthResponse, ProfileOut, SignInRequest, SignUpRequest
+from app.schemas.auth import (
+    ActionResult,
+    AuthResponse,
+    ChangePasswordRequest,
+    ProfileOut,
+    SignInRequest,
+    SignUpRequest,
+)
 from app.services import auth_service
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -29,3 +36,13 @@ def sign_out():
 @router.get("/me", response_model=ProfileOut)
 def me(profile: Perfil = Depends(get_current_profile)):
     return ProfileOut(id=str(profile.id), rol=profile.rol, nombre_completo=profile.nombre_completo)
+
+
+@router.post("/change-password", response_model=ActionResult)
+def change_password(payload: ChangePasswordRequest, profile: Perfil = Depends(get_current_profile)):
+    return auth_service.change_password(str(profile.id), payload.currentPassword, payload.newPassword)
+
+
+@router.delete("/account", response_model=ActionResult)
+def delete_account(db: Session = Depends(get_db), profile: Perfil = Depends(get_current_profile)):
+    return auth_service.delete_account(db, str(profile.id))

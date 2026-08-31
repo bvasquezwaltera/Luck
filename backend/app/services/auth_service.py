@@ -1,8 +1,21 @@
 from sqlalchemy.orm import Session
 
+from app.models.caracteristica_plan import CaracteristicaPlan
+from app.models.categoria_metodo_trabajo import CategoriaMetodoTrabajo
+from app.models.diferenciador import DiferenciadorFreelancer
+from app.models.educacion import Educacion
+from app.models.experiencia import Experiencia
+from app.models.habilidad import HabilidadFreelancer
+from app.models.herramienta import HerramientaFreelancer
+from app.models.idioma import IdiomaFreelancer
+from app.models.item_metodo_trabajo import ItemMetodoTrabajo
 from app.models.perfil import Perfil
-from app.schemas.auth import AuthResponse, SignInRequest, SignUpRequest
-from app.services.supabase_client import supabase_auth
+from app.models.perfil_freelancer import PerfilFreelancer
+from app.models.plan_suscripcion import PlanSuscripcion
+from app.models.proyecto_portafolio import ProyectoPortafolio
+from app.models.resena import Resena
+from app.schemas.auth import ActionResult, AuthResponse, SignInRequest, SignUpRequest
+from app.services.supabase_client import create_auth_client, supabase_auth
 
 
 def sign_up(db: Session, payload: SignUpRequest) -> AuthResponse:
@@ -10,7 +23,7 @@ def sign_up(db: Session, payload: SignUpRequest) -> AuthResponse:
         return AuthResponse(error="Rol inválido.")
 
     try:
-        result = supabase_auth.auth.sign_up({"email": payload.email, "password": payload.password})
+        result = create_auth_client().auth.sign_up({"email": payload.email, "password": payload.password})
     except Exception as exc:
         return AuthResponse(error=str(exc))
 
@@ -31,7 +44,7 @@ def sign_up(db: Session, payload: SignUpRequest) -> AuthResponse:
 
 def sign_in(db: Session, payload: SignInRequest) -> AuthResponse:
     try:
-        result = supabase_auth.auth.sign_in_with_password(
+        result = create_auth_client().auth.sign_in_with_password(
             {"email": payload.email, "password": payload.password}
         )
     except Exception as exc:
@@ -50,3 +63,69 @@ def sign_in(db: Session, payload: SignInRequest) -> AuthResponse:
         accessToken=session.access_token if session else None,
         refreshToken=session.refresh_token if session else None,
     )
+
+
+def change_password(user_id: str, current_password: str, new_password: str) -> ActionResult:
+    try:
+        auth_user = supabase_auth.auth.admin.get_user_by_id(user_id)
+        email = auth_user.user.email if auth_user and auth_user.user else None
+    except Exception as exc:
+        return ActionResult(error=str(exc))
+
+    if not email:
+        return ActionResult(error="No se pudo verificar la cuenta.")
+
+    try:
+        create_auth_client().auth.sign_in_with_password({"email": email, "password": current_password})
+    except Exception:
+        return ActionResult(error="La contraseña actual no es correcta.")
+
+    try:
+        supabase_auth.auth.admin.update_user_by_id(user_id, {"password": new_password})
+    except Exception as exc:
+        return ActionResult(error=str(exc))
+
+    return ActionResult()
+
+
+def delete_account(db: Session, freelancer_id: str) -> ActionResult:
+    plan_ids = [
+        row[0]
+        for row in db.query(PlanSuscripcion.id).filter(PlanSuscripcion.freelancer_id == freelancer_id).all()
+    ]
+    categoria_ids = [
+        row[0]
+        for row in db.query(CategoriaMetodoTrabajo.id)
+        .filter(CategoriaMetodoTrabajo.freelancer_id == freelancer_id)
+        .all()
+    ]
+
+    if categoria_ids:
+        db.query(ItemMetodoTrabajo).filter(ItemMetodoTrabajo.categoria_id.in_(categoria_ids)).delete(
+            synchronize_session=False
+        )
+    if plan_ids:
+        db.query(CaracteristicaPlan).filter(CaracteristicaPlan.plan_id.in_(plan_ids)).delete(
+            synchronize_session=False
+        )
+
+    db.query(CategoriaMetodoTrabajo).filter(CategoriaMetodoTrabajo.freelancer_id == freelancer_id).delete()
+    db.query(DiferenciadorFreelancer).filter(DiferenciadorFreelancer.freelancer_id == freelancer_id).delete()
+    db.query(HabilidadFreelancer).filter(HabilidadFreelancer.freelancer_id == freelancer_id).delete()
+    db.query(HerramientaFreelancer).filter(HerramientaFreelancer.freelancer_id == freelancer_id).delete()
+    db.query(IdiomaFreelancer).filter(IdiomaFreelancer.freelancer_id == freelancer_id).delete()
+    db.query(Experiencia).filter(Experiencia.freelancer_id == freelancer_id).delete()
+    db.query(Educacion).filter(Educacion.freelancer_id == freelancer_id).delete()
+    db.query(PlanSuscripcion).filter(PlanSuscripcion.freelancer_id == freelancer_id).delete()
+    db.query(Resena).filter(Resena.freelancer_id == freelancer_id).delete()
+    db.query(ProyectoPortafolio).filter(ProyectoPortafolio.freelancer_id == freelancer_id).delete()
+    db.query(PerfilFreelancer).filter(PerfilFreelancer.perfil_id == freelancer_id).delete()
+    db.query(Perfil).filter(Perfil.id == freelancer_id).delete()
+    db.commit()
+
+    try:
+        supabase_auth.auth.admin.delete_user(freelancer_id)
+    except Exception as exc:
+        return ActionResult(error=str(exc))
+
+    return ActionResult()

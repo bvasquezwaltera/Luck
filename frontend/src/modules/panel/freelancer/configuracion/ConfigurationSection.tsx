@@ -71,7 +71,7 @@ export function ConfigurationSection({
           </div>
         </>
       )}
-      {activeTab === "usuario" && <UserSection />}
+      {activeTab === "usuario" && <UserSection email={draftProfile.email} />}
       {activeTab === "proyectos" && <ProjectsSection freelancerId={draftProfile.id} />}
       {activeTab === "suscripcion" && <SubscriptionSection freelancerId={draftProfile.id} />}
     </div>

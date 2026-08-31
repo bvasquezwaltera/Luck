@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     database_url: str
     supabase_url: str
     supabase_secret_key: str
+    supabase_publishable_key: str
     frontend_url: str = "http://localhost:3000"
 
 

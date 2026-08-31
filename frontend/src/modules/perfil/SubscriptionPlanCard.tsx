@@ -34,9 +34,9 @@ export function SubscriptionPlanCard({ plan }: { plan: SubscriptionPlan }) {
       </p>
 
       <ul className="flex flex-1 flex-col">
-        {features.map((feature) => (
+        {features.map((feature, index) => (
           <li
-            key={feature}
+            key={index}
             className="border-t border-gray-100 py-2.5 text-xs text-gray-600 first:border-t-0"
           >
             {feature}

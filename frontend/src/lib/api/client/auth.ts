@@ -36,3 +36,21 @@ export async function signIn(params: { email: string; password: string }): Promi
 export async function signOut(): Promise<void> {
   clearAuthTokenCookie();
 }
+
+export async function changePassword(params: {
+  currentPassword: string;
+  newPassword: string;
+}): Promise<{ error?: string }> {
+  const response = await apiFetch("/api/auth/change-password", {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+  return response.json();
+}
+
+export async function deleteAccount(): Promise<{ error?: string }> {
+  const response = await apiFetch("/api/auth/account", { method: "DELETE" });
+  const result = await response.json();
+  if (!result.error) clearAuthTokenCookie();
+  return result;
+}

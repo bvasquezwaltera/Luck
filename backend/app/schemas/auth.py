@@ -24,3 +24,12 @@ class ProfileOut(BaseModel):
     id: str
     rol: str
     nombre_completo: str
+
+
+class ChangePasswordRequest(BaseModel):
+    currentPassword: str
+    newPassword: str
+
+
+class ActionResult(BaseModel):
+    error: str | None = None
