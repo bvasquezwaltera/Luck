@@ -6,10 +6,13 @@ import { getAuthTokenFromDocument } from "@/lib/api/token";
 export async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
   const token = getAuthTokenFromDocument();
 
+  // Con FormData el navegador pone solo el Content-Type (con el boundary); forzar JSON rompería la subida.
+  const isFormData = typeof FormData !== "undefined" && init?.body instanceof FormData;
+
   return fetch(`${API_URL}${path}`, {
     ...init,
     headers: {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...init?.headers,
     },

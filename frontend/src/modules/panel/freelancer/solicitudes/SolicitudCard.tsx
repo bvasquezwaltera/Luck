@@ -1,55 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Building2,
-  Code2,
-  Eye,
-  Megaphone,
-  MessageCircle,
-  MoreVertical,
-  Palette,
-  Paperclip,
-  Send,
-  Smartphone,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import type { Solicitud, SolicitudCategory } from "@/types/solicitud";
+import { Eye, MoreVertical, Paperclip } from "lucide-react";
+import { formatSolicitudDate } from "@/lib/formatSolicitudDate";
+import type { ReceivedSolicitud } from "@/types/receivedSolicitud";
+import { solicitudCategoryConfig } from "@/modules/panel/solicitudCategoryConfig";
+import type { Solicitud } from "@/types/solicitud";
 import { SolicitudDetailsModal } from "@/modules/panel/freelancer/solicitudes/SolicitudDetailsModal";
-import { RespondSolicitudModal } from "@/modules/panel/freelancer/solicitudes/RespondSolicitudModal";
 import { Badge } from "@/ui/Badge";
 import { Button } from "@/ui/Button";
-
-const categoryConfig: Record<
-  SolicitudCategory,
-  { icon: LucideIcon; label: string; className: string }
-> = {
-  desarrollo: { icon: Code2, label: "Desarrollo", className: "!bg-indigo-100 !text-indigo-600" },
-  movil: { icon: Smartphone, label: "Móvil", className: "!bg-emerald-100 !text-emerald-600" },
-  diseno: { icon: Palette, label: "Diseño", className: "!bg-violet-100 !text-violet-600" },
-  marketing: { icon: Megaphone, label: "Marketing", className: "!bg-amber-100 !text-amber-600" },
-  arquitectura: { icon: Building2, label: "Arquitectura", className: "!bg-sky-100 !text-sky-600" },
-  hogar: { icon: Building2, label: "Hogar", className: "!bg-slate-100 !text-slate-700" },
-  restaurantes: { icon: Building2, label: "Restaurantes", className: "!bg-rose-100 !text-rose-600" },
-  moda: { icon: Palette, label: "Moda", className: "!bg-pink-100 !text-pink-600" },
-  reposteria: { icon: Palette, label: "Repostería", className: "!bg-amber-50 !text-amber-600" },
-  servicios_generales: { icon: Building2, label: "Servicios", className: "!bg-slate-50 !text-slate-600" },
-};
 
 const statusConfig = {
   nueva: { label: "Nueva", className: "!bg-emerald-50 !text-emerald-600" },
   sin_responder: { label: "Sin responder", className: "!bg-amber-50 !text-amber-600" },
-  respondida: { label: "Respondida", className: "!bg-indigo-50 !text-indigo-600" },
+  respondida: { label: "Aceptada", className: "!bg-indigo-50 !text-indigo-600" },
   archivada: { label: "Archivada", className: "!bg-slate-100 !text-slate-500" },
 } satisfies Record<Solicitud["status"], { label: string; className: string }>;
 
-export function SolicitudCard({ solicitud }: { solicitud: Solicitud }) {
+export function SolicitudCard({
+  solicitud,
+  onDecision,
+}: {
+  solicitud: Solicitud;
+  onDecision: (updated: ReceivedSolicitud) => void;
+}) {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [showRespondModal, setShowRespondModal] = useState(false);
-  const category = categoryConfig[solicitud.category];
+  const category = solicitudCategoryConfig[solicitud.category];
   const status = statusConfig[solicitud.status];
   const CategoryIcon = category.icon;
-  const canRespond = solicitud.status !== "respondida" && solicitud.status !== "archivada";
 
   return (
     <>
@@ -84,19 +62,20 @@ export function SolicitudCard({ solicitud }: { solicitud: Solicitud }) {
             <p className="mt-3 line-clamp-2 text-xs leading-5 text-slate-600">{solicitud.description}</p>
 
             <div className="mt-3 flex flex-wrap gap-2">
-              {solicitud.desiredDate ? (
+              {solicitud.desiredDate && (
                 <Badge className="!bg-rose-50 !text-rose-600">
-                  Fecha solicitada: {new Date(solicitud.desiredDate).toLocaleDateString()}
-                </Badge>
-              ) : (
-                <Badge className="!bg-indigo-50 !text-indigo-600">
-                  {solicitud.requestedDeliveries} {solicitud.requestedDeliveries === 1 ? "entrega" : "entregas"}
+                  Fecha solicitada: {formatSolicitudDate(solicitud.desiredDate)}
                 </Badge>
               )}
-              <Badge className="!bg-emerald-50 !text-emerald-600">
-                {solicitud.revisiones} {solicitud.revisiones === 1 ? "revisión" : "revisiones"}
-              </Badge>
-              <Badge className={category.className}>{category.label}</Badge>
+              {solicitud.planProjects && (
+                <Badge className="!bg-indigo-50 !text-indigo-600">Proyectos activos: {solicitud.planProjects}</Badge>
+              )}
+              {solicitud.revisiones > 0 && (
+                <Badge className="!bg-emerald-50 !text-emerald-600">
+                  {solicitud.revisiones} {solicitud.revisiones === 1 ? "revisión" : "revisiones"}
+                </Badge>
+              )}
+              <Badge className={category.className}>{solicitud.categoryLabel ?? category.label}</Badge>
               {solicitud.attachments.length > 0 && (
                 <Badge className="!bg-slate-100 flex items-center gap-1 !text-slate-500">
                   <Paperclip className="h-3 w-3" />
@@ -113,9 +92,11 @@ export function SolicitudCard({ solicitud }: { solicitud: Solicitud }) {
               <p className="text-[11px] font-medium uppercase tracking-wide text-indigo-500">Plan contratado</p>
               <p className="mt-1 text-sm font-semibold text-slate-900">{solicitud.planName}</p>
               {solicitud.desiredDate ? (
-                <p className="mt-1 text-[11px] text-slate-500">Fecha solicitada: {new Date(solicitud.desiredDate).toLocaleDateString()}</p>
+                <p className="mt-1 text-[11px] text-slate-500">Fecha solicitada: {formatSolicitudDate(solicitud.desiredDate)}</p>
               ) : (
-                <p className="mt-1 text-[11px] text-slate-500">{solicitud.requestedDeliveries} entregas solicitadas</p>
+                solicitud.planProjects && (
+                  <p className="mt-1 text-[11px] text-slate-500">Proyectos activos: {solicitud.planProjects}</p>
+                )
               )}
             </div>
             <div className="flex flex-row gap-2">
@@ -128,20 +109,6 @@ export function SolicitudCard({ solicitud }: { solicitud: Solicitud }) {
               >
                 <Eye className="h-4 w-4" />
               </Button>
-              {canRespond ? (
-                <Button
-                  aria-label="Responder"
-                  title="Responder"
-                  className="!min-w-0 h-8 w-8 !px-0"
-                  onClick={() => setShowRespondModal(true)}
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
-              ) : (
-                <Button variant="outline-neutral" aria-label="Ver conversación" title="Ver conversación" className="!min-w-0 h-8 w-8 !px-0">
-                  <MessageCircle className="h-4 w-4" />
-                </Button>
-              )}
             </div>
           </div>
         </div>
@@ -151,12 +118,7 @@ export function SolicitudCard({ solicitud }: { solicitud: Solicitud }) {
         open={showDetailsModal}
         onClose={() => setShowDetailsModal(false)}
         solicitud={solicitud}
-        onRespond={() => setShowRespondModal(true)}
-      />
-      <RespondSolicitudModal
-        open={showRespondModal}
-        onClose={() => setShowRespondModal(false)}
-        solicitud={solicitud}
+        onDecision={onDecision}
       />
     </>
   );

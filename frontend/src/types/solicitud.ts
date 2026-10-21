@@ -44,4 +44,10 @@ export interface Solicitud {
   targetFreelancerRole?: string;
   // Optional fixed date requested by client (ISO yyyy-mm-dd)
   desiredDate?: string;
+  // Datos de solicitudes reales (backend): texto original de la categoría, proyectos activos
+  // del plan y, si el freelancer la rechazó, el motivo.
+  categoryLabel?: string;
+  planProjects?: string;
+  rejected?: boolean;
+  rejectionReason?: string;
 }

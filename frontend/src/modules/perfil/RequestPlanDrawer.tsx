@@ -1,11 +1,17 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Info } from "lucide-react";
+import { CheckCircle2, Info, Paperclip, X } from "lucide-react";
 import { signOut } from "@/lib/api/client/auth";
 import { createSolicitud } from "@/lib/api/client/solicitudes";
 import { withNext } from "@/lib/safeNext";
+import {
+  ATTACHMENT_ACCEPT,
+  MAX_ATTACHMENTS,
+  formatFileSize,
+  pickAttachments,
+} from "@/lib/solicitudAttachments";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import type { SubscriptionPlan } from "@/types/subscriptionPlan";
 import { Avatar } from "@/ui/Avatar";
@@ -182,9 +188,26 @@ function RequestForm({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [desiredDate, setDesiredDate] = useState("");
+  const [characteristics, setCharacteristics] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [fileError, setFileError] = useState("");
+  const fileInput = useRef<HTMLInputElement>(null);
   const [errors, setErrors] = useState<{ title?: string; description?: string }>({});
   const [isSending, setIsSending] = useState(false);
   const [sendError, setSendError] = useState("");
+
+  function handleFilesChosen(event: ChangeEvent<HTMLInputElement>) {
+    const { accepted, error } = pickAttachments(files, Array.from(event.target.files ?? []));
+    setFiles(accepted);
+    setFileError(error);
+    // Se limpia para poder volver a elegir el mismo archivo después de quitarlo.
+    event.target.value = "";
+  }
+
+  function removeFile(index: number) {
+    setFiles((current) => current.filter((_, position) => position !== index));
+    setFileError("");
+  }
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -206,6 +229,8 @@ function RequestForm({
       title: title.trim(),
       description: description.trim(),
       desiredDate,
+      characteristics: characteristics.split("\n").map((item) => item.trim()).filter(Boolean),
+      files,
     });
 
     setIsSending(false);
@@ -241,6 +266,59 @@ function RequestForm({
           className="[&_input]:bg-gray-50 [&_input]:text-gray-600"
         />
       )}
+      <Textarea
+        label="Características (opcional)"
+        rows={3}
+        placeholder={"Una por línea. Ej.:\nPágina de inicio y 3 páginas internas\nDiseño responsive"}
+        value={characteristics}
+        onChange={(event) => setCharacteristics(event.target.value)}
+      />
+      <div className="flex flex-col gap-1.5">
+        <p className="text-xs font-semibold text-gray-900">Anexos e inspiración (opcional)</p>
+        <input
+          ref={fileInput}
+          type="file"
+          multiple
+          accept={ATTACHMENT_ACCEPT}
+          className="hidden"
+          onChange={handleFilesChosen}
+        />
+        {files.length > 0 && (
+          <ul className="flex flex-col gap-1.5">
+            {files.map((file, index) => (
+              <li
+                key={`${file.name}-${file.size}`}
+                className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-xs"
+              >
+                <Paperclip className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+                <span className="min-w-0 flex-1 truncate text-gray-700">{file.name}</span>
+                <span className="shrink-0 text-gray-400">{formatFileSize(file.size)}</span>
+                <button
+                  type="button"
+                  aria-label={`Quitar ${file.name}`}
+                  onClick={() => removeFile(index)}
+                  className="shrink-0 rounded p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <Button
+          variant="outline-neutral"
+          className="w-full min-w-0"
+          onClick={() => fileInput.current?.click()}
+          disabled={files.length >= MAX_ATTACHMENTS}
+        >
+          <Paperclip className="mr-1.5 h-3.5 w-3.5" />
+          Adjuntar archivos
+        </Button>
+        <p className="text-[11px] text-gray-400">
+          PDF, PNG, JPG o WEBP. Hasta {MAX_ATTACHMENTS} archivos de 5 MB cada uno.
+        </p>
+        {fileError && <p className="text-xs text-red-500">{fileError}</p>}
+      </div>
       <Input
         label="Fecha deseada (opcional)"
         type="date"

@@ -19,6 +19,7 @@ import { SolicitudesSection } from "@/modules/panel/freelancer/solicitudes/Solic
 import { ReviewsSection } from "@/modules/panel/freelancer/reviews/ReviewsSection";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import type { FreelancerSectionId } from "@/types/freelancerSection";
+import type { ReceivedSolicitud } from "@/types/receivedSolicitud";
 import type { ReviewEntry } from "@/types/review";
 import { useDraftProfile } from "@/hooks/useDraftProfile";
 import fallbackProfileData from "@/data/exampleFreelancerProfile.json";
@@ -36,10 +37,12 @@ export function FreelancerDashboard({
   embedded = false,
   profile,
   reviews = [],
+  solicitudes = [],
 }: {
   embedded?: boolean;
   profile?: FreelancerProfile;
   reviews?: ReviewEntry[];
+  solicitudes?: ReceivedSolicitud[];
 }) {
   const [activeSection, setActiveSection] = useState<FreelancerSectionId>("inicio");
 
@@ -53,7 +56,7 @@ export function FreelancerDashboard({
       case "inicio":
         return <HomeSection profile={safeProfile} />;
       case "solicitudes":
-        return <SolicitudesSection />;
+        return <SolicitudesSection solicitudes={solicitudes} />;
       case "mensajes":
         return <MessagesSection />;
       case "entregas":
@@ -65,7 +68,7 @@ export function FreelancerDashboard({
       default:
         return null;
     }
-  }, [activeSection, safeProfile, reviews, draftProfile]);
+  }, [activeSection, safeProfile, reviews, draftProfile, solicitudes]);
 
   if (embedded) {
     return (
