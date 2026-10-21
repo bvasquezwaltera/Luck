@@ -1,26 +1,18 @@
 import { ArrowRight, BookOpen, CalendarDays } from "lucide-react";
 import { getCategoryBadgeClassName } from "@/modules/panel/client/deliveries/deliveryStatusConfig";
-import type { DeliveryModule } from "@/types/deliveryModule";
+import type { DeliveryProject } from "@/lib/deliveryAdapter";
 import { Badge } from "@/ui/Badge";
 
-export function DeliveryProjectCard({
-  freelancerName,
-  modules,
-  onClick,
-}: {
-  freelancerName: string;
-  modules: DeliveryModule[];
-  onClick: () => void;
-}) {
-  const requestTitle = modules[0].requestTitle;
-  const category = modules[0].category;
-  const averageProgress = Math.round(
-    modules.reduce((total, module) => total + module.progress, 0) / modules.length,
-  );
+// Un proyecto es el contrato con un freelancer. Puede no tener entregas todavía: las planifica el freelancer.
+export function DeliveryProjectCard({ project, onClick }: { project: DeliveryProject; onClick: () => void }) {
+  const { modules } = project;
+  const averageProgress = modules.length
+    ? Math.round(modules.reduce((total, module) => total + module.progress, 0) / modules.length)
+    : 0;
   const sortedByDate = [...modules].sort((a, b) => a.dueDateValue.localeCompare(b.dueDateValue));
-  const firstDate = sortedByDate[0].dueDate;
-  const lastDate = sortedByDate[sortedByDate.length - 1].dueDate;
-  const dateRange = firstDate === lastDate ? firstDate : `${firstDate} – ${lastDate}`;
+  const firstDate = sortedByDate[0]?.dueDate;
+  const lastDate = sortedByDate[sortedByDate.length - 1]?.dueDate;
+  const dateRange = !firstDate ? "El freelancer aún no planifica" : firstDate === lastDate ? firstDate : `${firstDate} – ${lastDate}`;
 
   return (
     <button
@@ -32,11 +24,11 @@ export function DeliveryProjectCard({
         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
           <BookOpen className="h-5 w-5" />
         </div>
-        <Badge className={getCategoryBadgeClassName(category)}>{category}</Badge>
+        <Badge className={getCategoryBadgeClassName(project.category)}>{project.category}</Badge>
       </div>
 
-      <h3 className="mt-4 text-lg font-semibold text-slate-900">{requestTitle}</h3>
-      <p className="mt-2 text-sm italic text-slate-600">Freelancer: {freelancerName}</p>
+      <h3 className="mt-4 text-lg font-semibold text-slate-900">{project.title}</h3>
+      <p className="mt-2 text-sm italic text-slate-600">Freelancer: {project.counterpartName}</p>
 
       <div className="mt-4 h-2 rounded-full bg-slate-100">
         <div

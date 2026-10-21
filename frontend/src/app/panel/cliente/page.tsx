@@ -1,6 +1,7 @@
 import { ClientDashboard } from "@/modules/panel/client/ClientDashboard";
 import { requireRole } from "@/lib/api/server/requireRole";
 import { getClientProfile } from "@/lib/api/server/clientProfile";
+import { getDeliveries } from "@/lib/api/server/deliveries";
 import { getClientPaymentSummary, getMyPayments } from "@/lib/api/server/payments";
 import { getMySolicitudes } from "@/lib/api/server/solicitudes";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
@@ -10,11 +11,12 @@ const exampleProfile = exampleProfileData as FreelancerProfile;
 
 export default async function ClientPanelPage() {
   const authProfile = await requireRole("client");
-  const [clientProfile, solicitudes, payments, paymentSummary] = await Promise.all([
+  const [clientProfile, solicitudes, payments, paymentSummary, deliveries] = await Promise.all([
     getClientProfile(),
     getMySolicitudes(),
     getMyPayments(),
     getClientPaymentSummary(),
+    getDeliveries(),
   ]);
 
   // Los datos reales del cliente (nombre, email, país, zona horaria) pisan el
@@ -36,6 +38,7 @@ export default async function ClientPanelPage() {
       solicitudes={solicitudes}
       payments={payments}
       paymentSummary={paymentSummary}
+      deliveries={deliveries}
     />
   );
 }

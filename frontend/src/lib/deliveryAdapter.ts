@@ -44,17 +44,20 @@ export function toDeliveryModule(contract: ContractDeliveries, item: DeliveryIte
     dueDateValue: item.dueDate,
     nextMilestone: "",
     objectives: item.objectives,
-    // El historial se muestra del más reciente al más antiguo.
-    advanceHistory: [...item.advances].reverse().map((advance) => ({
+    // El orden del hilo lo decide DeliveryThread, por la fecha real de cada entrada.
+    advanceHistory: item.advances.map((advance) => ({
       id: advance.id,
       note: advance.note,
+      progress: advance.progress,
+      createdAt: advance.createdAt,
       attachments: advance.attachments.map(toAttachment),
       timestamp: formatSolicitudDateTime(advance.createdAt),
     })),
-    clientFeedback: [...item.reviews].reverse().map((review) => ({
+    clientFeedback: item.reviews.map((review) => ({
       id: review.id,
       type: review.type === "aprobado" ? ("approved" as const) : ("changes-requested" as const),
       comment: review.comment,
+      createdAt: review.createdAt,
       attachments: review.attachments.map(toAttachment),
       timestamp: formatSolicitudDateTime(review.createdAt),
     })),

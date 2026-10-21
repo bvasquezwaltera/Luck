@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DELIVERY_MAX_FILE_BYTES, pickDeliveryFiles, validateLink } from "@/lib/deliveryFiles";
+import { DELIVERY_MAX_FILE_BYTES, pickDeliveryFiles, resolveAttachments, validateLink } from "@/lib/deliveryFiles";
 
 function file(name: string, size = 100) {
   return new File([new Uint8Array(size)], name);
@@ -44,5 +44,31 @@ describe("validateLink", () => {
     expect(validateLink("ftp://x.com/a")).not.toBeNull();
     expect(validateLink("figma.com/proto")).not.toBeNull();
     expect(validateLink("   ")).not.toBeNull();
+  });
+});
+
+describe("resolveAttachments", () => {
+  const empty = { files: [], links: [], pendingLink: "" };
+
+  it("sin enlace pendiente deja los adjuntos como están", () => {
+    expect(resolveAttachments({ ...empty, links: ["https://a.com/x"] })).toEqual({ files: [], links: ["https://a.com/x"] });
+  });
+
+  it("incluye el enlace escrito que no se agregó con el botón", () => {
+    expect(resolveAttachments({ ...empty, pendingLink: " https://figma.com/proto/abc " })).toEqual({
+      files: [],
+      links: ["https://figma.com/proto/abc"],
+    });
+  });
+
+  it("no lo duplica si ya estaba agregado", () => {
+    const result = resolveAttachments({ ...empty, links: ["https://a.com/x"], pendingLink: "https://a.com/x" });
+    expect(result).toEqual({ files: [], links: ["https://a.com/x"] });
+  });
+
+  it("avisa en vez de perder en silencio un enlace inválido o de más", () => {
+    expect(resolveAttachments({ ...empty, pendingLink: "figma.com/proto" })).toHaveProperty("error");
+    const five = Array.from({ length: 5 }, (_, index) => `https://a.com/${index}`);
+    expect(resolveAttachments({ ...empty, links: five, pendingLink: "https://a.com/otro" })).toHaveProperty("error");
   });
 });

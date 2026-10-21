@@ -67,3 +67,28 @@ export function validateLink(value: string): string | null {
   }
   return null;
 }
+
+export interface PickedAttachments {
+  files: File[];
+  links: string[];
+  // Lo que está escrito en el cuadro de enlace y aún no se agregó con el botón.
+  pendingLink: string;
+}
+
+export const EMPTY_ATTACHMENTS: PickedAttachments = { files: [], links: [], pendingLink: "" };
+
+// Al enviar, un enlace escrito pero sin agregar se incluye solo: si no, se perdería en silencio.
+export function resolveAttachments(
+  value: PickedAttachments,
+): { files: File[]; links: string[]; error?: undefined } | { error: string } {
+  const pending = value.pendingLink.trim();
+  if (!pending) return { files: value.files, links: value.links };
+
+  const problem = validateLink(pending);
+  if (problem) return { error: `El enlace que escribiste no es válido. ${problem}` };
+  if (value.links.includes(pending)) return { files: value.files, links: value.links };
+  if (value.links.length >= DELIVERY_MAX_LINKS) {
+    return { error: `Puedes agregar hasta ${DELIVERY_MAX_LINKS} enlaces por envío.` };
+  }
+  return { files: value.files, links: [...value.links, pending] };
+}

@@ -1,21 +1,13 @@
 "use client";
 
-import { useRef, useState, type ChangeEvent } from "react";
-import { CheckCircle2, Clock3, FileText, Link as LinkIcon, Paperclip, RotateCcw, Trash2, UploadCloud } from "lucide-react";
-import { DeliveryAttachmentChips } from "@/modules/panel/DeliveryAttachmentChips";
+import { useState } from "react";
+import { CheckCircle2, Clock3, RotateCcw, UploadCloud } from "lucide-react";
+import { DeliveryAttachmentPicker } from "@/modules/panel/DeliveryAttachmentPicker";
+import { EMPTY_ATTACHMENTS, resolveAttachments, type PickedAttachments } from "@/lib/deliveryFiles";
 import { addAdvance } from "@/lib/api/client/deliveries";
-import {
-  DELIVERY_ACCEPT,
-  DELIVERY_MAX_FILES,
-  DELIVERY_MAX_LINKS,
-  pickDeliveryFiles,
-  validateLink,
-} from "@/lib/deliveryFiles";
-import { formatFileSize } from "@/lib/solicitudAttachments";
 import type { ContractDeliveries } from "@/types/deliveryApi";
 import type { DeliveryModule } from "@/types/deliveryModule";
 import { Button } from "@/ui/Button";
-import { Input } from "@/ui/Input";
 import { Textarea } from "@/ui/Textarea";
 
 // El freelancer sube un avance (nota + archivos o enlaces) y la entrega pasa a revisión del cliente.
@@ -29,44 +21,22 @@ export function DeliveryFreelancerAdvance({
 }) {
   const [note, setNote] = useState("");
   const [progress, setProgress] = useState(Math.max(module.progress, 50));
-  const [files, setFiles] = useState<File[]>([]);
-  const [links, setLinks] = useState<string[]>([]);
-  const [linkInput, setLinkInput] = useState("");
-  const [attachError, setAttachError] = useState("");
+  const [attachments, setAttachments] = useState<PickedAttachments>(EMPTY_ATTACHMENTS);
   const [isSending, setIsSending] = useState(false);
   const [sendError, setSendError] = useState("");
-  const fileInput = useRef<HTMLInputElement>(null);
 
-  const history = module.advanceHistory ?? [];
   const canSubmit = module.apiStatus === "pendiente" || module.apiStatus === "cambios_solicitados";
-
-  function handleFilesChosen(event: ChangeEvent<HTMLInputElement>) {
-    const { accepted, error } = pickDeliveryFiles(files, Array.from(event.target.files ?? []));
-    setFiles(accepted);
-    setAttachError(error);
-    event.target.value = "";
-  }
-
-  function handleAddLink() {
-    const problem = validateLink(linkInput);
-    if (problem) {
-      setAttachError(problem);
-      return;
-    }
-    if (links.length >= DELIVERY_MAX_LINKS) {
-      setAttachError(`Puedes agregar hasta ${DELIVERY_MAX_LINKS} enlaces por envío.`);
-      return;
-    }
-    setLinks((current) => [...current, linkInput.trim()]);
-    setLinkInput("");
-    setAttachError("");
-  }
 
   async function handleSubmit() {
     if (!note.trim() || isSending) return;
+    const resolved = resolveAttachments(attachments);
+    if (resolved.error !== undefined) {
+      setSendError(resolved.error);
+      return;
+    }
     setIsSending(true);
     setSendError("");
-    const result = await addAdvance(module.id, { note: note.trim(), progress, files, links });
+    const result = await addAdvance(module.id, { note: note.trim(), progress, files: resolved.files, links: resolved.links });
     setIsSending(false);
 
     if (!result.contracts) {
@@ -74,9 +44,7 @@ export function DeliveryFreelancerAdvance({
       return;
     }
     setNote("");
-    setFiles([]);
-    setLinks([]);
-    setAttachError("");
+    setAttachments(EMPTY_ATTACHMENTS);
     onChanged(result.contracts);
   }
 
@@ -149,92 +117,8 @@ export function DeliveryFreelancerAdvance({
             />
           </div>
 
-          <div className="mt-4 space-y-2">
-            <p className="text-xs font-semibold text-slate-700">Adjuntar archivos o enlaces</p>
-
-            {(files.length > 0 || links.length > 0) && (
-              <div className="space-y-2">
-                {files.map((file, index) => (
-                  <div key={`${file.name}-${file.size}`} className="flex items-center gap-3 rounded-xl border border-slate-200 p-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
-                      <FileText className="h-4 w-4" />
-                    </div>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-xs font-medium text-slate-700">{file.name}</span>
-                      <span className="mt-0.5 block text-[11px] text-slate-400">{formatFileSize(file.size)}</span>
-                    </span>
-                    <button
-                      type="button"
-                      aria-label={`Quitar ${file.name}`}
-                      onClick={() => setFiles((current) => current.filter((_, position) => position !== index))}
-                      className="shrink-0 rounded-lg border border-red-200 p-1.5 text-red-600 transition hover:bg-red-50"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                ))}
-                {links.map((link, index) => (
-                  <div key={link} className="flex items-center gap-3 rounded-xl border border-slate-200 p-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-50 text-sky-600">
-                      <LinkIcon className="h-4 w-4" />
-                    </div>
-                    <span className="block min-w-0 flex-1 truncate text-xs font-medium text-slate-700">{link}</span>
-                    <button
-                      type="button"
-                      aria-label={`Quitar ${link}`}
-                      onClick={() => setLinks((current) => current.filter((_, position) => position !== index))}
-                      className="shrink-0 rounded-lg border border-red-200 p-1.5 text-red-600 transition hover:bg-red-50"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="flex flex-col gap-2">
-              <input
-                ref={fileInput}
-                type="file"
-                multiple
-                accept={DELIVERY_ACCEPT}
-                className="hidden"
-                onChange={handleFilesChosen}
-              />
-              <button
-                type="button"
-                onClick={() => fileInput.current?.click()}
-                disabled={files.length >= DELIVERY_MAX_FILES}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 px-3 py-2.5 text-xs font-medium text-slate-600 transition hover:border-indigo-300 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <Paperclip className="h-3.5 w-3.5" />
-                Subir archivo
-              </button>
-              <div className="flex flex-1 items-center gap-2">
-                <Input
-                  label="Agregar enlace"
-                  hideLabel
-                  className="flex-1"
-                  placeholder="Pega un enlace (Figma, Drive, GitHub...)"
-                  value={linkInput}
-                  onChange={(event) => setLinkInput(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      event.preventDefault();
-                      handleAddLink();
-                    }
-                  }}
-                />
-                <Button type="button" variant="outline-neutral" className="!min-w-0 !px-3" onClick={handleAddLink}>
-                  Agregar
-                </Button>
-              </div>
-            </div>
-            <p className="text-[11px] text-slate-400">
-              PDF, imágenes, ZIP, Office, TXT, CSV o MD. Hasta {DELIVERY_MAX_FILES} archivos de 25 MB y{" "}
-              {DELIVERY_MAX_LINKS} enlaces por envío.
-            </p>
-            {attachError && <p className="text-xs text-red-500">{attachError}</p>}
+          <div className="mt-4">
+            <DeliveryAttachmentPicker value={attachments} onChange={setAttachments} />
           </div>
 
           {sendError && <p className="mt-3 text-xs text-red-500">{sendError}</p>}
@@ -251,18 +135,6 @@ export function DeliveryFreelancerAdvance({
         </>
       )}
 
-      {history.length > 0 && (
-        <div className="mt-5 space-y-3 border-t border-slate-100 pt-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Historial de avances</p>
-          {history.map((entry) => (
-            <div key={entry.id} className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-              <span className="text-[11px] text-slate-400">{entry.timestamp}</span>
-              <p className="mt-1 whitespace-pre-line text-sm leading-6 text-slate-700">{entry.note}</p>
-              <DeliveryAttachmentChips deliveryId={module.id} attachments={entry.attachments} />
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

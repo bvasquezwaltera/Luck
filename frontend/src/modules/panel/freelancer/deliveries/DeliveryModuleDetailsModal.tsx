@@ -4,16 +4,13 @@ import { useState } from "react";
 import {
   BookOpen,
   CalendarDays,
-  CheckCircle2,
   ClipboardList,
   FileText,
-  MessageSquare,
-  RotateCcw,
   Sparkles,
   Trash2,
   X,
 } from "lucide-react";
-import { DeliveryAttachmentChips } from "@/modules/panel/DeliveryAttachmentChips";
+import { DeliveryThread } from "@/modules/panel/DeliveryThread";
 import { DeliveryFreelancerAdvance } from "@/modules/panel/freelancer/deliveries/DeliveryFreelancerAdvance";
 import { statusConfig } from "@/modules/panel/freelancer/deliveries/deliveryStatusConfig";
 import { deleteDelivery } from "@/lib/api/client/deliveries";
@@ -129,46 +126,7 @@ export function DeliveryModuleDetailsModal({
 
             <DeliveryFreelancerAdvance key={`${module.id}-${module.apiStatus}`} module={module} onChanged={onChanged} />
 
-            <div className="rounded-[24px] border border-slate-200 bg-white p-4">
-              <div className="flex items-center gap-2">
-                <MessageSquare className="h-4 w-4 text-indigo-500" />
-                <h4 className="text-sm font-semibold text-slate-900">Respuesta del cliente</h4>
-              </div>
-
-              {module.clientFeedback && module.clientFeedback.length > 0 ? (
-                <div className="mt-4 space-y-3">
-                  {module.clientFeedback.map((entry) => (
-                    <div key={entry.id} className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <Badge
-                          className={
-                            entry.type === "approved"
-                              ? "!bg-emerald-50 !text-emerald-600 inline-flex items-center gap-1.5"
-                              : "!bg-amber-50 !text-amber-600 inline-flex items-center gap-1.5"
-                          }
-                        >
-                          {entry.type === "approved" ? (
-                            <CheckCircle2 className="h-3 w-3" />
-                          ) : (
-                            <RotateCcw className="h-3 w-3" />
-                          )}
-                          {entry.type === "approved" ? "Entrega aprobada" : "Cambios solicitados"}
-                        </Badge>
-                        <span className="text-[11px] text-slate-400">{entry.timestamp}</span>
-                      </div>
-                      {entry.comment && (
-                        <p className="mt-2 whitespace-pre-line text-sm leading-6 text-slate-700">{entry.comment}</p>
-                      )}
-                      <DeliveryAttachmentChips deliveryId={module.id} attachments={entry.attachments} />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="mt-4 rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
-                  El cliente aún no respondió a esta entrega.
-                </p>
-              )}
-            </div>
+            <DeliveryThread module={module} viewer="freelancer" />
 
             <div className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100">

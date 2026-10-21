@@ -19,6 +19,7 @@ import { PaymentsSection } from "@/modules/panel/client/payments/PaymentsSection
 import { SolicitudesSection } from "@/modules/panel/client/projects/ProjectsSection";
 import type { ClientSectionId } from "@/types/clientSection";
 import type { ClientSolicitud } from "@/types/clientSolicitud";
+import type { ContractDeliveries } from "@/types/deliveryApi";
 import type { ClientPaymentSummary, PaymentRecord } from "@/types/payment";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import { useDraftProfile } from "@/hooks/useDraftProfile";
@@ -41,6 +42,7 @@ export function ClientDashboard({
   solicitudes = [],
   payments = [],
   paymentSummary = EMPTY_SUMMARY,
+  deliveries = [],
 }: {
   embedded?: boolean;
   profile?: FreelancerProfile;
@@ -48,6 +50,7 @@ export function ClientDashboard({
   // null = el servidor falló al cargarlos (la sección lo avisa); si no se pasan, se muestran vacíos.
   payments?: PaymentRecord[] | null;
   paymentSummary?: ClientPaymentSummary | null;
+  deliveries?: ContractDeliveries[] | null;
 }) {
   const [activeSection, setActiveSection] = useState<ClientSectionId>("inicio");
 
@@ -65,7 +68,7 @@ export function ClientDashboard({
       case "mensajes":
         return <MessagesSection />;
       case "entregas":
-        return <DeliveriesSection />;
+        return <DeliveriesSection contracts={deliveries} />;
       case "pagos":
         return <PaymentsSection payments={payments} summary={paymentSummary} />;
       case "configuracion":
@@ -73,7 +76,7 @@ export function ClientDashboard({
       default:
         return null;
     }
-  }, [activeSection, safeProfile, draftProfile, solicitudes, payments, paymentSummary]);
+  }, [activeSection, safeProfile, draftProfile, solicitudes, payments, paymentSummary, deliveries]);
 
   if (embedded) {
     return (
