@@ -27,6 +27,10 @@ class Pago(Base):
     moneda: Mapped[str] = mapped_column(Text, default="USD")
     metodo: Mapped[str] = mapped_column(Text, default="simulado")
     referencia: Mapped[str] = mapped_column(Text, unique=True)
+    # Lo que retiene la plataforma y lo que recibe el freelancer, fijado al momento del cobro.
+    comision_pct: Mapped[float] = mapped_column(Numeric, default=0)
+    comision: Mapped[float] = mapped_column(Numeric, default=0)
+    neto: Mapped[float] = mapped_column(Numeric, default=0)
     estado: Mapped[str] = mapped_column(Text)
     motivo_rechazo: Mapped[str | None] = mapped_column(Text, nullable=True)
     creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

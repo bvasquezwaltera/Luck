@@ -1,21 +1,37 @@
 import uuid
 from datetime import datetime, timedelta, timezone
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models.pago import CONTRATO_ACTIVO, PAGO_APROBADO, PAGO_RECHAZADO, Contrato, Pago
 from app.models.perfil import Perfil
 from app.models.solicitud import ESTADO_ACEPTADA, ESTADO_CONTRATADA, ESTADO_ENVIADA, Solicitud
-from app.schemas.payment import PaymentCounterpart, PaymentOut, PaymentReceipt
+from app.schemas.payment import (
+    ClientPaymentSummary,
+    FreelancerPaymentSummary,
+    PaymentCounterpart,
+    PaymentOut,
+    PaymentReceipt,
+)
 from app.schemas.solicitud import SolicitudPayment
 from app.services.payment_provider import get_provider
 from app.services.utils import get_initials
 
 CURRENCY = "USD"
 BILLING_PERIOD_DAYS = 30
+# Comisión de la plataforma sobre cada cobro. Se guarda en cada pago, así que cambiarla aquí
+# no modifica los pagos ya realizados.
+COMMISSION_PERCENT = Decimal("5")
+CENT = Decimal("0.01")
+
+
+def split_commission(amount: Decimal, percent: Decimal = COMMISSION_PERCENT) -> tuple[Decimal, Decimal]:
+    """(comisión, neto para el freelancer). La comisión se redondea a centavos y el neto es lo que queda."""
+    commission = (amount * percent / 100).quantize(CENT, rounding=ROUND_HALF_UP)
+    return commission, amount - commission
 
 
 def pay_solicitud(db: Session, cliente: Perfil, solicitud_id: str, simulate_decline: bool) -> PaymentReceipt:
@@ -47,6 +63,7 @@ def pay_solicitud(db: Session, cliente: Perfil, solicitud_id: str, simulate_decl
     result = provider.charge(amount, CURRENCY, f"Plan {solicitud.plan_nombre}: {solicitud.titulo}", simulate_decline)
     now = datetime.now(timezone.utc)
 
+    commission, net = split_commission(amount) if result.approved else (Decimal(0), Decimal(0))
     pago = Pago(
         id=uuid.uuid4(),
         solicitud_id=solicitud.id,
@@ -56,6 +73,9 @@ def pay_solicitud(db: Session, cliente: Perfil, solicitud_id: str, simulate_decl
         moneda=CURRENCY,
         metodo=provider.name,
         referencia=result.reference,
+        comision_pct=COMMISSION_PERCENT if result.approved else Decimal(0),
+        comision=commission,
+        neto=net,
         estado=PAGO_APROBADO if result.approved else PAGO_RECHAZADO,
         motivo_rechazo=None if result.approved else result.reason,
     )
@@ -116,7 +136,7 @@ def payments_by_solicitud(db: Session, solicitud_ids: list[uuid.UUID]) -> dict[u
     }
 
 
-def _to_out(pago: Pago, solicitud: Solicitud, other: Perfil) -> PaymentOut:
+def _to_out(pago: Pago, solicitud: Solicitud, other: Perfil, for_freelancer: bool) -> PaymentOut:
     return PaymentOut(
         id=str(pago.id),
         solicitudId=str(solicitud.id),
@@ -132,11 +152,14 @@ def _to_out(pago: Pago, solicitud: Solicitud, other: Perfil) -> PaymentOut:
         counterpart=PaymentCounterpart(
             id=str(other.id), name=other.nombre_completo, initials=get_initials(other.nombre_completo)
         ),
+        commissionRate=float(pago.comision_pct) if for_freelancer else None,
+        commission=float(pago.comision) if for_freelancer else None,
+        net=float(pago.neto) if for_freelancer else None,
     )
 
 
 def list_client_payments(db: Session, cliente: Perfil) -> list[PaymentOut]:
-    """Todos los intentos del cliente, aprobados y rechazados."""
+    """Todos los intentos del cliente, aprobados y rechazados. No incluye la comisión: no es asunto suyo."""
     rows = db.execute(
         select(Pago, Solicitud, Perfil)
         .join(Solicitud, Solicitud.id == Pago.solicitud_id)
@@ -144,11 +167,11 @@ def list_client_payments(db: Session, cliente: Perfil) -> list[PaymentOut]:
         .where(Pago.cliente_id == cliente.id)
         .order_by(Pago.creado_en.desc())
     ).all()
-    return [_to_out(pago, solicitud, freelancer) for pago, solicitud, freelancer in rows]
+    return [_to_out(pago, solicitud, freelancer, False) for pago, solicitud, freelancer in rows]
 
 
 def list_freelancer_payments(db: Session, freelancer: Perfil) -> list[PaymentOut]:
-    """El freelancer solo ve los cobros que sí se realizaron."""
+    """El freelancer solo ve los cobros que sí se realizaron, con la comisión y el neto."""
     rows = db.execute(
         select(Pago, Solicitud, Perfil)
         .join(Solicitud, Solicitud.id == Pago.solicitud_id)
@@ -156,4 +179,54 @@ def list_freelancer_payments(db: Session, freelancer: Perfil) -> list[PaymentOut
         .where(Pago.freelancer_id == freelancer.id, Pago.estado == PAGO_APROBADO)
         .order_by(Pago.creado_en.desc())
     ).all()
-    return [_to_out(pago, solicitud, cliente) for pago, solicitud, cliente in rows]
+    return [_to_out(pago, solicitud, cliente, True) for pago, solicitud, cliente in rows]
+
+
+def client_summary(db: Session, cliente: Perfil) -> ClientPaymentSummary:
+    contracts = db.scalars(
+        select(Contrato).where(Contrato.cliente_id == cliente.id, Contrato.estado == CONTRATO_ACTIVO)
+    ).all()
+    return ClientPaymentSummary(
+        activeContracts=len(contracts),
+        monthlySpend=float(sum((Decimal(c.plan_precio) for c in contracts), Decimal(0))),
+        nextChargeAt=min((c.proximo_cobro for c in contracts), default=None),
+    )
+
+
+def freelancer_summary(db: Session, freelancer: Perfil) -> FreelancerPaymentSummary:
+    gross, commission, net = db.execute(
+        select(
+            func.coalesce(func.sum(Pago.monto), 0),
+            func.coalesce(func.sum(Pago.comision), 0),
+            func.coalesce(func.sum(Pago.neto), 0),
+        ).where(Pago.freelancer_id == freelancer.id, Pago.estado == PAGO_APROBADO)
+    ).one()
+    contracts = db.scalars(
+        select(Contrato).where(Contrato.freelancer_id == freelancer.id, Contrato.estado == CONTRATO_ACTIVO)
+    ).all()
+    # Ingreso mensual neto: lo que quedaría de cada contrato activo después de la comisión.
+    monthly_net = sum((split_commission(Decimal(c.plan_precio))[1] for c in contracts), Decimal(0))
+    return FreelancerPaymentSummary(
+        commissionRate=float(COMMISSION_PERCENT),
+        totalGross=float(gross),
+        totalCommission=float(commission),
+        totalNet=float(net),
+        activeContracts=len(contracts),
+        monthlyNet=float(monthly_net),
+        nextChargeAt=min((c.proximo_cobro for c in contracts), default=None),
+    )
+
+
+def get_payment_for_receipt(db: Session, profile: Perfil, payment_id: str) -> tuple[Pago, Solicitud, Perfil, Perfil]:
+    """(pago, solicitud, cliente, freelancer) si el perfil es una de las dos partes; si no, 404."""
+    try:
+        payment_uuid = uuid.UUID(payment_id)
+    except ValueError:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "No se encontró el comprobante.")
+
+    pago = db.get(Pago, payment_uuid)
+    # Para cualquiera que no sea cliente ni freelancer del pago, el comprobante "no existe".
+    if not pago or profile.id not in (pago.cliente_id, pago.freelancer_id):
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "No se encontró el comprobante.")
+
+    return pago, db.get(Solicitud, pago.solicitud_id), db.get(Perfil, pago.cliente_id), db.get(Perfil, pago.freelancer_id)
