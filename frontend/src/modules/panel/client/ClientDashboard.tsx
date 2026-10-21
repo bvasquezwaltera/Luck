@@ -19,6 +19,7 @@ import { PaymentsSection } from "@/modules/panel/client/payments/PaymentsSection
 import { SolicitudesSection } from "@/modules/panel/client/projects/ProjectsSection";
 import type { ClientSectionId } from "@/types/clientSection";
 import type { ClientSolicitud } from "@/types/clientSolicitud";
+import type { ClientPaymentSummary, PaymentRecord } from "@/types/payment";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import { useDraftProfile } from "@/hooks/useDraftProfile";
 import fallbackProfileData from "@/data/exampleClientProfile.json";
@@ -32,14 +33,21 @@ const menuItems: Array<{ id: ClientSectionId; label: string; icon: typeof Layout
   { id: "configuracion", label: "Configuración", icon: Settings },
 ];
 
+const EMPTY_SUMMARY: ClientPaymentSummary = { activeContracts: 0, monthlySpend: 0, nextChargeAt: null };
+
 export function ClientDashboard({
   embedded = false,
   profile,
   solicitudes = [],
+  payments = [],
+  paymentSummary = EMPTY_SUMMARY,
 }: {
   embedded?: boolean;
   profile?: FreelancerProfile;
   solicitudes?: ClientSolicitud[];
+  // null = el servidor falló al cargarlos (la sección lo avisa); si no se pasan, se muestran vacíos.
+  payments?: PaymentRecord[] | null;
+  paymentSummary?: ClientPaymentSummary | null;
 }) {
   const [activeSection, setActiveSection] = useState<ClientSectionId>("inicio");
 
@@ -59,13 +67,13 @@ export function ClientDashboard({
       case "entregas":
         return <DeliveriesSection />;
       case "pagos":
-        return <PaymentsSection />;
+        return <PaymentsSection payments={payments} summary={paymentSummary} />;
       case "configuracion":
         return <ConfigurationSection draftProfile={draftProfile} setDraftProfile={setDraftProfile} />;
       default:
         return null;
     }
-  }, [activeSection, safeProfile, draftProfile, solicitudes]);
+  }, [activeSection, safeProfile, draftProfile, solicitudes, payments, paymentSummary]);
 
   if (embedded) {
     return (

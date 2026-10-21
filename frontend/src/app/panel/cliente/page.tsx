@@ -1,6 +1,7 @@
 import { ClientDashboard } from "@/modules/panel/client/ClientDashboard";
 import { requireRole } from "@/lib/api/server/requireRole";
 import { getClientProfile } from "@/lib/api/server/clientProfile";
+import { getClientPaymentSummary, getMyPayments } from "@/lib/api/server/payments";
 import { getMySolicitudes } from "@/lib/api/server/solicitudes";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import exampleProfileData from "@/data/exampleClientProfile.json";
@@ -9,7 +10,12 @@ const exampleProfile = exampleProfileData as FreelancerProfile;
 
 export default async function ClientPanelPage() {
   const authProfile = await requireRole("client");
-  const [clientProfile, solicitudes] = await Promise.all([getClientProfile(), getMySolicitudes()]);
+  const [clientProfile, solicitudes, payments, paymentSummary] = await Promise.all([
+    getClientProfile(),
+    getMySolicitudes(),
+    getMyPayments(),
+    getClientPaymentSummary(),
+  ]);
 
   // Los datos reales del cliente (nombre, email, país, zona horaria) pisan el
   // perfil de ejemplo; el resto del panel todavía no tiene backend.
@@ -24,5 +30,12 @@ export default async function ClientPanelPage() {
     timezone: clientProfile?.timezone ?? "",
   };
 
-  return <ClientDashboard profile={profile} solicitudes={solicitudes} />;
+  return (
+    <ClientDashboard
+      profile={profile}
+      solicitudes={solicitudes}
+      payments={payments}
+      paymentSummary={paymentSummary}
+    />
+  );
 }

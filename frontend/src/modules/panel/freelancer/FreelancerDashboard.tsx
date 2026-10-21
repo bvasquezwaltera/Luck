@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import {
+  CreditCard,
   Inbox,
   LayoutGrid,
   MessageCircle,
@@ -10,6 +11,7 @@ import {
   Truck,
 } from "lucide-react";
 import { PanelBrandHeader } from "@/modules/panel/PanelBrandHeader";
+import { PaymentsSection } from "@/modules/panel/freelancer/payments/PaymentsSection";
 import { PanelSidebar } from "@/modules/panel/PanelSidebar";
 import { ConfigurationSection } from "@/modules/panel/freelancer/configuracion/ConfigurationSection";
 import { DeliveriesSection } from "@/modules/panel/freelancer/deliveries/DeliveriesSection";
@@ -19,6 +21,7 @@ import { SolicitudesSection } from "@/modules/panel/freelancer/solicitudes/Solic
 import { ReviewsSection } from "@/modules/panel/freelancer/reviews/ReviewsSection";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import type { FreelancerSectionId } from "@/types/freelancerSection";
+import type { FreelancerPaymentSummary, PaymentRecord } from "@/types/payment";
 import type { ReceivedSolicitud } from "@/types/receivedSolicitud";
 import type { ReviewEntry } from "@/types/review";
 import { useDraftProfile } from "@/hooks/useDraftProfile";
@@ -29,20 +32,36 @@ const menuItems: Array<{ id: FreelancerSectionId; label: string; icon: typeof La
   { id: "solicitudes", label: "Solicitudes", icon: Inbox },
   { id: "mensajes", label: "Mensajes", icon: MessageCircle },
   { id: "entregas", label: "Entregas", icon: Truck },
+  { id: "pagos", label: "Pagos", icon: CreditCard },
   { id: "reseñas", label: "Reseñas", icon: Star },
   { id: "configuracion", label: "Configuración", icon: Settings },
 ];
+
+const EMPTY_SUMMARY: FreelancerPaymentSummary = {
+  commissionRate: 5,
+  totalGross: 0,
+  totalCommission: 0,
+  totalNet: 0,
+  activeContracts: 0,
+  monthlyNet: 0,
+  nextChargeAt: null,
+};
 
 export function FreelancerDashboard({
   embedded = false,
   profile,
   reviews = [],
   solicitudes = [],
+  payments = [],
+  paymentSummary = EMPTY_SUMMARY,
 }: {
   embedded?: boolean;
   profile?: FreelancerProfile;
   reviews?: ReviewEntry[];
   solicitudes?: ReceivedSolicitud[];
+  // null = el servidor falló al cargarlos (la sección lo avisa); si no se pasan, se muestran vacíos.
+  payments?: PaymentRecord[] | null;
+  paymentSummary?: FreelancerPaymentSummary | null;
 }) {
   const [activeSection, setActiveSection] = useState<FreelancerSectionId>("inicio");
 
@@ -61,6 +80,8 @@ export function FreelancerDashboard({
         return <MessagesSection />;
       case "entregas":
         return <DeliveriesSection />;
+      case "pagos":
+        return <PaymentsSection payments={payments} summary={paymentSummary} />;
       case "reseñas":
         return <ReviewsSection reviews={reviews} />;
       case "configuracion":
@@ -68,7 +89,7 @@ export function FreelancerDashboard({
       default:
         return null;
     }
-  }, [activeSection, safeProfile, reviews, draftProfile, solicitudes]);
+  }, [activeSection, safeProfile, reviews, draftProfile, solicitudes, payments, paymentSummary]);
 
   if (embedded) {
     return (

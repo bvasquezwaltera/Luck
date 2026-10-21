@@ -3,5 +3,6 @@ export type FreelancerSectionId =
   | "solicitudes"
   | "mensajes"
   | "entregas"
+  | "pagos"
   | "reseñas"
   | "configuracion";

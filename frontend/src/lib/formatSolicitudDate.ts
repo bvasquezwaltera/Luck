@@ -11,3 +11,17 @@ export function formatSolicitudDate(value: string): string {
   const date = /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T12:00:00Z`) : new Date(value);
   return dateFormatter.format(date);
 }
+
+const dateTimeFormatter = new Intl.DateTimeFormat("es-PE", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+  timeZone: "America/Lima",
+});
+
+export function formatSolicitudDateTime(value: string): string {
+  return dateTimeFormatter.format(new Date(value));
+}
