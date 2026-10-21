@@ -6,7 +6,13 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
 
   return (
     <div className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
-      <div className={`max-w-[70%] rounded-2xl px-4 py-2 text-xs ${isMe ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-800"}`}>
+      <div
+        className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm sm:max-w-[70%] lg:max-w-xl ${
+          isMe
+            ? "rounded-br-md bg-indigo-600 text-white"
+            : "rounded-bl-md border border-slate-200 bg-white text-slate-800"
+        }`}
+      >
         {message.fileUrl && message.fileName?.match(/\.(png|jpe?g|gif|webp|svg)$/i) ? (
           <img src={message.fileUrl} alt={message.fileName} className="max-h-48 rounded-lg" />
         ) : message.fileUrl ? (
@@ -19,9 +25,9 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
             {message.fileName}
           </a>
         ) : (
-          <p>{message.text}</p>
+          <p className="whitespace-pre-wrap break-words leading-relaxed">{message.text}</p>
         )}
-        <p className={`mt-1 text-[10px] ${isMe ? "text-indigo-100" : "text-gray-400"}`}>{message.time}</p>
+        <p className={`mt-1 text-right text-[10px] ${isMe ? "text-indigo-200" : "text-slate-400"}`}>{message.time}</p>
       </div>
     </div>
   );

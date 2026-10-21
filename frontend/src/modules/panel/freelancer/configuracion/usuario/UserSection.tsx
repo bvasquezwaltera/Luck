@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { TriangleAlert } from "lucide-react";
 import { changePassword, deleteAccount } from "@/lib/api/client/auth";
 import { Button } from "@/ui/Button";
 import { Card } from "@/ui/Card";
 import { Input } from "@/ui/Input";
+import { Modal } from "@/ui/Modal";
 
 export function UserSection({ email }: { email: string }) {
   const router = useRouter();
@@ -19,6 +21,7 @@ export function UserSection({ email }: { email: string }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
 
   async function handleChangePassword() {
     if (!newPassword) return;
@@ -34,6 +37,13 @@ export function UserSection({ email }: { email: string }) {
     }
     setPasswordMessage({ type: "success", text: "Contraseña actualizada." });
     setNewPassword("");
+  }
+
+  function closeDeleteModal() {
+    if (isDeleting) return;
+    setConfirmingDelete(false);
+    setConfirmText("");
+    setDeleteError("");
   }
 
   async function handleDeleteAccount() {
@@ -55,16 +65,18 @@ export function UserSection({ email }: { email: string }) {
       <Card className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">Cuenta</h3>
 
-        <Input label="Email" name="email" type="email" autoComplete="username" value={email} readOnly />
+        <div className="grid gap-4 md:grid-cols-2">
+          <Input label="Email" name="email" type="email" autoComplete="username" value={email} readOnly />
 
-        <Input
-          label="Nueva contraseña"
-          name="new-password"
-          type="password"
-          autoComplete="new-password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-        />
+          <Input
+            label="Nueva contraseña"
+            name="new-password"
+            type="password"
+            autoComplete="new-password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+        </div>
 
         {passwordMessage && (
           <p className={`text-xs ${passwordMessage.type === "error" ? "text-red-500" : "text-emerald-600"}`}>
@@ -88,38 +100,57 @@ export function UserSection({ email }: { email: string }) {
           Eliminar tu cuenta es una acción permanente y no se puede deshacer.
         </p>
 
-        {deleteError && <p className="text-xs text-red-500">{deleteError}</p>}
+        <Button
+          variant="outline-neutral"
+          className="!min-w-0 !px-4 hover:!border-red-300 hover:!text-red-600"
+          onClick={() => setConfirmingDelete(true)}
+        >
+          Eliminar cuenta
+        </Button>
+      </Card>
+      <Modal open={confirmingDelete} onClose={closeDeleteModal} size="sm">
+        <div className="p-6">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600">
+            <TriangleAlert className="h-6 w-6" />
+          </span>
+          <h3 className="mt-4 text-lg font-bold text-slate-900">¿Eliminar tu cuenta?</h3>
+          <p className="mt-1.5 text-sm text-slate-600">
+            Esta acción es permanente y no se puede deshacer. Se borrará todo lo asociado a tu cuenta:
+          </p>
+          <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-600">
+            <li>Tu perfil y tus datos</li>
+            <li>Solicitudes, contratos, pagos y entregas</li>
+            <li>Los archivos adjuntos que subiste</li>
+          </ul>
 
-        {confirmingDelete ? (
-          <div className="flex flex-wrap items-center gap-3">
-            <p className="text-sm font-medium text-red-600">¿Confirmas que quieres eliminar tu cuenta?</p>
+          <div className="mt-5">
+            <Input
+              label="Escribe ELIMINAR para confirmar"
+              name="confirm-delete"
+              autoComplete="off"
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder="ELIMINAR"
+            />
+          </div>
+
+          {deleteError && <p className="mt-3 text-xs text-red-500">{deleteError}</p>}
+
+          <div className="mt-6 flex justify-end gap-3">
+            <Button variant="outline-neutral" className="!min-w-0 !px-4" onClick={closeDeleteModal} disabled={isDeleting}>
+              Cancelar
+            </Button>
             <Button
               variant="outline-neutral"
-              className="!min-w-0 !px-4 !border-red-300 !text-red-600 hover:!bg-red-50"
+              className="!min-w-0 !border-red-600 !bg-red-600 !px-4 !text-white hover:!bg-red-700 disabled:!border-red-200 disabled:!bg-red-200"
               onClick={handleDeleteAccount}
-              disabled={isDeleting}
+              disabled={isDeleting || confirmText.trim() !== "ELIMINAR"}
             >
               {isDeleting ? "Eliminando..." : "Sí, eliminar mi cuenta"}
             </Button>
-            <Button
-              variant="outline-neutral"
-              className="!min-w-0 !px-4"
-              onClick={() => setConfirmingDelete(false)}
-              disabled={isDeleting}
-            >
-              Cancelar
-            </Button>
           </div>
-        ) : (
-          <Button
-            variant="outline-neutral"
-            className="!min-w-0 !px-4 hover:!border-red-300 hover:!text-red-600"
-            onClick={() => setConfirmingDelete(true)}
-          >
-            Eliminar cuenta
-          </Button>
-        )}
-      </Card>
+        </div>
+      </Modal>
     </div>
   );
 }

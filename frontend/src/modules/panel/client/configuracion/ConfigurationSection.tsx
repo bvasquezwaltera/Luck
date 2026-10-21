@@ -1,6 +1,8 @@
 "use client";
 
+import { Lock, Settings, UserRound } from "lucide-react";
 import { useState, type Dispatch, type SetStateAction } from "react";
+import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
 import { ProfileSection } from "@/modules/panel/client/configuracion/perfil/ProfileSection";
 import { UserSection } from "@/modules/panel/client/configuracion/usuario/UserSection";
 import { saveClientProfile } from "@/lib/api/client/clientProfile";
@@ -11,8 +13,8 @@ import { Tabs, type TabItem } from "@/ui/Tabs";
 type ConfigTab = "perfil" | "usuario";
 
 const tabs: TabItem<ConfigTab>[] = [
-  { id: "perfil", label: "Perfil" },
-  { id: "usuario", label: "Usuario" },
+  { id: "perfil", label: "Perfil", icon: UserRound },
+  { id: "usuario", label: "Usuario", icon: Lock },
 ];
 
 export function ConfigurationSection({
@@ -42,8 +44,12 @@ export function ConfigurationSection({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl bg-white p-5 shadow-sm">
-        <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+      <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
+        <PanelSectionHeader icon={Settings} subtitle="Administra tu perfil y los datos de tu cuenta." title="Configuración" />
+      </div>
+
+      <div className="rounded-2xl bg-white p-2.5 shadow-sm">
+        <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} variant="pill" />
       </div>
 
       {activeTab === "perfil" && (

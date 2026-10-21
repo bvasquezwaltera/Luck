@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import { Paperclip, Send } from "lucide-react";
-import { Button } from "@/ui/Button";
 import { Input } from "@/ui/Input";
 
 export function ChatComposer({
@@ -25,17 +24,24 @@ export function ChatComposer({
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const canSend = draft.trim().length > 0;
+
   return (
-    <div className="flex items-end gap-2 border-t border-gray-100 p-4">
+    <div className="flex items-center gap-2 border-t border-slate-100 bg-white p-3 sm:p-4">
       <input
         ref={fileInputRef}
         type="file"
         className="hidden"
         onChange={(event) => handleFileChange(event.target.files?.[0])}
       />
-      <Button variant="outline-neutral" className="!min-w-0 !px-3" onClick={() => fileInputRef.current?.click()}>
-        <Paperclip className="h-3.5 w-3.5" />
-      </Button>
+      <button
+        type="button"
+        aria-label="Adjuntar archivo"
+        onClick={() => fileInputRef.current?.click()}
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+      >
+        <Paperclip className="h-4 w-4" />
+      </button>
 
       <Input
         label="Mensaje"
@@ -44,15 +50,17 @@ export function ChatComposer({
         onChange={(event) => setDraft(event.target.value)}
         onKeyDown={(event) => event.key === "Enter" && handleSend()}
         placeholder="Escribe un mensaje..."
-        className="flex-1"
+        className="min-w-0 flex-1"
       />
-      <Button
-        variant="primary"
-        className="!min-w-0 bg-indigo-600 !px-3 hover:bg-indigo-700"
+      <button
+        type="button"
+        aria-label="Enviar mensaje"
         onClick={handleSend}
+        disabled={!canSend}
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
       >
-        <Send className="h-3.5 w-3.5" />
-      </Button>
+        <Send className="h-4 w-4" />
+      </button>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MessageCircle } from "lucide-react";
 import { Avatar } from "@/ui/Avatar";
 import { Card } from "@/ui/Card";
 import { ChatComposer } from "@/modules/panel/freelancer/messages/chat/ChatComposer";
@@ -49,19 +49,36 @@ export function ChatView({
   };
 
   return (
-    <Card className="flex h-[calc(100vh-48px)] flex-col !p-0">
-      <div className="flex items-center gap-3 border-b border-gray-100 px-5 py-4">
-        <button type="button" onClick={onBack} className="text-gray-400 hover:text-gray-600">
+    <Card className="flex h-[calc(100vh-48px)] flex-col overflow-hidden !p-0">
+      <div className="flex items-center gap-3 border-b border-slate-100 bg-white px-4 py-3 sm:px-5">
+        <button
+          type="button"
+          onClick={onBack}
+          aria-label="Volver a mensajes"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+        >
           <ArrowLeft className="h-4 w-4" />
         </button>
         <Avatar initials={contactInitials} name={contactName} size="sm" />
-        <p className="text-sm font-semibold text-gray-900">{contactName}</p>
+        <p className="text-sm font-semibold text-slate-900">{contactName}</p>
       </div>
 
-      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
-        {messages.map((message, index) => (
-          <MessageBubble key={index} message={message} />
-        ))}
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-slate-50/70 px-4 py-5 sm:px-6">
+        {messages.length === 0 ? (
+          <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
+            <MessageCircle className="h-8 w-8 text-slate-300" />
+            <p className="text-sm text-slate-500">Escribe el primer mensaje.</p>
+          </div>
+        ) : (
+          <div className="flex flex-col">
+            {messages.map((message, index) => (
+              // Mensajes seguidos del mismo autor van más juntos que los de distinto autor.
+              <div key={index} className={index === 0 ? "" : messages[index - 1].from === message.from ? "mt-1" : "mt-4"}>
+                <MessageBubble message={message} />
+              </div>
+            ))}
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 

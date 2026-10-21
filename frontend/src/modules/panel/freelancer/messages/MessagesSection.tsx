@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircle } from "lucide-react";
+import { ChevronRight, MessageCircle } from "lucide-react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
 import { ChatView, type ChatMessage } from "@/modules/panel/freelancer/messages/chat/ChatView";
 import { Avatar } from "@/ui/Avatar";
-import { Button } from "@/ui/Button";
 import { Card } from "@/ui/Card";
 
 const conversations = [
@@ -68,31 +67,31 @@ export function MessagesSection() {
             </div>
           ) : (
             conversations.map((conversation) => (
-              <div
+              <button
+                type="button"
                 key={conversation.name}
-                className="flex items-center gap-4 border-b border-gray-100 px-5 py-4 transition-colors last:border-b-0 hover:bg-indigo-50/40"
+                onClick={() => setActiveContact(conversation.name)}
+                className="group flex w-full items-center gap-4 border-b border-slate-100 px-5 py-4 text-left transition-colors last:border-b-0 hover:bg-indigo-50/40 focus-visible:bg-indigo-50/40 focus-visible:outline-none"
               >
-                <Avatar initials={conversation.initials} name={conversation.name} size="sm" />
+                <Avatar initials={conversation.initials} name={conversation.name} size="md" />
 
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-600" />
-                    <p className="text-sm font-semibold text-gray-900">{conversation.name}</p>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <p className="truncate text-sm font-semibold text-slate-900">{conversation.name}</p>
+                    <span className="shrink-0 text-[11px] text-slate-400">{conversation.time}</span>
                   </div>
-                  <p className="mt-0.5 truncate text-xs text-gray-500">{conversation.body}</p>
+                  <div className="mt-1 flex items-center gap-2">
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-indigo-600" aria-label="Sin leer" />
+                    <p className="truncate text-sm font-medium text-slate-700">{conversation.body}</p>
+                  </div>
                 </div>
 
-                <div className="flex shrink-0 flex-col items-end gap-2">
-                  <span className="text-[11px] text-gray-400">{conversation.time}</span>
-                  <Button
-                    variant="outline-neutral"
-                    className="!min-w-0 !px-3"
-                    onClick={() => setActiveContact(conversation.name)}
-                  >
-                    Responder
-                  </Button>
-                </div>
-              </div>
+                <span className="hidden shrink-0 items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 transition group-hover:bg-indigo-600 group-hover:text-white sm:inline-flex">
+                  Responder
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </span>
+                <ChevronRight className="h-4 w-4 shrink-0 text-slate-300 sm:hidden" />
+              </button>
             ))
           )}
         </Card>

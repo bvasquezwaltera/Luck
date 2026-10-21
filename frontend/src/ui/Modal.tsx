@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
 const SIZE_CLASSES = {
+  sm: "max-w-md", // para confirmaciones
   md: "max-w-2xl",
   xl: "max-w-4xl", // para modales con dos columnas
 };

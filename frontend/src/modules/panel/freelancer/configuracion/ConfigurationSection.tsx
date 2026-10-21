@@ -1,7 +1,8 @@
 "use client";
 
-import { CreditCard, FolderKanban, Lock, UserRound } from "lucide-react";
+import { CreditCard, Settings, FolderKanban, Lock, UserRound } from "lucide-react";
 import { useState, type Dispatch, type SetStateAction } from "react";
+import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
 import { ProfileSection } from "@/modules/panel/freelancer/configuracion/perfil/ProfileSection";
 import { ProjectsSection } from "@/modules/panel/freelancer/configuracion/proyecto/ProjectsSection";
 import { SubscriptionSection } from "@/modules/panel/freelancer/configuracion/suscripcion/SubscriptionSection";
@@ -52,6 +53,10 @@ export function ConfigurationSection({
 
   return (
     <div className="space-y-4">
+      <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
+        <PanelSectionHeader icon={Settings} subtitle="Administra tu perfil, tu cuenta, tus proyectos y tu suscripción." title="Configuración" />
+      </div>
+
       <div className="rounded-2xl bg-white p-2.5 shadow-sm">
         <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} variant="pill" />
       </div>
