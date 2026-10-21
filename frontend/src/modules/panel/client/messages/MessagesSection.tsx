@@ -47,8 +47,8 @@ export function MessagesSection() {
   return (
     <div className="space-y-4">
       {!activeConversation && (
-        <div className="rounded-2xl bg-white p-5 shadow-sm">
-          <PanelSectionHeader subtitle="Bienvenido de nuevo" title="Mensajes" />
+        <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
+          <PanelSectionHeader icon={MessageCircle} subtitle="Conversa con tus freelancers." title="Mensajes" />
         </div>
       )}
 

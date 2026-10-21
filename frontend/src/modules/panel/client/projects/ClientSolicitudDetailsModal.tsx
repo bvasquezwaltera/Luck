@@ -1,254 +1,213 @@
 "use client";
 
-import { CalendarDays, ClipboardList, CreditCard, Clock, FileText, Hash, Hourglass, Paperclip, ShieldCheck, Sparkles, User, X } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowRight,
+  CalendarDays,
+  Check,
+  CheckCircle2,
+  CreditCard,
+  FileText,
+  Hourglass,
+  Layers,
+  Paperclip,
+  RotateCcw,
+  Sparkles,
+  XCircle,
+} from "lucide-react";
+import {
+  DetailsBanner,
+  DetailsSection,
+  InfoRows,
+  SideCard,
+  SolicitudDetailsLayout,
+} from "@/modules/panel/SolicitudDetailsLayout";
 import { SolicitudAttachmentList } from "@/modules/panel/SolicitudAttachmentList";
-import { Badge } from "@/ui/Badge";
+import { CLIENT_LABEL, CLIENT_TONE, payHint } from "@/modules/panel/client/projects/clientSolicitudStatus";
+import { formatMoney } from "@/lib/formatMoney";
+import { formatSolicitudDate } from "@/lib/formatSolicitudDate";
+import type { ClientSolicitud } from "@/types/clientSolicitud";
 import { Button } from "@/ui/Button";
 import { Modal } from "@/ui/Modal";
-import { formatSolicitudDate } from "@/lib/formatSolicitudDate";
-import type { ClientSolicitud, ClientSolicitudStatus } from "@/types/clientSolicitud";
-
-export const CLIENT_STATUS_CONFIG: Record<ClientSolicitudStatus, { label: string; className: string }> = {
-  enviada: { label: "Enviada", className: "!bg-indigo-50 !text-indigo-600" },
-  aceptada: { label: "Aceptada", className: "!bg-emerald-50 !text-emerald-600" },
-  contratada: { label: "Contratada", className: "!bg-indigo-50 !text-indigo-600" },
-  rechazada: { label: "Rechazada", className: "!bg-red-50 !text-red-600" },
-  cancelada: { label: "Cancelada", className: "!bg-slate-100 !text-slate-500" },
-  expirada: { label: "Expirada", className: "!bg-amber-50 !text-amber-600" },
-};
-
-const STATUS_NOTE: Record<ClientSolicitudStatus, { title: string; text: string; box: string; iconBox: string; icon: string }> = {
-  enviada: {
-    title: "Esperando respuesta",
-    text: "El freelancer revisará tu solicitud. Verás aquí su respuesta apenas la envíe.",
-    box: "bg-blue-50",
-    iconBox: "bg-blue-100",
-    icon: "text-blue-600",
-  },
-  aceptada: {
-    title: "Solicitud aceptada",
-    text: "El freelancer aceptó tu solicitud. Falta tu pago para activar el contrato.",
-    box: "bg-emerald-50",
-    iconBox: "bg-emerald-100",
-    icon: "text-emerald-600",
-  },
-  contratada: {
-    title: "Contrato activo",
-    text: "Pagaste esta solicitud y tu suscripción con el freelancer está activa.",
-    box: "bg-indigo-50",
-    iconBox: "bg-indigo-100",
-    icon: "text-indigo-600",
-  },
-  rechazada: {
-    title: "Solicitud rechazada",
-    text: "El freelancer no pudo aceptar esta solicitud. Puedes elegir otro plan o a otro freelancer.",
-    box: "bg-red-50",
-    iconBox: "bg-red-100",
-    icon: "text-red-600",
-  },
-  cancelada: {
-    title: "Solicitud cancelada",
-    text: "Esta solicitud fue cancelada.",
-    box: "bg-slate-100",
-    iconBox: "bg-slate-200",
-    icon: "text-slate-600",
-  },
-  expirada: {
-    title: "Solicitud expirada",
-    text: "Esta solicitud venció sin respuesta.",
-    box: "bg-amber-50",
-    iconBox: "bg-amber-100",
-    icon: "text-amber-600",
-  },
-};
-
-// El botón de pagar solo se habilita con la solicitud aceptada; en los demás estados explica por qué no.
-export function payHint(status: ClientSolicitudStatus): string {
-  if (status === "enviada") return "Disponible cuando el freelancer acepte tu solicitud";
-  if (status === "aceptada") return "Pagar para activar el contrato";
-  if (status === "contratada") return "Ya pagaste esta solicitud";
-  return "Esta solicitud no se puede pagar";
-}
 
 export function ClientSolicitudDetailsModal({
   open,
   onClose,
   solicitud,
   onPay,
+  onGoToDeliveries,
 }: {
   open: boolean;
   onClose: () => void;
   solicitud: ClientSolicitud;
   onPay: () => void;
+  onGoToDeliveries?: () => void;
 }) {
-  const status = CLIENT_STATUS_CONFIG[solicitud.status];
-  const note = STATUS_NOTE[solicitud.status];
   const revisions = Number.parseInt(solicitud.plan.revisions, 10) || 0;
+  const payment = solicitud.payment;
+
+  // Lo primero que ve: en qué está la solicitud y qué sigue.
+  const banner =
+    solicitud.status === "contratada" ? (
+      <DetailsBanner tone="emerald" icon={CheckCircle2} title="Contrato activo">
+        {payment
+          ? `Pagaste ${formatMoney(payment.amount)} el ${formatSolicitudDate(payment.paidAt)}. Próximo cobro: ${formatSolicitudDate(payment.nextChargeAt)}.`
+          : "Tu solicitud está pagada."}{" "}
+        El freelancer planificará las entregas y las verás en la sección Entregas.
+      </DetailsBanner>
+    ) : solicitud.status === "aceptada" ? (
+      <DetailsBanner tone="indigo" icon={CreditCard} title="El freelancer aceptó tu solicitud">
+        Falta tu pago para activar el contrato. Pagas hoy el primer mes.
+      </DetailsBanner>
+    ) : solicitud.status === "enviada" ? (
+      <DetailsBanner tone="amber" icon={Hourglass} title="Esperando respuesta">
+        El freelancer revisará tu solicitud. Verás aquí su respuesta apenas la envíe.
+      </DetailsBanner>
+    ) : solicitud.status === "rechazada" ? (
+      <DetailsBanner tone="red" icon={XCircle} title="El freelancer rechazó tu solicitud">
+        {solicitud.rejectionReason
+          ? `Motivo: ${solicitud.rejectionReason}`
+          : "Puedes elegir otro plan o a otro freelancer."}
+      </DetailsBanner>
+    ) : (
+      <DetailsBanner tone="slate" icon={AlertCircle} title={CLIENT_LABEL[solicitud.status]}>
+        {solicitud.status === "cancelada" ? "Esta solicitud fue cancelada." : "Esta solicitud venció sin respuesta."}
+      </DetailsBanner>
+    );
+
+  const main = (
+    <>
+      <DetailsSection icon={FileText} title="Lo que pediste">
+        <p className="whitespace-pre-line text-sm leading-6 text-slate-700">{solicitud.description}</p>
+      </DetailsSection>
+
+      {solicitud.characteristics.length > 0 && (
+        <DetailsSection icon={Sparkles} title="Características">
+          <ul className="space-y-2">
+            {solicitud.characteristics.map((item, index) => (
+              <li key={index} className="flex items-start gap-2.5 text-sm leading-6 text-slate-700">
+                <Check className="mt-1 h-4 w-4 shrink-0 text-emerald-500" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </DetailsSection>
+      )}
+
+      {solicitud.attachments.length > 0 && (
+        <DetailsSection icon={Paperclip} title="Anexos e inspiración">
+          <SolicitudAttachmentList solicitudId={solicitud.id} attachments={solicitud.attachments} layout="rows" />
+        </DetailsSection>
+      )}
+    </>
+  );
+
+  const aside = (
+    <>
+      <SideCard label="Freelancer">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold text-white">
+            {solicitud.freelancer.initials}
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-slate-900">{solicitud.freelancer.name}</p>
+            {solicitud.freelancer.specialty && (
+              <p className="text-xs text-slate-500">{solicitud.freelancer.specialty}</p>
+            )}
+          </div>
+        </div>
+      </SideCard>
+
+      <SideCard label="Plan solicitado">
+        <p className="flex items-baseline gap-1">
+          <span className="text-2xl font-bold tracking-tight text-slate-900">{formatMoney(solicitud.plan.price)}</span>
+          <span className="text-xs text-slate-500">/mes</span>
+        </p>
+        <p className="mt-1 text-sm font-medium text-slate-700">Plan {solicitud.plan.name}</p>
+        <ul className="mt-3 space-y-1.5 border-t border-slate-200 pt-3 text-xs text-slate-600">
+          {solicitud.plan.activeProjects && (
+            <li className="flex items-center gap-2">
+              <Layers className="h-3.5 w-3.5 text-slate-400" />
+              {solicitud.plan.activeProjects} proyectos activos
+            </li>
+          )}
+          {revisions > 0 && (
+            <li className="flex items-center gap-2">
+              <RotateCcw className="h-3.5 w-3.5 text-slate-400" />
+              {revisions} {revisions === 1 ? "revisión incluida" : "revisiones incluidas"}
+            </li>
+          )}
+          {solicitud.desiredDate && (
+            <li className="flex items-center gap-2">
+              <CalendarDays className="h-3.5 w-3.5 text-slate-400" />
+              Para el {formatSolicitudDate(solicitud.desiredDate)}
+            </li>
+          )}
+        </ul>
+      </SideCard>
+
+      {solicitud.status === "contratada" && payment && (
+        <SideCard label="Tu pago">
+          <InfoRows
+            rows={[
+              { label: "Pagado", value: formatMoney(payment.amount), strong: true },
+              { label: "Fecha", value: formatSolicitudDate(payment.paidAt) },
+              { label: "Próximo cobro", value: formatSolicitudDate(payment.nextChargeAt) },
+              { label: "Referencia", value: payment.reference },
+            ]}
+          />
+        </SideCard>
+      )}
+    </>
+  );
+
+  // Pagar está siempre a la vista, pero solo se habilita con la solicitud aceptada; con el contrato ya activo,
+  // el paso siguiente es ir a las entregas.
+  const footer = (
+    <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+      <Button variant="outline-neutral" onClick={onClose} className="sm:min-w-28">
+        Cerrar
+      </Button>
+      {solicitud.status === "contratada" ? (
+        onGoToDeliveries && (
+          <Button
+            onClick={() => {
+              onClose();
+              onGoToDeliveries();
+            }}
+            className="gap-1.5 sm:min-w-36"
+          >
+            Ir a entregas
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Button>
+        )
+      ) : (
+        <Button
+          onClick={onPay}
+          disabled={solicitud.status !== "aceptada"}
+          title={payHint(solicitud.status)}
+          className="gap-1.5 disabled:cursor-not-allowed disabled:opacity-40 sm:min-w-36"
+        >
+          <CreditCard className="h-3.5 w-3.5" />
+          Pagar {formatMoney(solicitud.plan.price)}
+        </Button>
+      )}
+    </div>
+  );
 
   return (
-    <Modal open={open} onClose={onClose}>
-      <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-slate-200 bg-white p-5 sm:p-6">
-        <div className="min-w-0 pr-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-xl font-bold text-slate-900">{solicitud.title}</h2>
-            <Badge className={`${status.className} whitespace-nowrap text-[11px] font-medium`}>{status.label}</Badge>
-          </div>
-          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
-            <span className="flex items-center gap-1">
-              <Hash className="h-3 w-3" />
-              {solicitud.id.slice(0, 8)}
-            </span>
-            <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              Enviada el {formatSolicitudDate(solicitud.createdAt)}
-            </span>
-          </div>
-        </div>
-        <button
-          type="button"
-          aria-label="Cerrar detalles"
-          onClick={onClose}
-          className="shrink-0 rounded-full p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-        >
-          <X className="h-5 w-5" />
-        </button>
-      </div>
-
-      <div className="space-y-6 p-5 sm:p-6">
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-violet-50 p-4">
-            <div className="flex items-center gap-1.5">
-              <ShieldCheck className="h-3.5 w-3.5 text-indigo-500" />
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-indigo-500">Plan solicitado</p>
-            </div>
-            <div className="mt-2 flex items-baseline justify-between gap-3">
-              <p className="text-lg font-bold text-slate-900">Plan {solicitud.plan.name}</p>
-              <p className="text-sm font-bold text-slate-900">
-                ${solicitud.plan.price}
-                <span className="text-xs font-normal text-slate-500"> /mes</span>
-              </p>
-            </div>
-            <p className="mt-1 text-xs leading-5 text-slate-600">
-              {solicitud.plan.activeProjects ? `Proyectos activos: ${solicitud.plan.activeProjects}. ` : ""}
-              {revisions > 0 ? `${revisions} ${revisions === 1 ? "revisión incluida" : "revisiones incluidas"}.` : ""}
-            </p>
-          </div>
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <div className="flex items-center gap-1.5">
-              <User className="h-3.5 w-3.5 text-slate-400" />
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Freelancer</p>
-            </div>
-            <div className="mt-2 flex items-start gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-semibold text-white">
-                {solicitud.freelancer.initials}
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-slate-900">{solicitud.freelancer.name}</p>
-                <p className="mt-0.5 text-xs leading-5 text-slate-500">
-                  {solicitud.freelancer.specialty || "Freelancer"}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <section className="space-y-4">
-          <div>
-            <div className="mb-2 flex items-center gap-2">
-              <ClipboardList className="h-4 w-4 text-indigo-600" />
-              <h3 className="text-sm font-semibold text-slate-900">Título</h3>
-            </div>
-            <p className="rounded-xl border border-slate-100 bg-slate-50 p-4 text-sm font-semibold text-slate-800">
-              {solicitud.title}
-            </p>
-          </div>
-
-          <div>
-            <div className="mb-2 flex items-center gap-2">
-              <FileText className="h-4 w-4 text-indigo-600" />
-              <h3 className="text-sm font-semibold text-slate-900">Descripción</h3>
-            </div>
-            <p className="whitespace-pre-line rounded-xl border border-slate-100 bg-slate-50 p-4 text-sm leading-6 text-slate-700">
-              {solicitud.description}
-            </p>
-          </div>
-
-          {solicitud.characteristics.length > 0 && (
-            <div>
-              <div className="mb-2 flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-indigo-600" />
-                <h3 className="text-sm font-semibold text-slate-900">Características</h3>
-              </div>
-              <ul className="list-disc space-y-1 rounded-xl border border-slate-100 bg-slate-50 p-4 pl-9 text-sm leading-6 text-slate-700">
-                {solicitud.characteristics.map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </section>
-
-        {solicitud.attachments.length > 0 && (
-          <section>
-            <div className="mb-3 flex items-center gap-2">
-              <Paperclip className="h-4 w-4 text-indigo-600" />
-              <h3 className="text-sm font-semibold text-slate-900">Anexos e inspiración</h3>
-            </div>
-            <SolicitudAttachmentList solicitudId={solicitud.id} attachments={solicitud.attachments} layout="rows" />
-          </section>
-        )}
-
-        <div className="space-y-3 border-t border-slate-200 pt-5">
-          <div className={`flex items-start gap-3 rounded-xl p-4 ${note.box}`}>
-            <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${note.iconBox}`}>
-              <Hourglass className={`h-4 w-4 ${note.icon}`} />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-slate-900">{note.title}</p>
-              <p className="mt-0.5 text-xs leading-5 text-slate-600">{note.text}</p>
-              {solicitud.status === "contratada" && solicitud.payment && (
-                <p className="mt-2 text-xs text-slate-600">
-                  Pago {solicitud.payment.reference} · ${solicitud.payment.amount} el{" "}
-                  {formatSolicitudDate(solicitud.payment.paidAt)}. Próximo cobro:{" "}
-                  {formatSolicitudDate(solicitud.payment.nextChargeAt)}.
-                </p>
-              )}
-              {solicitud.status === "rechazada" && solicitud.rejectionReason && (
-                <p className="mt-2 text-xs font-medium text-red-700">Motivo: {solicitud.rejectionReason}</p>
-              )}
-            </div>
-          </div>
-
-          {solicitud.desiredDate && (
-            <div className="flex items-start gap-3 rounded-xl bg-slate-50 p-4">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100">
-                <CalendarDays className="h-4 w-4 text-slate-500" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-slate-900">Fecha deseada</p>
-                <p className="mt-0.5 text-xs leading-5 text-slate-600">{formatSolicitudDate(solicitud.desiredDate)}</p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="sticky bottom-0 z-10 border-t border-slate-200 bg-slate-50 p-5 sm:p-6">
-        <div className="flex gap-3">
-          <Button variant="outline-neutral" onClick={onClose} className="flex-1">
-            Cerrar
-          </Button>
-          <Button
-            onClick={onPay}
-            disabled={solicitud.status !== "aceptada"}
-            title={payHint(solicitud.status)}
-            className="flex-1 gap-1.5 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            <CreditCard className="h-3.5 w-3.5" />
-            {solicitud.status === "contratada" ? "Pagado" : `Pagar $${solicitud.plan.price}`}
-          </Button>
-        </div>
-      </div>
+    <Modal open={open} onClose={onClose} size="xl">
+      <SolicitudDetailsLayout
+        title={solicitud.title}
+        tone={CLIENT_TONE[solicitud.status]}
+        statusLabel={CLIENT_LABEL[solicitud.status]}
+        subtitle={`${solicitud.category || "Solicitud"} · Enviada el ${formatSolicitudDate(solicitud.createdAt)}`}
+        onClose={onClose}
+        banner={banner}
+        main={main}
+        aside={aside}
+        footer={footer}
+      />
     </Modal>
   );
 }

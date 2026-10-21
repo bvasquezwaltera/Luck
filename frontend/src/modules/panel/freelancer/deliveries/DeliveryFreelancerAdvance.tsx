@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Clock3, RotateCcw, UploadCloud } from "lucide-react";
+import { UploadCloud } from "lucide-react";
 import { DeliveryAttachmentPicker } from "@/modules/panel/DeliveryAttachmentPicker";
 import { EMPTY_ATTACHMENTS, resolveAttachments, type PickedAttachments } from "@/lib/deliveryFiles";
 import { addAdvance } from "@/lib/api/client/deliveries";
@@ -48,48 +48,16 @@ export function DeliveryFreelancerAdvance({
     onChanged(result.contracts);
   }
 
+  if (!canSubmit) return null;
+
   return (
-    <div className="rounded-[24px] border border-slate-200 bg-white p-4">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5">
       <div className="flex items-center gap-2">
         <UploadCloud className="h-4 w-4 text-indigo-500" />
         <h4 className="text-sm font-semibold text-slate-900">Registrar avance o entrega</h4>
       </div>
 
-      {module.apiStatus === "en_revision" && (
-        <div className="mt-4 flex items-start gap-3 rounded-xl bg-blue-50 p-4">
-          <Clock3 className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
-          <div>
-            <p className="text-sm font-semibold text-blue-900">Esperando la respuesta del cliente</p>
-            <p className="mt-0.5 text-xs leading-5 text-blue-700">
-              Ya enviaste este avance. Podrás subir otro si el cliente pide cambios.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {module.apiStatus === "aprobada" && (
-        <div className="mt-4 flex items-start gap-3 rounded-xl bg-emerald-50 p-4">
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
-          <div>
-            <p className="text-sm font-semibold text-emerald-900">Entrega aprobada</p>
-            <p className="mt-0.5 text-xs leading-5 text-emerald-700">El cliente aprobó esta entrega. ¡Buen trabajo!</p>
-          </div>
-        </div>
-      )}
-
-      {module.apiStatus === "cambios_solicitados" && (
-        <div className="mt-4 flex items-start gap-3 rounded-xl bg-amber-50 p-4">
-          <RotateCcw className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
-          <div>
-            <p className="text-sm font-semibold text-amber-900">El cliente pidió cambios</p>
-            <p className="mt-0.5 text-xs leading-5 text-amber-700">
-              Revisa su respuesta más abajo y sube un nuevo avance con los ajustes.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {canSubmit && (
+      {(
         <>
           <Textarea
             label="Describe el avance"

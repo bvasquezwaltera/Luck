@@ -20,7 +20,8 @@ export function ProfileSection({
     <div className="space-y-4">
       <EditProfileSection draftProfile={draftProfile} setDraftProfile={setDraftProfile} />
 
-      <div className="grid items-start gap-4 md:grid-cols-4">
+      {/* Cuatro listas cortas: en dos columnas se leen mejor que en cuatro estrechas. */}
+      <div className="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-4">
         <DifferentiatorsSection draftProfile={draftProfile} setDraftProfile={setDraftProfile} />
         <SkillsSection draftProfile={draftProfile} setDraftProfile={setDraftProfile} />
         <ToolsSection draftProfile={draftProfile} setDraftProfile={setDraftProfile} />

@@ -39,6 +39,7 @@ export function toPanelSolicitud(received: ReceivedSolicitud): Solicitud {
     requestedMilestones: [],
     desiredDate: received.desiredDate ?? undefined,
     planProjects: received.plan.activeProjects || undefined,
+    planPrice: received.plan.price,
     rejected: received.status === "rechazada",
     contracted: received.status === "contratada",
     payment: received.payment ?? undefined,

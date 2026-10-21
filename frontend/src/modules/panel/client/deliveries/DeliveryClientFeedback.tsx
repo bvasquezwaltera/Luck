@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Clock3, MessageSquare, RotateCcw } from "lucide-react";
+import { CheckCircle2, MessageSquare, RotateCcw } from "lucide-react";
 import { DeliveryAttachmentPicker } from "@/modules/panel/DeliveryAttachmentPicker";
 import { EMPTY_ATTACHMENTS, resolveAttachments, type PickedAttachments } from "@/lib/deliveryFiles";
 import { addReview } from "@/lib/api/client/deliveries";
@@ -59,8 +59,10 @@ export function DeliveryClientFeedback({
     onChanged(result.contracts);
   }
 
+  if (!canRespond) return null;
+
   return (
-    <div className="rounded-[24px] border border-slate-200 bg-white p-4">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5">
       <div className="flex flex-wrap items-center gap-2">
         <MessageSquare className="h-4 w-4 text-indigo-500" />
         <h4 className="text-sm font-semibold text-slate-900">Tu respuesta</h4>
@@ -71,28 +73,7 @@ export function DeliveryClientFeedback({
         </Badge>
       </div>
 
-      {module.apiStatus === "pendiente" && (
-        <div className="mt-4 flex items-start gap-3 rounded-xl bg-slate-50 p-4">
-          <Clock3 className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
-          <p className="text-sm text-slate-600">El freelancer aún no subió un avance. Cuando lo haga podrás responder aquí.</p>
-        </div>
-      )}
-
-      {module.apiStatus === "cambios_solicitados" && (
-        <div className="mt-4 flex items-start gap-3 rounded-xl bg-amber-50 p-4">
-          <RotateCcw className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
-          <p className="text-sm text-amber-800">Pediste cambios. Estás esperando el nuevo avance del freelancer.</p>
-        </div>
-      )}
-
-      {module.apiStatus === "aprobada" && (
-        <div className="mt-4 flex items-start gap-3 rounded-xl bg-emerald-50 p-4">
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
-          <p className="text-sm text-emerald-800">Aprobaste esta entrega.</p>
-        </div>
-      )}
-
-      {canRespond && (
+      {(
         <>
           <Textarea
             label="Deja un comentario"

@@ -287,7 +287,7 @@ def list_received_solicitudes(db: Session, freelancer: Perfil) -> list[ReceivedS
         .order_by(Solicitud.creado_en.desc())
     ).all()
     attachments = _attachments_by_solicitud(db, [solicitud.id for solicitud, _ in rows])
-    payments = payments_service.payments_by_solicitud(db, [solicitud.id for solicitud, _ in rows])
+    payments = payments_service.payments_by_solicitud(db, [solicitud.id for solicitud, _ in rows], include_net=True)
     return [
         _to_received(solicitud, cliente, attachments.get(solicitud.id, []), payments.get(solicitud.id))
         for solicitud, cliente in rows

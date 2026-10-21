@@ -115,7 +115,9 @@ def pay_solicitud(db: Session, cliente: Perfil, solicitud_id: str, simulate_decl
     )
 
 
-def payments_by_solicitud(db: Session, solicitud_ids: list[uuid.UUID]) -> dict[uuid.UUID, SolicitudPayment]:
+def payments_by_solicitud(
+    db: Session, solicitud_ids: list[uuid.UUID], include_net: bool = False
+) -> dict[uuid.UUID, SolicitudPayment]:
     """Pago aprobado y fecha del próximo cobro de cada solicitud ya contratada."""
     if not solicitud_ids:
         return {}
@@ -129,6 +131,7 @@ def payments_by_solicitud(db: Session, solicitud_ids: list[uuid.UUID]) -> dict[u
         pago.solicitud_id: SolicitudPayment(
             reference=pago.referencia,
             amount=float(pago.monto),
+            net=float(pago.neto) if include_net else None,
             paidAt=pago.creado_en,
             nextChargeAt=contrato.proximo_cobro,
         )

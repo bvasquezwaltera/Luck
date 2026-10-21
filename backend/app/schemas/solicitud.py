@@ -42,6 +42,8 @@ class SolicitudPlan(BaseModel):
 class SolicitudPayment(BaseModel):
     reference: str
     amount: float
+    # Lo que recibe el freelancer tras la comisión. Solo se envía a él; el cliente no lo recibe.
+    net: float | None = None
     paidAt: datetime
     nextChargeAt: datetime
 

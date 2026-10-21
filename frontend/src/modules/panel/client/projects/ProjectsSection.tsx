@@ -1,19 +1,19 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CreditCard, Eye, Filter, Inbox, Paperclip } from "lucide-react";
+import { ArrowRight, CalendarDays, CreditCard, Filter, Inbox, Layers, Paperclip, RotateCcw } from "lucide-react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
 import {
-  CLIENT_STATUS_CONFIG,
   ClientSolicitudDetailsModal,
-  payHint,
 } from "@/modules/panel/client/projects/ClientSolicitudDetailsModal";
 import { PaymentDrawer } from "@/modules/panel/client/projects/PaymentDrawer";
+import { SolicitudRowCard, type RowDetail, type RowFact } from "@/modules/panel/SolicitudRowCard";
+import { CLIENT_LABEL, CLIENT_TONE, payHint } from "@/modules/panel/client/projects/clientSolicitudStatus";
 import { solicitudCategoryConfig } from "@/modules/panel/solicitudCategoryConfig";
+import { formatMoney } from "@/lib/formatMoney";
 import { formatSolicitudDate } from "@/lib/formatSolicitudDate";
 import { toPanelCategory } from "@/lib/receivedSolicitudAdapter";
 import type { ClientSolicitud, ClientSolicitudStatus } from "@/types/clientSolicitud";
-import { Badge } from "@/ui/Badge";
 import { Button } from "@/ui/Button";
 import { Card } from "@/ui/Card";
 import { Pagination } from "@/ui/Pagination";
@@ -31,7 +31,13 @@ const TABS: Array<{ id: TabId; label: string }> = [
   { id: "rechazada", label: "Rechazadas" },
 ];
 
-export function SolicitudesSection({ solicitudes }: { solicitudes: ClientSolicitud[] }) {
+export function SolicitudesSection({
+  solicitudes,
+  onGoToDeliveries,
+}: {
+  solicitudes: ClientSolicitud[];
+  onGoToDeliveries?: () => void;
+}) {
   const [activeTab, setActiveTab] = useState<TabId>("todas");
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("");
@@ -77,10 +83,16 @@ export function SolicitudesSection({ solicitudes }: { solicitudes: ClientSolicit
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl bg-white p-5 shadow-sm sm:p-6">
+      <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
         <PanelSectionHeader
+          icon={Inbox}
           subtitle="Gestiona tus pedidos y mantén visible el avance de cada solicitud."
           title="Solicitudes"
+          stats={[
+            { label: "enviadas", value: solicitudes.filter((item) => item.status === "enviada").length, tone: "amber" },
+            { label: "por pagar", value: solicitudes.filter((item) => item.status === "aceptada").length, tone: "indigo" },
+            { label: "contratadas", value: solicitudes.filter((item) => item.status === "contratada").length, tone: "emerald" },
+          ]}
         />
       </div>
 
@@ -185,7 +197,7 @@ export function SolicitudesSection({ solicitudes }: { solicitudes: ClientSolicit
             <>
               <Card className="overflow-hidden">
                 {visible.map((solicitud) => (
-                  <SolicitudRow key={solicitud.id} solicitud={solicitud} />
+                  <SolicitudRow key={solicitud.id} solicitud={solicitud} onGoToDeliveries={onGoToDeliveries} />
                 ))}
               </Card>
               {totalPages > 1 && (
@@ -213,103 +225,94 @@ export function SolicitudesSection({ solicitudes }: { solicitudes: ClientSolicit
   );
 }
 
-function SolicitudRow({ solicitud }: { solicitud: ClientSolicitud }) {
+function SolicitudRow({
+  solicitud,
+  onGoToDeliveries,
+}: {
+  solicitud: ClientSolicitud;
+  onGoToDeliveries?: () => void;
+}) {
   const [showDetails, setShowDetails] = useState(false);
   const [showPay, setShowPay] = useState(false);
-  const status = CLIENT_STATUS_CONFIG[solicitud.status];
   const category = solicitudCategoryConfig[toPanelCategory(solicitud.category)];
-  const CategoryIcon = category.icon;
   const revisions = Number.parseInt(solicitud.plan.revisions, 10) || 0;
+
+  const facts: RowFact[] = [];
+  if (solicitud.desiredDate) {
+    facts.push({ icon: CalendarDays, label: `Para el ${formatSolicitudDate(solicitud.desiredDate)}` });
+  }
+  if (solicitud.plan.activeProjects) {
+    facts.push({ icon: Layers, label: `${solicitud.plan.activeProjects} proyectos activos` });
+  }
+  if (revisions > 0) {
+    facts.push({ icon: RotateCcw, label: `${revisions} ${revisions === 1 ? "revisión" : "revisiones"}` });
+  }
+  if (solicitud.attachments.length > 0) {
+    facts.push({
+      icon: Paperclip,
+      label: `${solicitud.attachments.length} ${solicitud.attachments.length === 1 ? "anexo" : "anexos"}`,
+    });
+  }
+
+  const details: RowDetail[] = [];
+  if (solicitud.status === "contratada" && solicitud.payment) {
+    details.push({ label: "Pagado", value: formatMoney(solicitud.payment.amount) });
+    details.push({ label: "Próximo cobro", value: formatSolicitudDate(solicitud.payment.nextChargeAt) });
+  } else if (solicitud.status === "enviada") {
+    details.push({ label: "Estado", value: "Esperando al freelancer" });
+  } else if (solicitud.status === "aceptada") {
+    details.push({ label: "Siguiente paso", value: "Pagar" });
+  }
+
+  // Pagar está siempre a la vista, pero solo se habilita con la solicitud aceptada; con el contrato ya
+  // activo, el paso siguiente es ir a las entregas.
+  const actions = (
+    <>
+      {solicitud.status === "contratada" ? (
+        <Button className="w-full min-w-0 gap-1.5" onClick={onGoToDeliveries} disabled={!onGoToDeliveries}>
+          Ir a entregas
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Button>
+      ) : (
+        <Button
+          className="w-full min-w-0 gap-1.5 disabled:cursor-not-allowed disabled:opacity-40"
+          title={payHint(solicitud.status)}
+          onClick={() => setShowPay(true)}
+          disabled={solicitud.status !== "aceptada"}
+        >
+          <CreditCard className="h-3.5 w-3.5" />
+          Pagar {formatMoney(solicitud.plan.price)}
+        </Button>
+      )}
+      <Button variant="outline-neutral" className="w-full min-w-0" onClick={() => setShowDetails(true)}>
+        Ver detalles
+      </Button>
+    </>
+  );
 
   return (
     <>
-      <article className="group border-b border-slate-100 px-4 py-5 transition last:border-b-0 hover:bg-slate-50/60 sm:px-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-          <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${category.className}`}>
-            <CategoryIcon className="h-5 w-5" aria-hidden="true" />
-          </div>
-
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h3 className="truncate text-sm font-semibold text-slate-900 sm:text-base">{solicitud.title}</h3>
-              <Badge className={`${status.className} whitespace-nowrap text-[11px] font-medium`}>{status.label}</Badge>
-            </div>
-            <p className="mt-1 text-xs text-slate-500">
-              {solicitud.freelancer.name} <span className="mx-1 text-slate-300">•</span> Plan {solicitud.plan.name}
-            </p>
-
-            <p className="mt-3 line-clamp-2 text-xs leading-5 text-slate-600">{solicitud.description}</p>
-
-            <div className="mt-3 flex flex-wrap gap-2">
-              {solicitud.desiredDate && (
-                <Badge className="!bg-rose-50 !text-rose-600">
-                  Fecha deseada: {formatSolicitudDate(solicitud.desiredDate)}
-                </Badge>
-              )}
-              {solicitud.plan.activeProjects && (
-                <Badge className="!bg-indigo-50 !text-indigo-600">
-                  Proyectos activos: {solicitud.plan.activeProjects}
-                </Badge>
-              )}
-              {revisions > 0 && (
-                <Badge className="!bg-emerald-50 !text-emerald-600">
-                  {revisions} {revisions === 1 ? "revisión" : "revisiones"}
-                </Badge>
-              )}
-              {solicitud.category && <Badge className={category.className}>{solicitud.category}</Badge>}
-              {solicitud.attachments.length > 0 && (
-                <Badge className="flex items-center gap-1 !bg-slate-100 !text-slate-500">
-                  <Paperclip className="h-3 w-3" />
-                  {solicitud.attachments.length} {solicitud.attachments.length === 1 ? "anexo" : "anexos"}
-                </Badge>
-              )}
-            </div>
-
-            <p className="mt-4 text-[11px] text-slate-400">Enviada el {formatSolicitudDate(solicitud.createdAt)}</p>
-          </div>
-
-          <div className="flex shrink-0 flex-row items-center gap-4 border-t border-slate-100 pt-4 lg:w-44 lg:flex-col lg:items-stretch lg:border-t-0 lg:pt-0">
-            <div className="flex-1 rounded-xl border border-indigo-100 bg-indigo-50/60 p-3 lg:flex-none">
-              <p className="text-[11px] font-medium uppercase tracking-wide text-indigo-500">Plan solicitado</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">Plan {solicitud.plan.name}</p>
-              <p className="mt-1 text-[11px] text-slate-500">${solicitud.plan.price} /mes</p>
-              {solicitud.payment && (
-                <p className="mt-1 text-[11px] text-slate-500">
-                  Próximo cobro: {formatSolicitudDate(solicitud.payment.nextChargeAt)}
-                </p>
-              )}
-            </div>
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-row gap-2">
-                <Button
-                  variant="outline-neutral"
-                  aria-label="Ver detalles"
-                  title="Ver detalles"
-                  className="!min-w-0 h-8 w-8 !px-0"
-                  onClick={() => setShowDetails(true)}
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
-                <Button
-                  aria-label="Pagar"
-                  title={payHint(solicitud.status)}
-                  className="!min-w-0 h-8 gap-1.5 !px-3 disabled:cursor-not-allowed disabled:opacity-40"
-                  onClick={() => setShowPay(true)}
-                  disabled={solicitud.status !== "aceptada"}
-                >
-                  <CreditCard className="h-3.5 w-3.5" />
-                  {solicitud.status === "contratada" ? "Pagado" : "Pagar"}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
+      <SolicitudRowCard
+        tone={CLIENT_TONE[solicitud.status]}
+        statusLabel={CLIENT_LABEL[solicitud.status]}
+        title={solicitud.title}
+        categoryIcon={category.icon}
+        categoryClassName={category.className}
+        person={{ name: solicitud.freelancer.name, initials: solicitud.freelancer.initials }}
+        planLine={`Plan ${solicitud.plan.name}`}
+        description={solicitud.description}
+        facts={facts}
+        footer={`${solicitud.category || category.label} · Enviada el ${formatSolicitudDate(solicitud.createdAt)}`}
+        price={{ amount: formatMoney(solicitud.plan.price), period: "/mes" }}
+        details={details}
+        actions={actions}
+      />
 
       <ClientSolicitudDetailsModal
         open={showDetails}
         onClose={() => setShowDetails(false)}
         solicitud={solicitud}
+        onGoToDeliveries={onGoToDeliveries}
         onPay={() => {
           setShowDetails(false);
           setShowPay(true);

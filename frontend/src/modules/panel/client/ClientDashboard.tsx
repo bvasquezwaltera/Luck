@@ -64,7 +64,7 @@ export function ClientDashboard({
       case "inicio":
         return <HomeSection profile={safeProfile} />;
       case "solicitudes":
-        return <SolicitudesSection solicitudes={solicitudes} />;
+        return <SolicitudesSection solicitudes={solicitudes} onGoToDeliveries={() => setActiveSection("entregas")} />;
       case "mensajes":
         return <MessagesSection />;
       case "entregas":

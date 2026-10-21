@@ -50,6 +50,7 @@ export interface Solicitud {
   // del plan y, si el freelancer la rechazó, el motivo.
   categoryLabel?: string;
   planProjects?: string;
+  planPrice?: number;
   rejected?: boolean;
   rejectionReason?: string;
   // Solicitud ya pagada: el contrato está activo.

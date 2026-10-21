@@ -15,6 +15,7 @@ export interface PaymentReceipt {
 export interface SolicitudPaymentInfo {
   reference: string;
   amount: number;
+  net?: number | null; // solo lo recibe el freelancer
   paidAt: string;
   nextChargeAt: string;
 }

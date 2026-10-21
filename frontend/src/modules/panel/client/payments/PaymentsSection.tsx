@@ -6,6 +6,7 @@ import { PaymentSummaryCard } from "@/modules/panel/PaymentSummaryCard";
 import { PaymentsTable } from "@/modules/panel/PaymentsTable";
 import { formatMoney } from "@/lib/formatMoney";
 import { formatSolicitudDate } from "@/lib/formatSolicitudDate";
+import { describeDaysUntil } from "@/lib/relativeDays";
 import type { ClientPaymentSummary, PaymentRecord } from "@/types/payment";
 
 // payments / summary llegan como null cuando el servidor falló: se avisa en vez de mostrar "sin pagos".
@@ -18,8 +19,8 @@ export function PaymentsSection({
 }) {
   return (
     <div className="space-y-4">
-      <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
-        <PanelSectionHeader subtitle="Tus contratos activos y el historial de tus pagos." title="Pagos" />
+      <div className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+        <PanelSectionHeader icon={Wallet} subtitle="Tus contratos activos y el historial de tus pagos." title="Pagos" />
       </div>
 
       {payments === null || summary === null ? (
@@ -33,18 +34,23 @@ export function PaymentsSection({
             <PaymentSummaryCard
               label="Contratos activos"
               value={String(summary.activeContracts)}
-              icon={<FileCheck2 className="h-4 w-4" />}
+              hint={summary.activeContracts === 1 ? "Suscripción vigente" : "Suscripciones vigentes"}
+              icon={<FileCheck2 className="h-5 w-5" />}
+              tone="emerald"
             />
             <PaymentSummaryCard
               label="Gasto mensual"
               value={formatMoney(summary.monthlySpend)}
               hint="Suma de tus suscripciones activas"
-              icon={<Wallet className="h-4 w-4" />}
+              icon={<Wallet className="h-5 w-5" />}
+              tone="indigo"
             />
             <PaymentSummaryCard
               label="Próximo cobro"
               value={summary.nextChargeAt ? formatSolicitudDate(summary.nextChargeAt) : "—"}
-              icon={<CalendarClock className="h-4 w-4" />}
+              hint={summary.nextChargeAt ? describeDaysUntil(summary.nextChargeAt) : "Sin contratos activos"}
+              icon={<CalendarClock className="h-5 w-5" />}
+              tone="sky"
             />
           </div>
 

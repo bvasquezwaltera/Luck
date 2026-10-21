@@ -2,6 +2,7 @@
 
 import { useEffect, type ReactNode } from "react";
 import { X } from "lucide-react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 export function Drawer({
   open,
@@ -14,6 +15,9 @@ export function Drawer({
   title: string;
   children: ReactNode;
 }) {
+  // La página de atrás no se mueve mientras el panel está abierto.
+  useScrollLock(open);
+
   useEffect(() => {
     if (!open) return;
 
@@ -29,7 +33,7 @@ export function Drawer({
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-md" onClick={onClose} />
       <aside
         role="dialog"
         aria-modal="true"
@@ -47,7 +51,7 @@ export function Drawer({
             <X className="h-4 w-4" />
           </button>
         </header>
-        <div className="flex-1 overflow-y-auto px-5 py-4">{children}</div>
+        <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-4">{children}</div>
       </aside>
     </div>
   );

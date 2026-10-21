@@ -1,8 +1,8 @@
 import { useState, type Dispatch, type KeyboardEvent, type SetStateAction } from "react";
-import { X } from "lucide-react";
+import { Layers, X } from "lucide-react";
+import { AddItemButton, EntryCard, ProfileCard } from "@/modules/panel/freelancer/configuracion/perfil/ProfileBlocks";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import { Button } from "@/ui/Button";
-import { Card } from "@/ui/Card";
 import { Input } from "@/ui/Input";
 
 export function WorkMethodsSection({
@@ -13,6 +13,7 @@ export function WorkMethodsSection({
   setDraftProfile: Dispatch<SetStateAction<FreelancerProfile>>;
 }) {
   const [pendingItems, setPendingItems] = useState<Record<number, string>>({});
+  const { workMethods } = draftProfile;
 
   function addItem(categoryIndex: number) {
     const value = (pendingItems[categoryIndex] ?? "").trim();
@@ -35,55 +36,57 @@ export function WorkMethodsSection({
   }
 
   return (
-    <Card className="space-y-3">
-      <h4 className="text-sm font-semibold text-gray-900">Métodos de trabajo</h4>
-      <p className="text-xs text-gray-500">
-        Agrega tus propias categorías (ej. Comunicación, Analítica, Diseño) y las herramientas que usas en cada
-        una.
-      </p>
-
+    <ProfileCard
+      icon={Layers}
+      title="Métodos de trabajo"
+      description="Agrega tus propias categorías (ej. Comunicación, Analítica, Diseño) y las herramientas que usas en cada una."
+      count={workMethods.length}
+    >
       <div className="space-y-3">
-        {draftProfile.workMethods.map((category, categoryIndex) => (
-          <div key={categoryIndex} className="rounded-lg border border-gray-200 p-3">
-            <div className="flex items-center gap-2">
-              <Input
-                label="Categoría"
-                value={category.label}
-                onChange={(event) =>
-                  setDraftProfile((current) => ({
-                    ...current,
-                    workMethods: current.workMethods.map((value, valueIndex) =>
-                      valueIndex === categoryIndex ? { ...value, label: event.target.value } : value,
-                    ),
-                  }))
-                }
-              />
-              <Button
-                variant="outline-neutral"
-                className="!mt-6 !min-w-0 !border-red-200 !px-3 !text-red-600"
-                onClick={() =>
-                  setDraftProfile((current) => ({
-                    ...current,
-                    workMethods: current.workMethods.filter((_, valueIndex) => valueIndex !== categoryIndex),
-                  }))
-                }
-              >
-                Eliminar categoría
-              </Button>
-            </div>
+        {workMethods.length === 0 && (
+          <p className="rounded-xl bg-slate-50 px-3 py-4 text-center text-xs text-slate-500">
+            Aún no agregaste categorías.
+          </p>
+        )}
+
+        {workMethods.map((category, categoryIndex) => (
+          <EntryCard
+            key={categoryIndex}
+            title={`Categoría ${categoryIndex + 1}`}
+            removeLabel={`Eliminar categoría ${categoryIndex + 1}`}
+            onRemove={() =>
+              setDraftProfile((current) => ({
+                ...current,
+                workMethods: current.workMethods.filter((_, valueIndex) => valueIndex !== categoryIndex),
+              }))
+            }
+          >
+            <Input
+              label="Nombre de la categoría"
+              placeholder="Ej.: Comunicación"
+              value={category.label}
+              onChange={(event) =>
+                setDraftProfile((current) => ({
+                  ...current,
+                  workMethods: current.workMethods.map((value, valueIndex) =>
+                    valueIndex === categoryIndex ? { ...value, label: event.target.value } : value,
+                  ),
+                }))
+              }
+            />
 
             {category.items.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-2">
                 {category.items.map((item, itemIndex) => (
                   <span
                     key={`${item}-${itemIndex}`}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 py-1 pl-3 pr-1.5 text-xs text-gray-700"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 py-1 pl-3 pr-1.5 text-xs font-medium text-indigo-700"
                   >
                     {item}
                     <button
                       type="button"
                       aria-label={`Quitar ${item}`}
-                      className="rounded-full p-0.5 text-gray-400 hover:bg-gray-200 hover:text-gray-600"
+                      className="rounded-full p-0.5 text-indigo-400 transition hover:bg-indigo-100 hover:text-indigo-700"
                       onClick={() =>
                         setDraftProfile((current) => ({
                           ...current,
@@ -105,8 +108,9 @@ export function WorkMethodsSection({
             <div className="mt-3 flex items-center gap-2">
               <Input
                 id={`work-method-new-${categoryIndex}`}
-                label=""
+                label="Agregar herramienta"
                 hideLabel
+                className="min-w-0 flex-1"
                 placeholder="Agregar herramienta..."
                 value={pendingItems[categoryIndex] ?? ""}
                 onChange={(event) =>
@@ -115,30 +119,26 @@ export function WorkMethodsSection({
                 onKeyDown={(event) => handleKeyDown(event, categoryIndex)}
                 onBlur={() => addItem(categoryIndex)}
               />
-              <Button
-                variant="outline-neutral"
-                className="!min-w-0 !px-3"
-                onClick={() => addItem(categoryIndex)}
-              >
-                + Agregar herramienta
+              <Button variant="outline-neutral" className="!min-w-0 shrink-0 !px-3" onClick={() => addItem(categoryIndex)}>
+                Agregar
               </Button>
             </div>
-          </div>
+          </EntryCard>
         ))}
       </div>
 
-      <Button
-        variant="outline-neutral"
-        className="!min-w-0 !px-3"
-        onClick={() =>
-          setDraftProfile((current) => ({
-            ...current,
-            workMethods: [...current.workMethods, { label: "", items: [] }],
-          }))
-        }
-      >
-        + Agregar categoría
-      </Button>
-    </Card>
+      <div className="mt-3">
+        <AddItemButton
+          onClick={() =>
+            setDraftProfile((current) => ({
+              ...current,
+              workMethods: [...current.workMethods, { label: "", items: [] }],
+            }))
+          }
+        >
+          Agregar categoría
+        </AddItemButton>
+      </div>
+    </ProfileCard>
   );
 }

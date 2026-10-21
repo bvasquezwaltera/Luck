@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Filter } from "lucide-react";
+import { Filter, Inbox } from "lucide-react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
 import { SolicitudCard } from "@/modules/panel/freelancer/solicitudes/SolicitudCard";
 import { Pagination } from "@/ui/Pagination";
@@ -40,7 +40,13 @@ function countByStatus(solicitudes: Solicitud[], status: SolicitudStatus) {
   return solicitudes.filter((solicitud) => solicitud.status === status).length;
 }
 
-export function SolicitudesSection({ solicitudes }: { solicitudes: ReceivedSolicitud[] }) {
+export function SolicitudesSection({
+  solicitudes,
+  onGoToDeliveries,
+}: {
+  solicitudes: ReceivedSolicitud[];
+  onGoToDeliveries?: () => void;
+}) {
   const [activeTab, setActiveTab] = useState<TabType>("todas");
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState<SolicitudCategory | "">("");
@@ -89,10 +95,16 @@ export function SolicitudesSection({ solicitudes }: { solicitudes: ReceivedSolic
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl bg-white p-5 shadow-sm sm:p-6">
+      <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
         <PanelSectionHeader
-          subtitle="Revisa el alcance y los anexos de cada solicitud, y acepta o rechaza. Si aceptas, el cliente pasa al pago."
+          icon={Inbox}
+          subtitle="Revisa el alcance y los anexos, y acepta o rechaza. Si aceptas, el cliente pasa al pago."
           title="Solicitudes"
+          stats={[
+            { label: "por responder", value: items.filter((item) => item.status === "enviada").length, tone: "amber" },
+            { label: "aceptadas", value: items.filter((item) => item.status === "aceptada").length, tone: "indigo" },
+            { label: "contratadas", value: items.filter((item) => item.status === "contratada").length, tone: "emerald" },
+          ]}
         />
       </div>
 
@@ -178,7 +190,12 @@ export function SolicitudesSection({ solicitudes }: { solicitudes: ReceivedSolic
           <>
            <Card className="overflow-hidden">
               {paginatedSolicitudes.map((solicitud) => (
-                <SolicitudCard key={solicitud.id} solicitud={solicitud} onDecision={handleDecision} />
+                <SolicitudCard
+                  key={solicitud.id}
+                  solicitud={solicitud}
+                  onDecision={handleDecision}
+                  onGoToDeliveries={onGoToDeliveries}
+                />
               ))}
            </Card>
             {totalPages > 1 && (

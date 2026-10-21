@@ -6,6 +6,7 @@ import { PaymentSummaryCard } from "@/modules/panel/PaymentSummaryCard";
 import { PaymentsTable } from "@/modules/panel/PaymentsTable";
 import { formatMoney } from "@/lib/formatMoney";
 import { formatSolicitudDate } from "@/lib/formatSolicitudDate";
+import { describeDaysUntil } from "@/lib/relativeDays";
 import type { FreelancerPaymentSummary, PaymentRecord } from "@/types/payment";
 
 // payments / summary llegan como null cuando el servidor falló: se avisa en vez de mostrar "sin cobros".
@@ -18,8 +19,8 @@ export function PaymentsSection({
 }) {
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl bg-white p-5 shadow-sm">
-        <PanelSectionHeader subtitle="Lo que cobras por tus contratos, con la comisión de la plataforma." title="Pagos" />
+      <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
+        <PanelSectionHeader icon={Wallet} subtitle="Lo que cobras por tus contratos, con la comisión de la plataforma." title="Pagos" />
       </div>
 
       {payments === null || summary === null ? (
@@ -34,24 +35,29 @@ export function PaymentsSection({
               label="Neto recibido"
               value={formatMoney(summary.totalNet)}
               hint={`De ${formatMoney(summary.totalGross)} cobrados`}
-              icon={<Wallet className="h-4 w-4" />}
+              icon={<Wallet className="h-5 w-5" />}
+              tone="emerald"
             />
             <PaymentSummaryCard
               label={`Comisión (${summary.commissionRate}%)`}
               value={formatMoney(summary.totalCommission)}
               hint="Retenida por la plataforma"
-              icon={<Percent className="h-4 w-4" />}
+              icon={<Percent className="h-5 w-5" />}
+              tone="amber"
             />
             <PaymentSummaryCard
               label="Ingreso mensual neto"
               value={formatMoney(summary.monthlyNet)}
               hint={`${summary.activeContracts} ${summary.activeContracts === 1 ? "contrato activo" : "contratos activos"}`}
-              icon={<TrendingUp className="h-4 w-4" />}
+              icon={<TrendingUp className="h-5 w-5" />}
+              tone="indigo"
             />
             <PaymentSummaryCard
               label="Próximo cobro"
               value={summary.nextChargeAt ? formatSolicitudDate(summary.nextChargeAt) : "—"}
-              icon={<CalendarClock className="h-4 w-4" />}
+              hint={summary.nextChargeAt ? describeDaysUntil(summary.nextChargeAt) : "Sin contratos activos"}
+              icon={<CalendarClock className="h-5 w-5" />}
+              tone="sky"
             />
           </div>
 

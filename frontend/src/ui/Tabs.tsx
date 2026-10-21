@@ -1,17 +1,51 @@
+import type { LucideIcon } from "lucide-react";
+
 export interface TabItem<T extends string = string> {
   id: T;
   label: string;
+  icon?: LucideIcon;
 }
 
 export function Tabs<T extends string>({
   tabs,
   activeTab,
   onChange,
+  variant = "underline",
 }: {
   tabs: TabItem<T>[];
   activeTab: T;
   onChange: (tab: T) => void;
+  variant?: "underline" | "pill";
 }) {
+  if (variant === "pill") {
+    return (
+      <div className="overflow-x-auto">
+        <div className="flex w-max gap-1.5" role="tablist">
+          {tabs.map((tab) => {
+            const active = tab.id === activeTab;
+            const Icon = tab.icon;
+
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => onChange(tab.id)}
+                className={`inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 text-sm font-semibold transition-colors ${
+                  active ? "bg-indigo-50 text-indigo-700" : "text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                }`}
+              >
+                {Icon && <Icon className="h-4 w-4" />}
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="overflow-x-auto border-b border-gray-200">
       <div className="flex w-max gap-6">

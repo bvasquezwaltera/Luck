@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ArrowLeft, BookOpen } from "lucide-react";
+import { PackageCheck } from "lucide-react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
 import { DeliveryModuleDetailsModal } from "@/modules/panel/client/deliveries/DeliveryModuleDetailsModal";
 import { DeliveryModuleGroup } from "@/modules/panel/client/deliveries/DeliveryModuleGroup";
@@ -236,8 +237,8 @@ export function DeliveriesSection({ contracts: initialContracts }: { contracts: 
 
 function SectionHeader() {
   return (
-    <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-      <PanelSectionHeader subtitle="Consulta el avance de cada entrega de tus freelancers y respóndelas." title="Entregas" />
+    <div className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+      <PanelSectionHeader icon={PackageCheck} subtitle="Consulta el avance de cada entrega de tus freelancers y respóndelas." title="Entregas" />
     </div>
   );
 }

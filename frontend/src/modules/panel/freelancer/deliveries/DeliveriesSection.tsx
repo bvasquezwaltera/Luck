@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ArrowLeft, BookOpen, Plus } from "lucide-react";
+import { PackageCheck } from "lucide-react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
 import { DeliveryClientGroup } from "@/modules/panel/freelancer/deliveries/DeliveryClientGroup";
 import { DeliveryModuleDetailsModal } from "@/modules/panel/freelancer/deliveries/DeliveryModuleDetailsModal";
@@ -65,6 +66,7 @@ export function DeliveriesSection({ contracts: initialContracts }: { contracts: 
   );
   const activeProject: DeliveryProject | undefined = projects.find((project) => project.contractId === selectedContractId);
   const selectedModule = allModules.find((module) => module.id === selectedModuleId) ?? null;
+  const selectedProject = projects.find((project) => project.modules.some((module) => module.id === selectedModuleId));
 
   if (contracts === null) {
     return (
@@ -247,6 +249,8 @@ export function DeliveriesSection({ contracts: initialContracts }: { contracts: 
       <DeliveryModuleDetailsModal
         key={selectedModule?.id ?? "none"}
         module={selectedModule}
+        revisionsLimit={selectedProject?.revisionsLimit ?? null}
+        revisionsUsed={selectedProject?.revisionsUsed ?? 0}
         onClose={() => setSelectedModuleId(null)}
         onChanged={setContracts}
       />
@@ -256,8 +260,8 @@ export function DeliveriesSection({ contracts: initialContracts }: { contracts: 
 
 function SectionHeader() {
   return (
-    <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-      <PanelSectionHeader subtitle="Planifica tus entregas y mantén al cliente informado de cada avance." title="Entregas" />
+    <div className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+      <PanelSectionHeader icon={PackageCheck} subtitle="Planifica tus entregas y mantén al cliente informado de cada avance." title="Entregas" />
     </div>
   );
 }
