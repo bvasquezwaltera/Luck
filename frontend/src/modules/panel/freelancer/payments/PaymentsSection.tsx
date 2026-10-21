@@ -35,7 +35,6 @@ export function PaymentsSection({
               value={formatMoney(summary.totalNet)}
               hint={`De ${formatMoney(summary.totalGross)} cobrados`}
               icon={<Wallet className="h-4 w-4" />}
-              highlight
             />
             <PaymentSummaryCard
               label={`Comisión (${summary.commissionRate}%)`}

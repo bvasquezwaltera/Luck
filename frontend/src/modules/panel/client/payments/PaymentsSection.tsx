@@ -40,7 +40,6 @@ export function PaymentsSection({
               value={formatMoney(summary.monthlySpend)}
               hint="Suma de tus suscripciones activas"
               icon={<Wallet className="h-4 w-4" />}
-              highlight
             />
             <PaymentSummaryCard
               label="Próximo cobro"
