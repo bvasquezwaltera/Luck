@@ -10,6 +10,7 @@ from app.core.database import Base
 ESTADO_ENVIADA = "enviada"
 ESTADO_ACEPTADA = "aceptada"
 ESTADO_RECHAZADA = "rechazada"
+ESTADO_CONTRATADA = "contratada"
 
 
 class Solicitud(Base):

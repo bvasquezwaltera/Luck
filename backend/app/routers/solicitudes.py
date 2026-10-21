@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import get_current_profile, require_role
 from app.models.perfil import Perfil
+from app.schemas.payment import PayRequest, PaymentReceipt
 from app.schemas.solicitud import (
     AttachmentUrl,
     ClientSolicitud,
@@ -15,7 +16,7 @@ from app.schemas.solicitud import (
     SolicitudCreated,
     SolicitudReject,
 )
-from app.services import solicitudes_service, storage_service
+from app.services import payments_service, solicitudes_service, storage_service
 from app.services.solicitudes_service import AttachmentUpload
 
 router = APIRouter(prefix="/api/solicitudes", tags=["solicitudes"])
@@ -99,3 +100,14 @@ def get_attachment_url(
     return AttachmentUrl(
         url=solicitudes_service.get_attachment_url(db, current, solicitud_id, attachment_id)
     )
+
+
+# Pago de una solicitud aceptada (solo su cliente). Hoy el cobro es simulado: ver services/payment_provider.py.
+@router.post("/{solicitud_id}/pay", response_model=PaymentReceipt)
+def pay_solicitud(
+    solicitud_id: str,
+    payload: PayRequest,
+    db: Session = Depends(get_db),
+    current: Perfil = Depends(require_role("client")),
+):
+    return payments_service.pay_solicitud(db, current, solicitud_id, payload.simulateDecline)

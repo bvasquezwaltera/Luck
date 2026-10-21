@@ -39,6 +39,13 @@ class SolicitudPlan(BaseModel):
     revisions: str
 
 
+class SolicitudPayment(BaseModel):
+    reference: str
+    amount: float
+    paidAt: datetime
+    nextChargeAt: datetime
+
+
 class SolicitudAttachment(BaseModel):
     id: str
     name: str
@@ -58,6 +65,7 @@ class ClientSolicitud(BaseModel):
     createdAt: datetime
     plan: SolicitudPlan
     attachments: list[SolicitudAttachment]
+    payment: SolicitudPayment | None = None
     freelancer: SolicitudFreelancer
 
 
@@ -73,6 +81,7 @@ class ReceivedSolicitud(BaseModel):
     createdAt: datetime
     plan: SolicitudPlan
     attachments: list[SolicitudAttachment]
+    payment: SolicitudPayment | None = None
     client: SolicitudClient
 
 

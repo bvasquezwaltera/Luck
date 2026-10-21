@@ -24,9 +24,10 @@ from app.schemas.solicitud import (
     SolicitudCreate,
     SolicitudCreated,
     SolicitudFreelancer,
+    SolicitudPayment,
     SolicitudPlan,
 )
-from app.services import storage_service
+from app.services import payments_service, storage_service
 from app.services.utils import get_initials
 
 MAX_CHARACTERISTIC_LENGTH = 200
@@ -223,6 +224,7 @@ def list_client_solicitudes(db: Session, cliente: Perfil) -> list[ClientSolicitu
         .order_by(Solicitud.creado_en.desc())
     ).all()
     attachments = _attachments_by_solicitud(db, [row[0].id for row in rows])
+    payments = payments_service.payments_by_solicitud(db, [row[0].id for row in rows])
 
     return [
         ClientSolicitud(
@@ -237,6 +239,7 @@ def list_client_solicitudes(db: Session, cliente: Perfil) -> list[ClientSolicitu
             createdAt=solicitud.creado_en,
             plan=_plan_out(solicitud),
             attachments=attachments.get(solicitud.id, []),
+            payment=payments.get(solicitud.id),
             freelancer=SolicitudFreelancer(
                 id=str(freelancer.id),
                 name=freelancer.nombre_completo,
@@ -249,7 +252,10 @@ def list_client_solicitudes(db: Session, cliente: Perfil) -> list[ClientSolicitu
 
 
 def _to_received(
-    solicitud: Solicitud, cliente: Perfil, attachments: list[SolicitudAttachment]
+    solicitud: Solicitud,
+    cliente: Perfil,
+    attachments: list[SolicitudAttachment],
+    payment: SolicitudPayment | None = None,
 ) -> ReceivedSolicitud:
     return ReceivedSolicitud(
         id=str(solicitud.id),
@@ -263,6 +269,7 @@ def _to_received(
         createdAt=solicitud.creado_en,
         plan=_plan_out(solicitud),
         attachments=attachments,
+        payment=payment,
         client=SolicitudClient(
             id=str(cliente.id),
             name=cliente.nombre_completo,
@@ -280,7 +287,11 @@ def list_received_solicitudes(db: Session, freelancer: Perfil) -> list[ReceivedS
         .order_by(Solicitud.creado_en.desc())
     ).all()
     attachments = _attachments_by_solicitud(db, [solicitud.id for solicitud, _ in rows])
-    return [_to_received(solicitud, cliente, attachments.get(solicitud.id, [])) for solicitud, cliente in rows]
+    payments = payments_service.payments_by_solicitud(db, [solicitud.id for solicitud, _ in rows])
+    return [
+        _to_received(solicitud, cliente, attachments.get(solicitud.id, []), payments.get(solicitud.id))
+        for solicitud, cliente in rows
+    ]
 
 
 def _decide(
