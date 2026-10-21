@@ -9,6 +9,8 @@ export interface PanelMenuItem<T extends string = string> {
   id: T;
   label: string;
   icon: LucideIcon;
+  // Número pendiente (p. ej. mensajes sin leer); con 0 o sin valor no se muestra nada.
+  badge?: number;
 }
 
 export function PanelSidebar<T extends string>({
@@ -45,7 +47,17 @@ export function PanelSidebar<T extends string>({
               }`}
             >
               <Icon className="h-4 w-4" />
-              <span>{item.label}</span>
+              <span className="flex-1">{item.label}</span>
+              {item.badge ? (
+                <span
+                  aria-label={`${item.badge} sin leer`}
+                  className={`flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold ${
+                    isActive ? "bg-white text-indigo-600" : "bg-indigo-600 text-white"
+                  }`}
+                >
+                  {item.badge > 99 ? "99+" : item.badge}
+                </span>
+              ) : null}
             </button>
           );
         })}

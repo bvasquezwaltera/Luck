@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { PanelBrandHeader } from "@/modules/panel/PanelBrandHeader";
 import { PanelSidebar } from "@/modules/panel/PanelSidebar";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { ConfigurationSection } from "@/modules/panel/client/configuracion/ConfigurationSection";
 import { DeliveriesSection } from "@/modules/panel/client/deliveries/DeliveriesSection";
 import { HomeSection } from "@/modules/panel/client/home/HomeSection";
@@ -53,6 +54,9 @@ export function ClientDashboard({
   deliveries?: ContractDeliveries[] | null;
 }) {
   const [activeSection, setActiveSection] = useState<ClientSectionId>("inicio");
+  // Sin sesión real (la vista de ejemplo incrustada) no hay mensajes que consultar.
+  const unreadMessages = useUnreadMessages(!embedded);
+  const sidebarItems = menuItems.map((item) => (item.id === "mensajes" ? { ...item, badge: unreadMessages } : item));
 
   const { safeProfile, draftProfile, setDraftProfile } = useDraftProfile(
     profile,
@@ -85,7 +89,7 @@ export function ClientDashboard({
 
         <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
           <PanelSidebar
-            menuItems={menuItems}
+            menuItems={sidebarItems}
             activeSection={activeSection}
             onSectionChange={setActiveSection}
             className="rounded-xl bg-indigo-50 p-3"
@@ -103,7 +107,7 @@ export function ClientDashboard({
     <div className="min-h-screen bg-indigo-50 text-slate-900">
       <div className="flex min-h-screen flex-col lg:flex-row">
         <PanelSidebar
-          menuItems={menuItems}
+          menuItems={sidebarItems}
           activeSection={activeSection}
           onSectionChange={setActiveSection}
           showHeader

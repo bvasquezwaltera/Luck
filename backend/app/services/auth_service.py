@@ -16,7 +16,7 @@ from app.models.plan_suscripcion import PlanSuscripcion
 from app.models.proyecto_portafolio import ProyectoPortafolio
 from app.models.resena import Resena
 from app.models.solicitud import Solicitud, SolicitudAdjunto
-from app.services import deliveries_service, storage_service
+from app.services import deliveries_service, messages_service, storage_service
 from app.schemas.auth import ActionResult, AuthResponse, SignInRequest, SignUpRequest
 from app.services.supabase_client import create_auth_client, supabase_auth
 
@@ -120,7 +120,9 @@ def delete_account(db: Session, freelancer_id: str) -> ActionResult:
     db.query(Educacion).filter(Educacion.freelancer_id == freelancer_id).delete()
     db.query(PlanSuscripcion).filter(PlanSuscripcion.freelancer_id == freelancer_id).delete()
     # Los archivos viven en Storage, fuera de la base: se recogen sus rutas antes de borrar las filas.
-    entrega_paths = deliveries_service.attachment_paths_for_user(db, freelancer_id)
+    entrega_paths = deliveries_service.attachment_paths_for_user(db, freelancer_id) + messages_service.attachment_paths_for_user(
+        db, freelancer_id
+    )
     adjunto_paths = list(
         db.scalars(
             select(SolicitudAdjunto.ruta)

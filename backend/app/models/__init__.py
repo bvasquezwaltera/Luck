@@ -8,6 +8,7 @@ from app.models.habilidad import HabilidadFreelancer
 from app.models.herramienta import HerramientaFreelancer
 from app.models.idioma import IdiomaFreelancer
 from app.models.item_metodo_trabajo import ItemMetodoTrabajo
+from app.models.mensaje import Mensaje
 from app.models.pago import Contrato, Pago
 from app.models.perfil import Perfil
 from app.models.perfil_freelancer import PerfilFreelancer
@@ -31,6 +32,7 @@ __all__ = [
     "HerramientaFreelancer",
     "IdiomaFreelancer",
     "ItemMetodoTrabajo",
+    "Mensaje",
     "Pago",
     "Perfil",
     "PerfilFreelancer",
