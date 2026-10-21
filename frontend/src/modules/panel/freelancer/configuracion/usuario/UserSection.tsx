@@ -10,7 +10,6 @@ import { Input } from "@/ui/Input";
 export function UserSection({ email }: { email: string }) {
   const router = useRouter();
 
-  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [passwordMessage, setPasswordMessage] = useState<{ type: "success" | "error"; text: string } | null>(
@@ -22,11 +21,11 @@ export function UserSection({ email }: { email: string }) {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   async function handleChangePassword() {
-    if (!currentPassword || !newPassword) return;
+    if (!newPassword) return;
     setIsChangingPassword(true);
     setPasswordMessage(null);
 
-    const result = await changePassword({ currentPassword, newPassword });
+    const result = await changePassword({ newPassword });
 
     setIsChangingPassword(false);
     if (result.error) {
@@ -34,7 +33,6 @@ export function UserSection({ email }: { email: string }) {
       return;
     }
     setPasswordMessage({ type: "success", text: "Contraseña actualizada." });
-    setCurrentPassword("");
     setNewPassword("");
   }
 
@@ -57,22 +55,16 @@ export function UserSection({ email }: { email: string }) {
       <Card className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">Cuenta</h3>
 
-        <Input label="Email" type="email" value={email} disabled />
+        <Input label="Email" name="email" type="email" autoComplete="username" value={email} readOnly />
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <Input
-            label="Contraseña actual"
-            type="password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-          />
-          <Input
-            label="Nueva contraseña"
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
-        </div>
+        <Input
+          label="Nueva contraseña"
+          name="new-password"
+          type="password"
+          autoComplete="new-password"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+        />
 
         {passwordMessage && (
           <p className={`text-xs ${passwordMessage.type === "error" ? "text-red-500" : "text-emerald-600"}`}>
@@ -84,7 +76,7 @@ export function UserSection({ email }: { email: string }) {
           variant="outline-neutral"
           className="!min-w-0 !px-4"
           onClick={handleChangePassword}
-          disabled={isChangingPassword || !currentPassword || !newPassword}
+          disabled={isChangingPassword || !newPassword}
         >
           {isChangingPassword ? "Cambiando..." : "Cambiar contraseña"}
         </Button>

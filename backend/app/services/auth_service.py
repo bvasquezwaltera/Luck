@@ -18,6 +18,12 @@ from app.schemas.auth import ActionResult, AuthResponse, SignInRequest, SignUpRe
 from app.services.supabase_client import create_auth_client, supabase_auth
 
 
+# La plataforma está orientada a Perú: valores iniciales hasta que el usuario los cambie.
+DEFAULT_COUNTRY_CODE = "PE"
+DEFAULT_COUNTRY = "Perú"
+DEFAULT_TIMEZONE = "GMT-5 (Lima)"
+
+
 def sign_up(db: Session, payload: SignUpRequest) -> AuthResponse:
     if payload.role not in ("freelancer", "client"):
         return AuthResponse(error="Rol inválido.")
@@ -30,7 +36,14 @@ def sign_up(db: Session, payload: SignUpRequest) -> AuthResponse:
     if not result.user:
         return AuthResponse(error="No se pudo crear la cuenta.")
 
-    perfil = Perfil(id=result.user.id, rol=payload.role, nombre_completo=payload.fullName)
+    perfil = Perfil(
+        id=result.user.id,
+        rol=payload.role,
+        nombre_completo=payload.fullName,
+        pais_codigo=DEFAULT_COUNTRY_CODE,
+        pais=DEFAULT_COUNTRY,
+        zona_horaria=DEFAULT_TIMEZONE,
+    )
     db.add(perfil)
     db.commit()
 
@@ -65,21 +78,7 @@ def sign_in(db: Session, payload: SignInRequest) -> AuthResponse:
     )
 
 
-def change_password(user_id: str, current_password: str, new_password: str) -> ActionResult:
-    try:
-        auth_user = supabase_auth.auth.admin.get_user_by_id(user_id)
-        email = auth_user.user.email if auth_user and auth_user.user else None
-    except Exception as exc:
-        return ActionResult(error=str(exc))
-
-    if not email:
-        return ActionResult(error="No se pudo verificar la cuenta.")
-
-    try:
-        create_auth_client().auth.sign_in_with_password({"email": email, "password": current_password})
-    except Exception:
-        return ActionResult(error="La contraseña actual no es correcta.")
-
+def change_password(user_id: str, new_password: str) -> ActionResult:
     try:
         supabase_auth.auth.admin.update_user_by_id(user_id, {"password": new_password})
     except Exception as exc:

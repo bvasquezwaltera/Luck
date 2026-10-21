@@ -40,7 +40,7 @@ def me(profile: Perfil = Depends(get_current_profile)):
 
 @router.post("/change-password", response_model=ActionResult)
 def change_password(payload: ChangePasswordRequest, profile: Perfil = Depends(get_current_profile)):
-    return auth_service.change_password(str(profile.id), payload.currentPassword, payload.newPassword)
+    return auth_service.change_password(str(profile.id), payload.newPassword)
 
 
 @router.delete("/account", response_model=ActionResult)

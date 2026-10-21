@@ -37,10 +37,7 @@ export async function signOut(): Promise<void> {
   clearAuthTokenCookie();
 }
 
-export async function changePassword(params: {
-  currentPassword: string;
-  newPassword: string;
-}): Promise<{ error?: string }> {
+export async function changePassword(params: { newPassword: string }): Promise<{ error?: string }> {
   const response = await apiFetch("/api/auth/change-password", {
     method: "POST",
     body: JSON.stringify(params),
