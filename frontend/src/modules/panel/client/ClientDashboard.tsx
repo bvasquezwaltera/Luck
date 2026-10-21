@@ -18,6 +18,7 @@ import { MessagesSection } from "@/modules/panel/client/messages/MessagesSection
 import { PaymentsSection } from "@/modules/panel/client/payments/PaymentsSection";
 import { SolicitudesSection } from "@/modules/panel/client/projects/ProjectsSection";
 import type { ClientSectionId } from "@/types/clientSection";
+import type { ClientSolicitud } from "@/types/clientSolicitud";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import { useDraftProfile } from "@/hooks/useDraftProfile";
 import fallbackProfileData from "@/data/exampleClientProfile.json";
@@ -34,9 +35,11 @@ const menuItems: Array<{ id: ClientSectionId; label: string; icon: typeof Layout
 export function ClientDashboard({
   embedded = false,
   profile,
+  solicitudes = [],
 }: {
   embedded?: boolean;
   profile?: FreelancerProfile;
+  solicitudes?: ClientSolicitud[];
 }) {
   const [activeSection, setActiveSection] = useState<ClientSectionId>("inicio");
 
@@ -50,7 +53,7 @@ export function ClientDashboard({
       case "inicio":
         return <HomeSection profile={safeProfile} />;
       case "solicitudes":
-        return <SolicitudesSection />;
+        return <SolicitudesSection solicitudes={solicitudes} />;
       case "mensajes":
         return <MessagesSection />;
       case "entregas":
@@ -62,7 +65,7 @@ export function ClientDashboard({
       default:
         return null;
     }
-  }, [activeSection, safeProfile, draftProfile]);
+  }, [activeSection, safeProfile, draftProfile, solicitudes]);
 
   if (embedded) {
     return (

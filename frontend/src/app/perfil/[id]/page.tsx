@@ -1,17 +1,26 @@
 import { notFound } from "next/navigation";
 import { PerfilPageClient } from "@/modules/perfil/PerfilPageClient";
 import { getPortfolioProjects } from "@/lib/api/server/portfolioProjects";
+import { getViewerRole } from "@/lib/api/server/currentUser";
 import { getFreelancerProfile } from "@/lib/api/server/profile";
 import { getReviews } from "@/lib/api/server/reviews";
 import { getSubscriptionPlans } from "@/lib/api/server/subscriptionPlans";
 
-export default async function PerfilPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function PerfilPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const { id } = await params;
-  const [profile, plans, projects, reviews] = await Promise.all([
+  const { plan } = await searchParams;
+  const [profile, plans, projects, reviews, viewerRole] = await Promise.all([
     getFreelancerProfile(id),
     getSubscriptionPlans(id),
     getPortfolioProjects(id),
     getReviews(id),
+    getViewerRole(),
   ]);
 
   if (!profile) {
@@ -29,6 +38,8 @@ export default async function PerfilPage({ params }: { params: Promise<{ id: str
       reviews={reviews}
       projects={projects}
       plans={savedPlans}
+      viewerRole={viewerRole}
+      initialPlanId={typeof plan === "string" ? plan : null}
     />
   );
 }

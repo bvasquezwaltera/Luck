@@ -11,7 +11,7 @@ class ProyectoPortafolio(Base):
     __tablename__ = "proyectos_portafolio"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    freelancer_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("perfiles.id"))
+    freelancer_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("perfiles.id", ondelete="CASCADE"))
     nombre: Mapped[str] = mapped_column(Text)
     categoria: Mapped[str] = mapped_column(Text)
     descripcion: Mapped[str] = mapped_column(Text)

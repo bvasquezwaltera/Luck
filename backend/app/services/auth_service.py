@@ -14,6 +14,7 @@ from app.models.perfil_freelancer import PerfilFreelancer
 from app.models.plan_suscripcion import PlanSuscripcion
 from app.models.proyecto_portafolio import ProyectoPortafolio
 from app.models.resena import Resena
+from app.models.solicitud import Solicitud
 from app.schemas.auth import ActionResult, AuthResponse, SignInRequest, SignUpRequest
 from app.services.supabase_client import create_auth_client, supabase_auth
 
@@ -116,6 +117,9 @@ def delete_account(db: Session, freelancer_id: str) -> ActionResult:
     db.query(Experiencia).filter(Experiencia.freelancer_id == freelancer_id).delete()
     db.query(Educacion).filter(Educacion.freelancer_id == freelancer_id).delete()
     db.query(PlanSuscripcion).filter(PlanSuscripcion.freelancer_id == freelancer_id).delete()
+    db.query(Solicitud).filter(
+        (Solicitud.cliente_id == freelancer_id) | (Solicitud.freelancer_id == freelancer_id)
+    ).delete(synchronize_session=False)
     db.query(Resena).filter(Resena.freelancer_id == freelancer_id).delete()
     db.query(ProyectoPortafolio).filter(ProyectoPortafolio.freelancer_id == freelancer_id).delete()
     db.query(PerfilFreelancer).filter(PerfilFreelancer.perfil_id == freelancer_id).delete()

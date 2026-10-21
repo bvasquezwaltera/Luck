@@ -12,7 +12,7 @@ class Resena(Base):
     __tablename__ = "resenas"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    freelancer_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("perfiles.id"))
+    freelancer_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("perfiles.id", ondelete="CASCADE"))
     nombre_autor: Mapped[str] = mapped_column(Text)
     iniciales_autor: Mapped[str] = mapped_column(Text)
     pais: Mapped[str | None] = mapped_column(Text, nullable=True)

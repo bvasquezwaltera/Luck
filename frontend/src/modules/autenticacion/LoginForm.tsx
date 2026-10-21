@@ -7,6 +7,7 @@ import { Input } from "@/ui/Input";
 import { Button } from "@/ui/Button";
 import { GoogleIcon } from "@/modules/autenticacion/GoogleIcon";
 import { signIn } from "@/lib/api/client/auth";
+import { withNext } from "@/lib/safeNext";
 import { validateLoginForm, type LoginFormErrors } from "@/validators/authValidation";
 
 const PANEL_PATH_BY_ROLE: Record<string, string> = {
@@ -14,7 +15,7 @@ const PANEL_PATH_BY_ROLE: Record<string, string> = {
   client: "/panel/cliente",
 };
 
-export function LoginForm() {
+export function LoginForm({ next = null }: { next?: string | null }) {
   const router = useRouter();
   const [values, setValues] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<LoginFormErrors>({});
@@ -38,7 +39,7 @@ export function LoginForm() {
       return;
     }
     if (result?.role) {
-      router.push(PANEL_PATH_BY_ROLE[result.role] ?? "/");
+      router.push(next ?? PANEL_PATH_BY_ROLE[result.role] ?? "/");
     }
   }
 
@@ -111,7 +112,7 @@ export function LoginForm() {
 
       <p className="mt-6 text-center text-xs text-gray-500">
         ¿No tienes una cuenta?{" "}
-        <a href="/registro" className="font-semibold text-indigo-600">
+        <a href={withNext("/registro", next)} className="font-semibold text-indigo-600">
           Regístrate
         </a>
       </p>

@@ -1,56 +1,61 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { CalendarDays, FolderOpen, MessageSquareText, UploadCloud } from "lucide-react";
+import Link from "next/link";
+import { CalendarDays, FolderOpen } from "lucide-react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
+import { Avatar } from "@/ui/Avatar";
 import { Button } from "@/ui/Button";
 import { Card } from "@/ui/Card";
-import { CreateSolicitudModal, type NewSolicitudData } from "@/modules/panel/client/projects/CreateSolicitudModal";
-import { loadStoredSolicitudes, storeSolicitud } from "@/lib/solicitudStorage";
-import type { Solicitud } from "@/types/solicitud";
+import type { ClientSolicitud, ClientSolicitudStatus } from "@/types/clientSolicitud";
 
-export function SolicitudesSection() {
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
+const STATUS_CONFIG: Record<ClientSolicitudStatus, { label: string; hint: string; className: string }> = {
+  enviada: {
+    label: "Enviada",
+    hint: "Esperando la respuesta del freelancer.",
+    className: "bg-indigo-50 text-indigo-600",
+  },
+  aceptada: {
+    label: "Aceptada · pendiente de pago",
+    hint: "El freelancer aceptó tu solicitud. Falta el pago para activar el contrato.",
+    className: "bg-emerald-50 text-emerald-700",
+  },
+  rechazada: {
+    label: "Rechazada",
+    hint: "El freelancer no pudo aceptar esta solicitud.",
+    className: "bg-red-50 text-red-600",
+  },
+  cancelada: {
+    label: "Cancelada",
+    hint: "La solicitud fue cancelada.",
+    className: "bg-slate-100 text-slate-600",
+  },
+  expirada: {
+    label: "Expirada",
+    hint: "La solicitud venció sin respuesta.",
+    className: "bg-amber-50 text-amber-700",
+  },
+};
 
-  useEffect(() => {
-    setSolicitudes(loadStoredSolicitudes());
-  }, []);
+// Zona fija (Lima) para que el servidor y el navegador muestren la misma fecha.
+const dateFormatter = new Intl.DateTimeFormat("es-PE", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "America/Lima",
+});
 
-  function handleCreateSolicitud(newSolicitud: NewSolicitudData) {
-    storeSolicitud({
-      titulo: newSolicitud.title,
-      description: newSolicitud.description,
-      category: newSolicitud.category,
-      planName: newSolicitud.planName,
-      requestedDeliveries: newSolicitud.requestedDeliveries,
-      characteristics: newSolicitud.characteristics,
-      attachmentNames: newSolicitud.attachmentNames,
-      targetFreelancerName: (newSolicitud as any).freelancerName,
-      targetFreelancerRole: (newSolicitud as any).freelancerRole,
-    });
-    setSolicitudes(loadStoredSolicitudes());
-    setShowCreateModal(false);
-  }
+function formatDate(value: string): string {
+  // Las fechas sin hora (yyyy-mm-dd) se tratan como mediodía UTC para no correrse de día.
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T12:00:00Z`) : new Date(value);
+  return dateFormatter.format(date);
+}
 
+export function SolicitudesSection({ solicitudes }: { solicitudes: ClientSolicitud[] }) {
   return (
     <div className="space-y-4">
       <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <PanelSectionHeader
-            subtitle="Gestiona tus pedidos y mantén visible el avance de cada solicitud."
-            title="Solicitudes"
-          />
-          {solicitudes.length > 0 && (
-            <Button
-              variant="primary"
-              className="!min-w-0 !px-4 bg-indigo-600 hover:bg-indigo-700"
-              onClick={() => setShowCreateModal(true)}
-            >
-              Nueva solicitud
-            </Button>
-          )}
-        </div>
+        <PanelSectionHeader
+          subtitle="Gestiona tus pedidos y mantén visible el avance de cada solicitud."
+          title="Solicitudes"
+        />
       </div>
 
       {solicitudes.length === 0 ? (
@@ -59,86 +64,86 @@ export function SolicitudesSection() {
             <FolderOpen className="h-7 w-7" />
           </div>
           <div className="max-w-xl">
-            <h2 className="text-xl font-semibold text-slate-900">Aún no tienes solicitudes activas</h2>
+            <h2 className="text-xl font-semibold text-slate-900">Aún no tienes solicitudes</h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              Desde aquí podrás crear tus solicitudes para exponer tus necesidades a los freelancers y gestionar el seguimiento de cada pedido.
+              Elige un freelancer y un plan desde su perfil para enviar tu primera solicitud. Aquí verás
+              su respuesta.
             </p>
           </div>
-          <Button variant="soft" className="!min-w-0 !px-5" onClick={() => setShowCreateModal(true)}>
-            Crear primera solicitud
+          <Button variant="soft" className="!min-w-0 !px-5" href="/">
+            Explorar freelancers
           </Button>
         </div>
       ) : (
         <div className="grid gap-4">
           {solicitudes.map((solicitud) => (
-            <Card key={solicitud.id} className="border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-600">
-                      Solicitud nueva
-                    </span>
-                    <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium text-slate-600">
-                      {solicitud.enviado}
-                    </span>
-                  </div>
-                  <h3 className="mt-3 text-lg font-semibold text-slate-900">{solicitud.titulo}</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    Solicitada a {solicitud.targetFreelancerName ?? "(sin destinatario)"} {solicitud.targetFreelancerRole ? `— ${solicitud.targetFreelancerRole}` : ""}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2 lg:justify-end">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
-                    <CalendarDays className="h-4 w-4 text-indigo-500" />
-                    Seguimiento activo
-                  </div>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
-                    <MessageSquareText className="h-4 w-4 text-indigo-500" />
-                    Pendiente de responder
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-5 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Descripción</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-700">{solicitud.description}</p>
-                </div>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="flex items-center gap-2">
-                    <UploadCloud className="h-4 w-4 text-indigo-500" />
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Características</p>
-                  </div>
-                  <p className="mt-2 text-sm leading-6 text-slate-700 whitespace-pre-line">
-                    {solicitud.characteristics.length > 0
-                      ? solicitud.characteristics.join("\n")
-                      : "No se agregaron características adicionales."}
-                  </p>
-                </div>
-              </div>
-
-              {solicitud.attachments.length > 0 && (
-                <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Archivos de referencia</p>
-                  <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-                    {solicitud.attachments.map((attachment) => (
-                      <li key={attachment.id} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">
-                        {attachment.name}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </Card>
+            <SolicitudCard key={solicitud.id} solicitud={solicitud} />
           ))}
         </div>
       )}
-
-      <CreateSolicitudModal
-        open={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        onCreate={handleCreateSolicitud}
-      />
     </div>
+  );
+}
+
+function SolicitudCard({ solicitud }: { solicitud: ClientSolicitud }) {
+  const status = STATUS_CONFIG[solicitud.status];
+
+  return (
+    <Card className="border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${status.className}`}>
+          {status.label}
+        </span>
+        <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium text-slate-600">
+          Enviada el {formatDate(solicitud.createdAt)}
+        </span>
+      </div>
+
+      <h3 className="mt-3 text-lg font-semibold text-slate-900">{solicitud.title}</h3>
+      <p className="mt-1 text-sm text-slate-500">{status.hint}</p>
+
+      {solicitud.status === "rechazada" && solicitud.rejectionReason && (
+        <p className="mt-3 rounded-xl bg-red-50 p-3 text-sm text-red-700">
+          Motivo: {solicitud.rejectionReason}
+        </p>
+      )}
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Descripción</p>
+          <p className="mt-2 whitespace-pre-line text-sm leading-6 text-slate-700">{solicitud.description}</p>
+        </div>
+
+        <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <Link
+            href={`/perfil/${solicitud.freelancer.id}`}
+            className="flex items-center gap-3 hover:opacity-80"
+          >
+            <Avatar initials={solicitud.freelancer.initials} name={solicitud.freelancer.name} size="sm" />
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-slate-900">{solicitud.freelancer.name}</p>
+              <p className="truncate text-xs text-slate-500">{solicitud.freelancer.specialty}</p>
+            </div>
+          </Link>
+
+          <div className="flex items-baseline justify-between border-t border-slate-200 pt-3">
+            <p className="text-sm font-medium text-slate-700">Plan {solicitud.plan.name}</p>
+            <p className="text-sm font-bold text-slate-900">
+              ${solicitud.plan.price}
+              <span className="text-xs font-normal text-slate-500"> /mes</span>
+            </p>
+          </div>
+
+          {solicitud.category && <p className="text-xs text-slate-500">Categoría: {solicitud.category}</p>}
+
+          {solicitud.desiredDate && (
+            <p className="inline-flex items-center gap-2 text-xs text-slate-600">
+              <CalendarDays className="h-4 w-4 text-indigo-500" />
+              Fecha deseada: {formatDate(solicitud.desiredDate)}
+            </p>
+          )}
+        </div>
+      </div>
+    </Card>
   );
 }
