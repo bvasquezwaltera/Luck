@@ -2,6 +2,7 @@ from app.models.caracteristica_plan import CaracteristicaPlan
 from app.models.categoria_metodo_trabajo import CategoriaMetodoTrabajo
 from app.models.diferenciador import DiferenciadorFreelancer
 from app.models.educacion import Educacion
+from app.models.entrega import Entrega, EntregaAdjunto, EntregaAvance, EntregaRevision
 from app.models.experiencia import Experiencia
 from app.models.habilidad import HabilidadFreelancer
 from app.models.herramienta import HerramientaFreelancer
@@ -21,6 +22,10 @@ __all__ = [
     "Contrato",
     "DiferenciadorFreelancer",
     "Educacion",
+    "Entrega",
+    "EntregaAdjunto",
+    "EntregaAvance",
+    "EntregaRevision",
     "Experiencia",
     "HabilidadFreelancer",
     "HerramientaFreelancer",

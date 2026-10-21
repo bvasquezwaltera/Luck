@@ -1,6 +1,6 @@
 from app.services.supabase_client import supabase_auth
 
-# Bucket privado: los archivos solo se leen mediante enlaces temporales firmados.
+# Buckets privados: los archivos solo se leen mediante enlaces temporales firmados.
 BUCKET = "solicitud-adjuntos"
 MAX_FILE_BYTES = 5 * 1024 * 1024
 MAX_FILES = 5
@@ -16,21 +16,45 @@ ALLOWED_TYPES: dict[str, tuple[str, tuple[bytes, ...]]] = {
 }
 ALLOWED_MIME_TYPES = sorted({mime for mime, _ in ALLOWED_TYPES.values()})
 
+# Entregas del freelancer y devoluciones del cliente: archivos de trabajo, más grandes y de más formatos.
+# No se permiten ejecutables, HTML ni SVG (podrían llevar código).
+DELIVERY_BUCKET = "entrega-adjuntos"
+DELIVERY_MAX_FILE_BYTES = 25 * 1024 * 1024
+DELIVERY_MAX_TOTAL_BYTES = 50 * 1024 * 1024
+DELIVERY_MAX_FILES = 5
+DELIVERY_MAX_LINKS = 5
 
-def upload(path: str, content: bytes, content_type: str) -> None:
-    supabase_auth.storage.from_(BUCKET).upload(path, content, {"content-type": content_type})
+_ZIP = (b"PK\x03\x04",)
+# Los formatos de texto no tienen firma: se comprueba aparte que sean texto legible (ver deliveries_service).
+DELIVERY_TEXT_EXTENSIONS = {".txt", ".csv", ".md"}
+DELIVERY_ALLOWED_TYPES: dict[str, tuple[str, tuple[bytes, ...]]] = {
+    **ALLOWED_TYPES,
+    ".gif": ("image/gif", (b"GIF87a", b"GIF89a")),
+    ".zip": ("application/zip", _ZIP),
+    ".docx": ("application/vnd.openxmlformats-officedocument.wordprocessingml.document", _ZIP),
+    ".xlsx": ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", _ZIP),
+    ".pptx": ("application/vnd.openxmlformats-officedocument.presentationml.presentation", _ZIP),
+    ".txt": ("text/plain", ()),
+    ".csv": ("text/csv", ()),
+    ".md": ("text/markdown", ()),
+}
+DELIVERY_ALLOWED_MIME_TYPES = sorted({mime for mime, _ in DELIVERY_ALLOWED_TYPES.values()})
 
 
-def create_signed_url(path: str, expires_in: int = SIGNED_URL_SECONDS) -> str:
-    result = supabase_auth.storage.from_(BUCKET).create_signed_url(path, expires_in)
+def upload(path: str, content: bytes, content_type: str, bucket: str = BUCKET) -> None:
+    supabase_auth.storage.from_(bucket).upload(path, content, {"content-type": content_type})
+
+
+def create_signed_url(path: str, expires_in: int = SIGNED_URL_SECONDS, bucket: str = BUCKET) -> str:
+    result = supabase_auth.storage.from_(bucket).create_signed_url(path, expires_in)
     return result["signedURL"]
 
 
-def remove(paths: list[str]) -> None:
+def remove(paths: list[str], bucket: str = BUCKET) -> None:
     """Borra archivos del bucket sin fallar: se usa al limpiar, y un archivo huérfano es menos grave que un error."""
     if not paths:
         return
     try:
-        supabase_auth.storage.from_(BUCKET).remove(paths)
+        supabase_auth.storage.from_(bucket).remove(paths)
     except Exception:
         pass
