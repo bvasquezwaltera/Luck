@@ -1,3 +1,5 @@
+import type { DeliveryApiStatus } from "@/types/deliveryApi";
+
 export interface DeliveryAttachment {
   id: string;
   name: string;
@@ -36,4 +38,7 @@ export interface DeliveryModule {
   objectives: string[];
   advanceHistory?: AdvanceEntry[];
   clientFeedback?: ClientFeedbackEntry[];
+  // Solo en entregas reales (backend): a qué contrato pertenece y su estado exacto.
+  contractId?: string;
+  apiStatus?: DeliveryApiStatus;
 }

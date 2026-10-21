@@ -21,6 +21,7 @@ import { SolicitudesSection } from "@/modules/panel/freelancer/solicitudes/Solic
 import { ReviewsSection } from "@/modules/panel/freelancer/reviews/ReviewsSection";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import type { FreelancerSectionId } from "@/types/freelancerSection";
+import type { ContractDeliveries } from "@/types/deliveryApi";
 import type { FreelancerPaymentSummary, PaymentRecord } from "@/types/payment";
 import type { ReceivedSolicitud } from "@/types/receivedSolicitud";
 import type { ReviewEntry } from "@/types/review";
@@ -54,6 +55,7 @@ export function FreelancerDashboard({
   solicitudes = [],
   payments = [],
   paymentSummary = EMPTY_SUMMARY,
+  deliveries = [],
 }: {
   embedded?: boolean;
   profile?: FreelancerProfile;
@@ -62,6 +64,7 @@ export function FreelancerDashboard({
   // null = el servidor falló al cargarlos (la sección lo avisa); si no se pasan, se muestran vacíos.
   payments?: PaymentRecord[] | null;
   paymentSummary?: FreelancerPaymentSummary | null;
+  deliveries?: ContractDeliveries[] | null;
 }) {
   const [activeSection, setActiveSection] = useState<FreelancerSectionId>("inicio");
 
@@ -79,7 +82,7 @@ export function FreelancerDashboard({
       case "mensajes":
         return <MessagesSection />;
       case "entregas":
-        return <DeliveriesSection />;
+        return <DeliveriesSection contracts={deliveries} />;
       case "pagos":
         return <PaymentsSection payments={payments} summary={paymentSummary} />;
       case "reseñas":
@@ -89,7 +92,7 @@ export function FreelancerDashboard({
       default:
         return null;
     }
-  }, [activeSection, safeProfile, reviews, draftProfile, solicitudes, payments, paymentSummary]);
+  }, [activeSection, safeProfile, reviews, draftProfile, solicitudes, payments, paymentSummary, deliveries]);
 
   if (embedded) {
     return (
