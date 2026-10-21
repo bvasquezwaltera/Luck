@@ -1,3 +1,5 @@
+import type { SolicitudPaymentInfo } from "@/types/payment";
+
 export type SolicitudStatus = "nueva" | "sin_responder" | "respondida" | "archivada";
 export type SolicitudCategory =
   | "desarrollo"
@@ -50,4 +52,7 @@ export interface Solicitud {
   planProjects?: string;
   rejected?: boolean;
   rejectionReason?: string;
+  // Solicitud ya pagada: el contrato está activo.
+  contracted?: boolean;
+  payment?: SolicitudPaymentInfo;
 }

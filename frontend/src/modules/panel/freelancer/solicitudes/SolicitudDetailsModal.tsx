@@ -6,6 +6,7 @@ import { Modal } from "@/ui/Modal";
 import { Button } from "@/ui/Button";
 import { Badge } from "@/ui/Badge";
 import { Textarea } from "@/ui/Textarea";
+import { formatSolicitudDate } from "@/lib/formatSolicitudDate";
 import { acceptSolicitud, openAttachment, rejectSolicitud } from "@/lib/api/client/solicitudes";
 import type { ReceivedSolicitud } from "@/types/receivedSolicitud";
 import type { Solicitud } from "@/types/solicitud";
@@ -84,7 +85,7 @@ export function SolicitudDetailsModal({
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-xl font-bold text-slate-900">{solicitud.titulo}</h2>
             <Badge className={`${status.className} whitespace-nowrap text-[11px] font-medium`}>
-              {solicitud.rejected ? "Rechazada" : status.label}
+              {solicitud.rejected ? "Rechazada" : solicitud.contracted ? "Contratada" : status.label}
             </Badge>
           </div>
           <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
@@ -220,8 +221,14 @@ export function SolicitudDetailsModal({
                 <Check className="h-4 w-4 text-indigo-600" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-indigo-900">Aceptaste esta solicitud</p>
-                <p className="mt-0.5 text-xs leading-5 text-indigo-700">El cliente debe pagar para activar el contrato.</p>
+                <p className="text-sm font-semibold text-indigo-900">
+                  {solicitud.contracted ? "Contrato activo" : "Aceptaste esta solicitud"}
+                </p>
+                <p className="mt-0.5 text-xs leading-5 text-indigo-700">
+                  {solicitud.contracted && solicitud.payment
+                    ? `El cliente pagó $${solicitud.payment.amount} el ${formatSolicitudDate(solicitud.payment.paidAt)} (ref. ${solicitud.payment.reference}). Próximo cobro: ${formatSolicitudDate(solicitud.payment.nextChargeAt)}.`
+                    : "El cliente debe pagar para activar el contrato."}
+                </p>
               </div>
             </div>
           )}

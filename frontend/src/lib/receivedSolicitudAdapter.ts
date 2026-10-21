@@ -13,10 +13,10 @@ export function toPanelCategory(category: string): SolicitudCategory {
   return "servicios_generales";
 }
 
-// enviada -> nueva · aceptada -> aceptada (el cliente debe pagar) · el resto -> archivada.
+// enviada -> nueva · aceptada y contratada -> aceptadas (contratada ya fue pagada) · el resto -> archivada.
 function toPanelStatus(status: ReceivedSolicitud["status"]): SolicitudStatus {
   if (status === "enviada") return "nueva";
-  if (status === "aceptada") return "respondida";
+  if (status === "aceptada" || status === "contratada") return "respondida";
   return "archivada";
 }
 
@@ -40,6 +40,8 @@ export function toPanelSolicitud(received: ReceivedSolicitud): Solicitud {
     desiredDate: received.desiredDate ?? undefined,
     planProjects: received.plan.activeProjects || undefined,
     rejected: received.status === "rechazada",
+    contracted: received.status === "contratada",
+    payment: received.payment ?? undefined,
     rejectionReason: received.rejectionReason ?? undefined,
   };
 }

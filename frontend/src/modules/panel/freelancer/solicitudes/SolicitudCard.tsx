@@ -43,7 +43,7 @@ export function SolicitudCard({
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="truncate text-sm font-semibold text-slate-900 sm:text-base">{solicitud.titulo}</h3>
                   <Badge className={`${status.className} whitespace-nowrap text-[11px] font-medium`}>
-                    {status.label}
+                    {solicitud.contracted ? "Contratada" : status.label}
                   </Badge>
                 </div>
                 <p className="mt-1 text-xs text-slate-500">

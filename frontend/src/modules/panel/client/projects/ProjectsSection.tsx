@@ -8,6 +8,7 @@ import {
   ClientSolicitudDetailsModal,
   payHint,
 } from "@/modules/panel/client/projects/ClientSolicitudDetailsModal";
+import { PaymentDrawer } from "@/modules/panel/client/projects/PaymentDrawer";
 import { solicitudCategoryConfig } from "@/modules/panel/solicitudCategoryConfig";
 import { formatSolicitudDate } from "@/lib/formatSolicitudDate";
 import { toPanelCategory } from "@/lib/receivedSolicitudAdapter";
@@ -26,6 +27,7 @@ const TABS: Array<{ id: TabId; label: string }> = [
   { id: "todas", label: "Todas" },
   { id: "enviada", label: "Enviadas" },
   { id: "aceptada", label: "Aceptadas" },
+  { id: "contratada", label: "Contratadas" },
   { id: "rechazada", label: "Rechazadas" },
 ];
 
@@ -213,7 +215,7 @@ export function SolicitudesSection({ solicitudes }: { solicitudes: ClientSolicit
 
 function SolicitudRow({ solicitud }: { solicitud: ClientSolicitud }) {
   const [showDetails, setShowDetails] = useState(false);
-  const [payNotice, setPayNotice] = useState(false);
+  const [showPay, setShowPay] = useState(false);
   const status = CLIENT_STATUS_CONFIG[solicitud.status];
   const category = solicitudCategoryConfig[toPanelCategory(solicitud.category)];
   const CategoryIcon = category.icon;
@@ -271,6 +273,11 @@ function SolicitudRow({ solicitud }: { solicitud: ClientSolicitud }) {
               <p className="text-[11px] font-medium uppercase tracking-wide text-indigo-500">Plan solicitado</p>
               <p className="mt-1 text-sm font-semibold text-slate-900">Plan {solicitud.plan.name}</p>
               <p className="mt-1 text-[11px] text-slate-500">${solicitud.plan.price} /mes</p>
+              {solicitud.payment && (
+                <p className="mt-1 text-[11px] text-slate-500">
+                  Próximo cobro: {formatSolicitudDate(solicitud.payment.nextChargeAt)}
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-2">
               <div className="flex flex-row gap-2">
@@ -287,20 +294,28 @@ function SolicitudRow({ solicitud }: { solicitud: ClientSolicitud }) {
                   aria-label="Pagar"
                   title={payHint(solicitud.status)}
                   className="!min-w-0 h-8 gap-1.5 !px-3 disabled:cursor-not-allowed disabled:opacity-40"
-                  onClick={() => setPayNotice(true)}
+                  onClick={() => setShowPay(true)}
                   disabled={solicitud.status !== "aceptada"}
                 >
                   <CreditCard className="h-3.5 w-3.5" />
-                  Pagar
+                  {solicitud.status === "contratada" ? "Pagado" : "Pagar"}
                 </Button>
               </div>
-              {payNotice && <p className="text-[11px] text-amber-600">El pago se activará pronto.</p>}
             </div>
           </div>
         </div>
       </article>
 
-      <ClientSolicitudDetailsModal open={showDetails} onClose={() => setShowDetails(false)} solicitud={solicitud} />
+      <ClientSolicitudDetailsModal
+        open={showDetails}
+        onClose={() => setShowDetails(false)}
+        solicitud={solicitud}
+        onPay={() => {
+          setShowDetails(false);
+          setShowPay(true);
+        }}
+      />
+      <PaymentDrawer open={showPay} solicitud={solicitud} onClose={() => setShowPay(false)} />
     </>
   );
 }

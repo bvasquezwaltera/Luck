@@ -1,4 +1,12 @@
-export type ClientSolicitudStatus = "enviada" | "aceptada" | "rechazada" | "cancelada" | "expirada";
+import type { SolicitudPaymentInfo } from "@/types/payment";
+
+export type ClientSolicitudStatus =
+  | "enviada"
+  | "aceptada"
+  | "contratada"
+  | "rechazada"
+  | "cancelada"
+  | "expirada";
 
 export interface SolicitudAttachmentInfo {
   id: string;
@@ -27,5 +35,6 @@ export interface ClientSolicitud {
   createdAt: string;
   plan: SolicitudPlanInfo;
   attachments: SolicitudAttachmentInfo[];
+  payment: SolicitudPaymentInfo | null;
   freelancer: { id: string; name: string; initials: string; specialty: string };
 }

@@ -1,4 +1,5 @@
 import { apiFetch } from "@/lib/api/httpClient";
+import type { PaymentReceipt } from "@/types/payment";
 import type { ReceivedSolicitud } from "@/types/receivedSolicitud";
 
 export interface CreateSolicitudInput {
@@ -71,4 +72,13 @@ export async function openAttachment(solicitudId: string, attachmentId: string):
   if (tab) tab.location.href = url;
   else window.location.href = url;
   return {};
+}
+
+// Cobro de una solicitud aceptada. Hoy es simulado; los datos de la tarjeta nunca salen de la pantalla.
+export async function paySolicitud(id: string): Promise<{ receipt?: PaymentReceipt; error?: string }> {
+  const response = await apiFetch(`/api/solicitudes/${id}/pay`, { method: "POST", body: JSON.stringify({}) });
+
+  if (response.ok) return { receipt: (await response.json()) as PaymentReceipt };
+  if (response.status === 403) return { error: "Solo las cuentas de cliente pueden pagar." };
+  return { error: await readError(response, "No se pudo procesar el pago.") };
 }
