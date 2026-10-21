@@ -1,6 +1,7 @@
 "use client";
 
-import { CalendarDays, ClipboardList, Clock, FileText, Hash, Hourglass, Paperclip, ShieldCheck, Sparkles, User, X } from "lucide-react";
+import { useState } from "react";
+import { CalendarDays, ClipboardList, CreditCard, Clock, FileText, Hash, Hourglass, Paperclip, ShieldCheck, Sparkles, User, X } from "lucide-react";
 import { SolicitudAttachmentList } from "@/modules/panel/SolicitudAttachmentList";
 import { Badge } from "@/ui/Badge";
 import { Button } from "@/ui/Button";
@@ -54,6 +55,13 @@ const STATUS_NOTE: Record<ClientSolicitudStatus, { title: string; text: string; 
   },
 };
 
+// El botón de pagar solo se habilita con la solicitud aceptada; en los demás estados explica por qué no.
+export function payHint(status: ClientSolicitudStatus): string {
+  if (status === "enviada") return "Disponible cuando el freelancer acepte tu solicitud";
+  if (status === "aceptada") return "Pagar para activar el contrato";
+  return "Esta solicitud no se puede pagar";
+}
+
 export function ClientSolicitudDetailsModal({
   open,
   onClose,
@@ -63,6 +71,7 @@ export function ClientSolicitudDetailsModal({
   onClose: () => void;
   solicitud: ClientSolicitud;
 }) {
+  const [payNotice, setPayNotice] = useState(false);
   const status = CLIENT_STATUS_CONFIG[solicitud.status];
   const note = STATUS_NOTE[solicitud.status];
   const revisions = Number.parseInt(solicitud.plan.revisions, 10) || 0;
@@ -209,9 +218,21 @@ export function ClientSolicitudDetailsModal({
       </div>
 
       <div className="sticky bottom-0 z-10 border-t border-slate-200 bg-slate-50 p-5 sm:p-6">
-        <Button variant="outline-neutral" onClick={onClose} className="w-full">
-          Cerrar
-        </Button>
+        {payNotice && <p className="mb-3 text-xs text-amber-600">El pago se activará pronto.</p>}
+        <div className="flex gap-3">
+          <Button variant="outline-neutral" onClick={onClose} className="flex-1">
+            Cerrar
+          </Button>
+          <Button
+            onClick={() => setPayNotice(true)}
+            disabled={solicitud.status !== "aceptada"}
+            title={payHint(solicitud.status)}
+            className="flex-1 gap-1.5 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <CreditCard className="h-3.5 w-3.5" />
+            Pagar ${solicitud.plan.price}
+          </Button>
+        </div>
       </div>
     </Modal>
   );

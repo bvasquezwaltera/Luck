@@ -1,11 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Eye, Filter, Inbox, Paperclip } from "lucide-react";
+import { CreditCard, Eye, Filter, Inbox, Paperclip } from "lucide-react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
 import {
   CLIENT_STATUS_CONFIG,
   ClientSolicitudDetailsModal,
+  payHint,
 } from "@/modules/panel/client/projects/ClientSolicitudDetailsModal";
 import { solicitudCategoryConfig } from "@/modules/panel/solicitudCategoryConfig";
 import { formatSolicitudDate } from "@/lib/formatSolicitudDate";
@@ -212,6 +213,7 @@ export function SolicitudesSection({ solicitudes }: { solicitudes: ClientSolicit
 
 function SolicitudRow({ solicitud }: { solicitud: ClientSolicitud }) {
   const [showDetails, setShowDetails] = useState(false);
+  const [payNotice, setPayNotice] = useState(false);
   const status = CLIENT_STATUS_CONFIG[solicitud.status];
   const category = solicitudCategoryConfig[toPanelCategory(solicitud.category)];
   const CategoryIcon = category.icon;
@@ -270,15 +272,30 @@ function SolicitudRow({ solicitud }: { solicitud: ClientSolicitud }) {
               <p className="mt-1 text-sm font-semibold text-slate-900">Plan {solicitud.plan.name}</p>
               <p className="mt-1 text-[11px] text-slate-500">${solicitud.plan.price} /mes</p>
             </div>
-            <Button
-              variant="outline-neutral"
-              aria-label="Ver detalles"
-              title="Ver detalles"
-              className="!min-w-0 h-8 w-8 !px-0"
-              onClick={() => setShowDetails(true)}
-            >
-              <Eye className="h-4 w-4" />
-            </Button>
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-row gap-2">
+                <Button
+                  variant="outline-neutral"
+                  aria-label="Ver detalles"
+                  title="Ver detalles"
+                  className="!min-w-0 h-8 w-8 !px-0"
+                  onClick={() => setShowDetails(true)}
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
+                <Button
+                  aria-label="Pagar"
+                  title={payHint(solicitud.status)}
+                  className="!min-w-0 h-8 gap-1.5 !px-3 disabled:cursor-not-allowed disabled:opacity-40"
+                  onClick={() => setPayNotice(true)}
+                  disabled={solicitud.status !== "aceptada"}
+                >
+                  <CreditCard className="h-3.5 w-3.5" />
+                  Pagar
+                </Button>
+              </div>
+              {payNotice && <p className="text-[11px] text-amber-600">El pago se activará pronto.</p>}
+            </div>
           </div>
         </div>
       </article>
