@@ -12,7 +12,7 @@ from app.models.perfil_freelancer import PerfilFreelancer
 from app.models.plan_suscripcion import PlanSuscripcion
 from app.models.proyecto_portafolio import ProyectoPortafolio
 from app.models.resena import Resena
-from app.models.solicitud import Solicitud
+from app.models.solicitud import Solicitud, SolicitudAdjunto
 
 __all__ = [
     "CaracteristicaPlan",
@@ -30,4 +30,5 @@ __all__ = [
     "ProyectoPortafolio",
     "Resena",
     "Solicitud",
+    "SolicitudAdjunto",
 ]

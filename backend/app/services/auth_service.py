@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.caracteristica_plan import CaracteristicaPlan
@@ -14,7 +15,8 @@ from app.models.perfil_freelancer import PerfilFreelancer
 from app.models.plan_suscripcion import PlanSuscripcion
 from app.models.proyecto_portafolio import ProyectoPortafolio
 from app.models.resena import Resena
-from app.models.solicitud import Solicitud
+from app.models.solicitud import Solicitud, SolicitudAdjunto
+from app.services import storage_service
 from app.schemas.auth import ActionResult, AuthResponse, SignInRequest, SignUpRequest
 from app.services.supabase_client import create_auth_client, supabase_auth
 
@@ -117,6 +119,14 @@ def delete_account(db: Session, freelancer_id: str) -> ActionResult:
     db.query(Experiencia).filter(Experiencia.freelancer_id == freelancer_id).delete()
     db.query(Educacion).filter(Educacion.freelancer_id == freelancer_id).delete()
     db.query(PlanSuscripcion).filter(PlanSuscripcion.freelancer_id == freelancer_id).delete()
+    # Los archivos viven en Storage, fuera de la base: se recogen sus rutas antes de borrar las filas.
+    adjunto_paths = list(
+        db.scalars(
+            select(SolicitudAdjunto.ruta)
+            .join(Solicitud, Solicitud.id == SolicitudAdjunto.solicitud_id)
+            .where((Solicitud.cliente_id == freelancer_id) | (Solicitud.freelancer_id == freelancer_id))
+        )
+    )
     db.query(Solicitud).filter(
         (Solicitud.cliente_id == freelancer_id) | (Solicitud.freelancer_id == freelancer_id)
     ).delete(synchronize_session=False)
@@ -125,6 +135,7 @@ def delete_account(db: Session, freelancer_id: str) -> ActionResult:
     db.query(PerfilFreelancer).filter(PerfilFreelancer.perfil_id == freelancer_id).delete()
     db.query(Perfil).filter(Perfil.id == freelancer_id).delete()
     db.commit()
+    storage_service.remove(adjunto_paths)
 
     try:
         supabase_auth.auth.admin.delete_user(freelancer_id)
