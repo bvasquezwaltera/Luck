@@ -1,3 +1,5 @@
+import logging
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -17,14 +19,18 @@ from app.models.proyecto_portafolio import ProyectoPortafolio
 from app.models.resena import Resena
 from app.models.solicitud import Solicitud, SolicitudAdjunto
 from app.services import auth_validation, deliveries_service, messages_service, storage_service
+from app.core.config import settings
 from app.schemas.auth import ActionResult, AuthResponse, SignInRequest, SignUpRequest
 from app.services.supabase_client import create_auth_client, supabase_auth
 
+logger = logging.getLogger(__name__)
 
 # La plataforma está orientada a Perú: valores iniciales hasta que el usuario los cambie.
 DEFAULT_COUNTRY_CODE = "PE"
 DEFAULT_COUNTRY = "Perú"
 DEFAULT_TIMEZONE = "GMT-5 (Lima)"
+# Pantalla del frontend a la que lleva el enlace del correo de recuperación.
+RESET_PASSWORD_PATH = "/restablecer-contrasena"
 
 
 def sign_up(db: Session, payload: SignUpRequest) -> AuthResponse:
@@ -90,6 +96,28 @@ def sign_in(db: Session, payload: SignInRequest) -> AuthResponse:
         accessToken=session.access_token if session else None,
         refreshToken=session.refresh_token if session else None,
     )
+
+
+def forgot_password(email: str) -> ActionResult:
+    """Envía el correo con el enlace para elegir una contraseña nueva.
+
+    Responde igual exista o no la cuenta: si no, cualquiera podría averiguar qué correos están registrados."""
+    error = auth_validation.validate_email(email)
+    if error:
+        return ActionResult(error=error)
+
+    try:
+        create_auth_client().auth.reset_password_for_email(
+            email.strip(), {"redirect_to": settings.frontend_url.rstrip("/") + RESET_PASSWORD_PATH}
+        )
+    except Exception as exc:
+        # Supabase limita cuántos correos se pueden enviar por hora: ese caso sí se le avisa a la persona.
+        if "rate limit" in str(exc).lower():
+            return ActionResult(error="Se enviaron demasiados correos. Espera unos minutos antes de intentarlo de nuevo.")
+        # Cualquier otro fallo no se detalla (podría delatar si la cuenta existe); queda en el registro del servidor.
+        logger.warning("No se pudo enviar el correo de recuperación: %s", exc)
+
+    return ActionResult()
 
 
 def change_password(user_id: str, new_password: str) -> ActionResult:

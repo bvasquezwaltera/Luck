@@ -42,3 +42,7 @@ class OAuthCompleteRequest(BaseModel):
 
 class GoogleUrl(BaseModel):
     url: str
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: str

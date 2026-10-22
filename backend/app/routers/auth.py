@@ -8,6 +8,7 @@ from app.schemas.auth import (
     ActionResult,
     AuthResponse,
     ChangePasswordRequest,
+    ForgotPasswordRequest,
     GoogleUrl,
     OAuthCompleteRequest,
     ProfileOut,
@@ -38,6 +39,11 @@ def google_url():
 @router.post("/oauth/complete", response_model=AuthResponse)
 def oauth_complete(payload: OAuthCompleteRequest, db: Session = Depends(get_db), user=Depends(get_current_user)):
     return oauth_service.complete_sign_in(db, user, payload.role)
+
+
+@router.post("/forgot-password", response_model=ActionResult)
+def forgot_password(payload: ForgotPasswordRequest):
+    return auth_service.forgot_password(payload.email)
 
 
 @router.post("/sign-out")

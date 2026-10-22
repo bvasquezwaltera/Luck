@@ -1,4 +1,5 @@
 import { apiFetch } from "@/lib/api/httpClient";
+import { API_URL } from "@/lib/api/config";
 import { savePending } from "@/lib/oauthPending";
 import { clearAuthTokenCookie, setAuthTokenCookie } from "@/lib/api/token";
 
@@ -76,4 +77,29 @@ export async function completeGoogleSignIn(role?: "freelancer" | "client"): Prom
   if (response.status === 401) return { error: "Tu sesión de Google no es válida. Inténtalo de nuevo." };
   if (!response.ok) return { error: "No se pudo completar el inicio de sesión." };
   return (await response.json()) as AuthActionResult;
+}
+
+// Pide el correo con el enlace para elegir una contraseña nueva.
+export async function requestPasswordReset(email: string): Promise<{ error?: string }> {
+  const response = await apiFetch("/api/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  }).catch(() => null);
+  if (!response?.ok) return { error: "No se pudo enviar el correo. Revisa tu conexión e inténtalo de nuevo." };
+  const result = (await response.json()) as { error?: string | null };
+  return result.error ? { error: result.error } : {};
+}
+
+// Guarda la contraseña nueva con la sesión temporal del enlace del correo. Esa sesión no se guarda como inicio de
+// sesión (no se escribe la cookie): solo sirve para este cambio, y después la persona entra con su contraseña nueva.
+export async function resetPasswordWithToken(token: string, newPassword: string): Promise<{ error?: string }> {
+  const response = await fetch(`${API_URL}/api/auth/change-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ newPassword }),
+  }).catch(() => null);
+  if (!response) return { error: "No se pudo conectar. Revisa tu conexión e inténtalo de nuevo." };
+  if (response.status === 401) return { error: "El enlace venció. Pide uno nuevo para continuar." };
+  const result = (await response.json().catch(() => ({}))) as { error?: string | null };
+  return result.error ? { error: result.error } : {};
 }
