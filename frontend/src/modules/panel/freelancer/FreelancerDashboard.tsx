@@ -12,6 +12,9 @@ import {
 } from "lucide-react";
 import { PanelBrandHeader } from "@/modules/panel/PanelBrandHeader";
 import { PaymentsSection } from "@/modules/panel/freelancer/payments/PaymentsSection";
+import { WelcomeModal } from "@/modules/panel/onboarding/WelcomeModal";
+import { useOnboarding } from "@/hooks/useOnboarding";
+import type { OnboardingState } from "@/lib/onboardingSteps";
 import { PanelMobileNav } from "@/modules/panel/PanelMobileNav";
 import { PanelSidebar } from "@/modules/panel/PanelSidebar";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
@@ -58,8 +61,11 @@ export function FreelancerDashboard({
   payments = [],
   paymentSummary = EMPTY_SUMMARY,
   deliveries = [],
+  onboarding = "completado",
 }: {
   embedded?: boolean;
+  // Hasta dónde llegó la guía de bienvenida; sin dato (la vista de ejemplo) no se muestra.
+  onboarding?: OnboardingState;
   profile?: FreelancerProfile;
   reviews?: ReviewEntry[];
   solicitudes?: ReceivedSolicitud[];
@@ -72,11 +78,21 @@ export function FreelancerDashboard({
   // Sin sesión real (la vista de ejemplo incrustada) no hay mensajes que consultar.
   const unreadMessages = useUnreadMessages(!embedded);
   // Las secciones sin contenido todavía se ven en el menú pero no se pueden abrir.
+  // Guía de bienvenida: el globo señala Configuración hasta que la persona la abre por primera vez.
+  const guide = useOnboarding(onboarding);
+  const [openedConfig, setOpenedConfig] = useState(false);
+  const showGuideHint = guide.state !== "completado" && !openedConfig;
   const sidebarItems = menuItems.map((item) => ({
     ...item,
     ...(item.id === "mensajes" ? { badge: unreadMessages } : {}),
+    ...(item.id === "configuracion" && showGuideHint ? { hint: "Empieza aquí: configura tu perfil" } : {}),
     disabled: ["inicio", "reseñas"].includes(item.id),
   }));
+
+  function goTo(section: FreelancerSectionId) {
+    if (section === "configuracion") setOpenedConfig(true);
+    setActiveSection(section);
+  }
 
   const { safeProfile, draftProfile, setDraftProfile } = useDraftProfile(
     profile,
@@ -98,11 +114,17 @@ export function FreelancerDashboard({
       case "reseñas":
         return <ReviewsSection reviews={reviews} />;
       case "configuracion":
-        return <ConfigurationSection draftProfile={draftProfile} setDraftProfile={setDraftProfile} />;
+        return (
+          <ConfigurationSection
+            draftProfile={draftProfile}
+            setDraftProfile={setDraftProfile}
+            guide={guide.state === "completado" ? undefined : { onFinish: () => guide.advance("completado") }}
+          />
+        );
       default:
         return null;
     }
-  }, [activeSection, safeProfile, reviews, draftProfile, solicitudes, payments, paymentSummary, deliveries]);
+  }, [activeSection, safeProfile, reviews, draftProfile, solicitudes, payments, paymentSummary, deliveries, guide]);
 
   if (embedded) {
     return (
@@ -113,7 +135,7 @@ export function FreelancerDashboard({
           <PanelSidebar
             menuItems={sidebarItems}
             activeSection={activeSection}
-            onSectionChange={setActiveSection}
+            onSectionChange={goTo}
             className="rounded-xl bg-indigo-50 p-3"
           />
 
@@ -128,11 +150,11 @@ export function FreelancerDashboard({
   return (
     <div className="min-h-screen bg-indigo-50 text-slate-900">
       <div className="flex min-h-screen flex-col lg:flex-row">
-        <PanelMobileNav menuItems={sidebarItems} activeSection={activeSection} onSectionChange={setActiveSection} />
+        <PanelMobileNav menuItems={sidebarItems} activeSection={activeSection} onSectionChange={goTo} />
         <PanelSidebar
           menuItems={sidebarItems}
           activeSection={activeSection}
-          onSectionChange={setActiveSection}
+          onSectionChange={goTo}
           showHeader
           className="w-full border-b border-slate-200 bg-white lg:w-[220px] lg:border-b-0 lg:border-r"
         />
@@ -140,6 +162,17 @@ export function FreelancerDashboard({
         <main className="flex-1 p-4 sm:p-6">
           <div className="space-y-4">{panelContent}</div>
         </main>
+
+        <WelcomeModal
+          role="freelancer"
+          name={safeProfile.name}
+          open={guide.state === "pendiente"}
+          onStart={() => {
+            guide.advance("bienvenida_vista");
+            goTo("configuracion");
+          }}
+          onLater={() => guide.advance("bienvenida_vista")}
+        />
       </div>
     </div>
   );

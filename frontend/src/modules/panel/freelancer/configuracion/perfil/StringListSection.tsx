@@ -9,6 +9,7 @@ import { Input } from "@/ui/Input";
 // Lista de textos cortos que se agregan y se quitan (diferenciadores, habilidades, herramientas).
 // Solo cambia cómo se ve: el padre sigue recibiendo la lista completa en cada cambio.
 export function StringListSection({
+  id,
   icon,
   title,
   description,
@@ -20,6 +21,7 @@ export function StringListSection({
   onChange,
   errorKey,
 }: {
+  id?: string;
   icon: LucideIcon;
   title: string;
   description?: string;
@@ -37,7 +39,7 @@ export function StringListSection({
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
 
   return (
-    <ProfileCard icon={icon} title={title} description={description} count={items.length}>
+    <ProfileCard id={id} icon={icon} title={title} description={description} count={items.length}>
       <div className="space-y-2">
         {items.length === 0 && (
           <p className="rounded-xl bg-slate-50 px-3 py-3 text-center text-xs text-slate-500">{emptyText}</p>

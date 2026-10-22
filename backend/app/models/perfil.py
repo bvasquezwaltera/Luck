@@ -19,3 +19,5 @@ class Perfil(Base):
     pais_codigo: Mapped[str | None] = mapped_column(Text, nullable=True)
     pais: Mapped[str | None] = mapped_column(Text, nullable=True)
     zona_horaria: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # Guía de bienvenida: pendiente -> bienvenida_vista -> completado (solo avanza).
+    onboarding: Mapped[str] = mapped_column(Text, server_default="pendiente")

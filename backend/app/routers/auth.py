@@ -11,6 +11,8 @@ from app.schemas.auth import (
     ForgotPasswordRequest,
     GoogleUrl,
     OAuthCompleteRequest,
+    OnboardingRequest,
+    RefreshRequest,
     ProfileOut,
     SignInRequest,
     SignUpRequest,
@@ -41,6 +43,11 @@ def oauth_complete(payload: OAuthCompleteRequest, db: Session = Depends(get_db),
     return oauth_service.complete_sign_in(db, user, payload.role)
 
 
+@router.post("/refresh", response_model=AuthResponse)
+def refresh(payload: RefreshRequest):
+    return auth_service.refresh_session(payload.refreshToken)
+
+
 @router.post("/forgot-password", response_model=ActionResult)
 def forgot_password(payload: ForgotPasswordRequest):
     return auth_service.forgot_password(payload.email)
@@ -54,7 +61,12 @@ def sign_out():
 
 @router.get("/me", response_model=ProfileOut)
 def me(profile: Perfil = Depends(get_current_profile)):
-    return ProfileOut(id=str(profile.id), rol=profile.rol, nombre_completo=profile.nombre_completo)
+    return ProfileOut(id=str(profile.id), rol=profile.rol, nombre_completo=profile.nombre_completo, onboarding=profile.onboarding)
+
+
+@router.post("/onboarding", response_model=ActionResult)
+def onboarding(payload: OnboardingRequest, db: Session = Depends(get_db), profile: Perfil = Depends(get_current_profile)):
+    return auth_service.advance_onboarding(db, profile, payload.state)
 
 
 @router.post("/change-password", response_model=ActionResult)

@@ -7,7 +7,7 @@ import { RoleToggle, type Role } from "@/modules/autenticacion/RoleToggle";
 import { completeGoogleSignIn } from "@/lib/api/client/auth";
 import { clearPending, readPending } from "@/lib/oauthPending";
 import { parseOAuthReturn } from "@/lib/oauthHash";
-import { clearAuthTokenCookie, setAuthTokenCookie } from "@/lib/api/token";
+import { clearSession, storeSession } from "@/lib/api/token";
 import { Button } from "@/ui/Button";
 
 const PANEL_PATH_BY_ROLE: Record<string, string> = {
@@ -37,7 +37,7 @@ export function OAuthCallback() {
       return;
     }
     if (result.error || !result.role) {
-      clearAuthTokenCookie();
+      clearSession();
       setError(result.error ?? "No se pudo completar el inicio de sesión.");
       setStage("error");
       return;
@@ -59,7 +59,7 @@ export function OAuthCallback() {
       setStage("error");
       return;
     }
-    setAuthTokenCookie(returned.accessToken);
+    storeSession({ accessToken: returned.accessToken, refreshToken: returned.refreshToken });
     void complete(readPending().role);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- solo al llegar a la página
   }, []);

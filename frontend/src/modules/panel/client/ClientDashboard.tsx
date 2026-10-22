@@ -10,6 +10,9 @@ import {
   Truck,
 } from "lucide-react";
 import { PanelBrandHeader } from "@/modules/panel/PanelBrandHeader";
+import { WelcomeModal } from "@/modules/panel/onboarding/WelcomeModal";
+import { useOnboarding } from "@/hooks/useOnboarding";
+import type { OnboardingState } from "@/lib/onboardingSteps";
 import { PanelMobileNav } from "@/modules/panel/PanelMobileNav";
 import { PanelSidebar } from "@/modules/panel/PanelSidebar";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
@@ -45,8 +48,11 @@ export function ClientDashboard({
   payments = [],
   paymentSummary = EMPTY_SUMMARY,
   deliveries = [],
+  onboarding = "completado",
 }: {
   embedded?: boolean;
+  // Hasta dónde llegó la guía de bienvenida; sin dato (la vista de ejemplo) no se muestra.
+  onboarding?: OnboardingState;
   profile?: FreelancerProfile;
   solicitudes?: ClientSolicitud[];
   // null = el servidor falló al cargarlos (la sección lo avisa); si no se pasan, se muestran vacíos.
@@ -63,6 +69,9 @@ export function ClientDashboard({
     ...(item.id === "mensajes" ? { badge: unreadMessages } : {}),
     disabled: ["inicio"].includes(item.id),
   }));
+
+  // El cliente casi no tiene nada que configurar: su bienvenida es un solo aviso que se cierra y no vuelve.
+  const guide = useOnboarding(onboarding);
 
   const { safeProfile, draftProfile, setDraftProfile } = useDraftProfile(
     profile,
@@ -124,6 +133,17 @@ export function ClientDashboard({
         <main className="flex-1 p-4 sm:p-6">
           <div className="space-y-4">{panelContent}</div>
         </main>
+
+        <WelcomeModal
+          role="client"
+          name={safeProfile.name}
+          open={guide.state !== "completado"}
+          onStart={() => {
+            guide.advance("completado");
+            window.location.assign("/");
+          }}
+          onLater={() => guide.advance("completado")}
+        />
       </div>
     </div>
   );

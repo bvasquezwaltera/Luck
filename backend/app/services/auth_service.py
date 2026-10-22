@@ -98,6 +98,38 @@ def sign_in(db: Session, payload: SignInRequest) -> AuthResponse:
     )
 
 
+def refresh_session(refresh_token: str) -> AuthResponse:
+    """Cambia el token de renovación por una sesión nueva (el de acceso dura solo una hora).
+
+    Supabase rota el token de renovación: el que se envía deja de servir y el que vuelve es el que hay que guardar."""
+    if not refresh_token.strip():
+        return AuthResponse(error="Sesión vencida.")
+
+    try:
+        result = create_auth_client().auth.refresh_session(refresh_token.strip())
+    except Exception:
+        return AuthResponse(error="Sesión vencida.")
+
+    session = result.session
+    if not session:
+        return AuthResponse(error="Sesión vencida.")
+    return AuthResponse(accessToken=session.access_token, refreshToken=session.refresh_token)
+
+
+ONBOARDING_ORDER = ["pendiente", "bienvenida_vista", "completado"]
+
+
+def advance_onboarding(db: Session, perfil: Perfil, state: str) -> ActionResult:
+    """La guía solo avanza: pendiente -> bienvenida_vista -> completado. Pedir un paso anterior no hace nada."""
+    if state not in ONBOARDING_ORDER:
+        return ActionResult(error="Estado inválido.")
+
+    if ONBOARDING_ORDER.index(state) > ONBOARDING_ORDER.index(perfil.onboarding):
+        perfil.onboarding = state
+        db.commit()
+    return ActionResult()
+
+
 def forgot_password(email: str) -> ActionResult:
     """Envía el correo con el enlace para elegir una contraseña nueva.
 

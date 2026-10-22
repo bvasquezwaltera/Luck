@@ -12,6 +12,7 @@ export function SkillsSection({
 }) {
   return (
     <StringListSection
+      id="onboarding-skills"
       icon={Zap}
       title="Habilidades"
       description="Lo que sabes hacer."

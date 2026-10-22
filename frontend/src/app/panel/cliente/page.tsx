@@ -35,6 +35,7 @@ export default async function ClientPanelPage() {
   return (
     <ClientDashboard
       profile={profile}
+      onboarding={authProfile.onboarding}
       solicitudes={solicitudes}
       payments={payments}
       paymentSummary={paymentSummary}

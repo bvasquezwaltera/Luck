@@ -21,6 +21,7 @@ export function EditProfileSection({
 
   return (
     <ProfileCard
+      id="onboarding-info"
       icon={UserRound}
       title="Información personal"
       description="Es lo primero que ven los clientes en tu perfil público."

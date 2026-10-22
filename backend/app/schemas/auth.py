@@ -26,6 +26,7 @@ class ProfileOut(BaseModel):
     id: str
     rol: str
     nombre_completo: str
+    onboarding: str
 
 
 class ChangePasswordRequest(BaseModel):
@@ -46,3 +47,11 @@ class GoogleUrl(BaseModel):
 
 class ForgotPasswordRequest(BaseModel):
     email: str
+
+
+class RefreshRequest(BaseModel):
+    refreshToken: str
+
+
+class OnboardingRequest(BaseModel):
+    state: str

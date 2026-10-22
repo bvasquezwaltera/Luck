@@ -41,7 +41,7 @@ export function PanelMobileNav<T extends string>({
   }, [open, close]);
 
   const activeLabel = menuItems.find((item) => item.id === activeSection)?.label ?? "";
-  const pending = menuItems.reduce((total, item) => total + (item.badge ?? 0), 0);
+  const pending = menuItems.reduce((total, item) => total + (item.badge ?? 0), 0) + (menuItems.some((item) => item.hint) ? 1 : 0);
 
   return (
     <div className="lg:hidden">

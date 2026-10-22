@@ -1,8 +1,10 @@
 "use client";
 
 import { CreditCard, Settings, FolderKanban, Lock, UserRound } from "lucide-react";
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
+import { OnboardingGuide } from "@/modules/panel/freelancer/configuracion/OnboardingGuide";
+import type { OnboardingStep } from "@/lib/onboardingSteps";
 import { ProfileErrorsProvider } from "@/modules/panel/profileErrors";
 import { ProfileSection } from "@/modules/panel/freelancer/configuracion/perfil/ProfileSection";
 import { ProjectsSection } from "@/modules/panel/freelancer/configuracion/proyecto/ProjectsSection";
@@ -34,9 +36,12 @@ const tabs: TabItem<ConfigTab>[] = [
 export function ConfigurationSection({
   draftProfile,
   setDraftProfile,
+  guide,
 }: {
   draftProfile: FreelancerProfile;
   setDraftProfile: Dispatch<SetStateAction<FreelancerProfile>>;
+  // Con valor, se muestran los pasos para empezar a recibir solicitudes (la guía de bienvenida sigue abierta).
+  guide?: { onFinish: () => void };
 }) {
   const [activeTab, setActiveTab] = useState<ConfigTab>("perfil");
   const [isSaving, setIsSaving] = useState(false);
@@ -44,11 +49,33 @@ export function ConfigurationSection({
 
   const [savedSnapshot, setSavedSnapshot] = useState(() => JSON.stringify(draftProfile));
   const isDirty = JSON.stringify(draftProfile) !== savedSnapshot;
+  // Lo último guardado: los pasos de la guía se marcan al guardar, no mientras se escribe.
+  const savedProfile = useMemo(() => JSON.parse(savedSnapshot) as FreelancerProfile, [savedSnapshot]);
 
   // Hasta el primer intento de guardar no se marca nada; después los errores se actualizan mientras se corrige.
   const [showErrors, setShowErrors] = useState(false);
   const errors = showErrors ? validateFreelancerProfile(draftProfile) : {};
   const errorCount = Object.keys(errors).length;
+
+  // "Ir" de la guía: abre la pestaña del paso, lleva la vista hasta ese bloque y deja el cursor en lo que falta llenar.
+  function goToStep(step: OnboardingStep) {
+    setActiveTab(step.tab);
+    // La pestaña se dibuja en el siguiente ciclo: el bloque de destino todavía no existe en este.
+    setTimeout(() => {
+      const target = document.getElementById(`onboarding-${step.id}`);
+      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      const empty = (element: Element | null) => element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement ? !element.value : false;
+      const field =
+        step.id === "info"
+          ? ["Especialidad", "Categoría", "Sobre mí"].map((id) => document.getElementById(id)).find(empty)
+          : step.id === "skills"
+            ? ([...(target?.querySelectorAll("input") ?? [])].find(empty) ??
+              [...(target?.querySelectorAll("button") ?? [])].find((button) => button.textContent?.trim().startsWith("Agregar")))
+            : null;
+      (field as HTMLElement | null | undefined)?.focus({ preventScroll: true });
+    }, 80);
+  }
 
   async function handleSave() {
     setShowErrors(true);
@@ -78,6 +105,16 @@ export function ConfigurationSection({
       <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
         <PanelSectionHeader icon={Settings} subtitle="Administra tu perfil, tu cuenta, tus proyectos y tu suscripción." title="Configuración" />
       </div>
+
+      {guide && (
+        <OnboardingGuide
+          freelancerId={draftProfile.id}
+          savedProfile={savedProfile}
+          refreshKey={activeTab}
+          onGo={goToStep}
+          onFinish={guide.onFinish}
+        />
+      )}
 
       <div className="rounded-2xl bg-white p-2.5 shadow-sm">
         <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} variant="pill" />
@@ -121,7 +158,11 @@ export function ConfigurationSection({
       )}
       {activeTab === "usuario" && <UserSection email={draftProfile.email} />}
       {activeTab === "proyectos" && <ProjectsSection freelancerId={draftProfile.id} />}
-      {activeTab === "suscripcion" && <SubscriptionSection freelancerId={draftProfile.id} />}
+      {activeTab === "suscripcion" && (
+        <div id="onboarding-plan" className="scroll-mt-4">
+          <SubscriptionSection freelancerId={draftProfile.id} />
+        </div>
+      )}
     </div>
   );
 }

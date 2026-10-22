@@ -13,6 +13,8 @@ export interface PanelMenuItem<T extends string = string> {
   badge?: number;
   // Sección que todavía no tiene contenido: se ve en el menú, pero no se puede abrir.
   disabled?: boolean;
+  // Globo que señala este elemento (p. ej. "Empieza aquí"): se ve debajo del botón, mientras exista.
+  hint?: string;
 }
 
 // Un elemento del menú; lo usan el menú lateral y el panel del menú móvil.
@@ -28,6 +30,7 @@ export function PanelNavButton<T extends string>({
   const Icon = item.icon;
 
   return (
+    <div>
     <button
       type="button"
       onClick={item.disabled ? undefined : onClick}
@@ -56,6 +59,19 @@ export function PanelNavButton<T extends string>({
         </span>
       ) : null}
     </button>
+    {item.hint && !item.disabled && (
+      <p
+        role="note"
+        className="relative mx-1 mb-1 mt-2 flex items-center gap-2 rounded-lg bg-indigo-50 px-3 py-2 text-[11px] font-semibold leading-4 text-indigo-700 before:absolute before:-top-1 before:left-6 before:h-2 before:w-2 before:rotate-45 before:bg-indigo-50"
+      >
+        <span className="relative flex h-2 w-2 shrink-0">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-indigo-600" />
+        </span>
+        {item.hint}
+      </p>
+    )}
+    </div>
   );
 }
 

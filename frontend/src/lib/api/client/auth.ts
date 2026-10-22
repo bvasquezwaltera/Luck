@@ -1,7 +1,7 @@
 import { apiFetch } from "@/lib/api/httpClient";
 import { API_URL } from "@/lib/api/config";
 import { savePending } from "@/lib/oauthPending";
-import { clearAuthTokenCookie, setAuthTokenCookie } from "@/lib/api/token";
+import { clearSession, storeSession } from "@/lib/api/token";
 
 export interface AuthActionResult {
   error?: string;
@@ -23,7 +23,7 @@ export async function signUp(params: {
     body: JSON.stringify(params),
   });
   const result: AuthActionResult = await response.json();
-  if (result.accessToken) setAuthTokenCookie(result.accessToken);
+  if (result.accessToken) storeSession({ accessToken: result.accessToken, refreshToken: result.refreshToken });
   return result;
 }
 
@@ -33,12 +33,12 @@ export async function signIn(params: { email: string; password: string }): Promi
     body: JSON.stringify(params),
   });
   const result: AuthActionResult = await response.json();
-  if (result.accessToken) setAuthTokenCookie(result.accessToken);
+  if (result.accessToken) storeSession({ accessToken: result.accessToken, refreshToken: result.refreshToken });
   return result;
 }
 
 export async function signOut(): Promise<void> {
-  clearAuthTokenCookie();
+  clearSession();
 }
 
 export async function changePassword(params: { newPassword: string }): Promise<{ error?: string }> {
@@ -52,7 +52,7 @@ export async function changePassword(params: { newPassword: string }): Promise<{
 export async function deleteAccount(): Promise<{ error?: string }> {
   const response = await apiFetch("/api/auth/account", { method: "DELETE" });
   const result = await response.json();
-  if (!result.error) clearAuthTokenCookie();
+  if (!result.error) clearSession();
   return result;
 }
 
@@ -72,7 +72,7 @@ export async function completeGoogleSignIn(role?: "freelancer" | "client"): Prom
   const response = await apiFetch("/api/auth/oauth/complete", {
     method: "POST",
     body: JSON.stringify({ role: role ?? null }),
-  }).catch(() => null);
+  }, { onUnauthorized: "ignore" }).catch(() => null);
   if (!response) return { error: "No se pudo conectar. Revisa tu conexión." };
   if (response.status === 401) return { error: "Tu sesión de Google no es válida. Inténtalo de nuevo." };
   if (!response.ok) return { error: "No se pudo completar el inicio de sesión." };
