@@ -12,6 +12,7 @@ export function SkillsSection({
 }) {
   return (
     <StringListSection
+      id="onboarding-skills"
       icon={Zap}
       title="Habilidades"
       description="Lo que sabes hacer."
@@ -20,6 +21,7 @@ export function SkillsSection({
       addLabel="Agregar habilidad"
       emptyText="Aún no agregaste ninguna."
       items={draftProfile.skills}
+      errorKey="skills"
       onChange={(skills) => setDraftProfile((current) => ({ ...current, skills }))}
     />
   );

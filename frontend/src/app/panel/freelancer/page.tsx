@@ -18,6 +18,7 @@ export default async function FreelancerPanelPage() {
   ]);
 
   return <FreelancerDashboard profile={profile ?? undefined} reviews={reviews}
+      onboarding={authProfile.onboarding}
       solicitudes={solicitudes}
       payments={payments}
       paymentSummary={paymentSummary}

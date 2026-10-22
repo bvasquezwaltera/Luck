@@ -6,12 +6,14 @@ import type { LucideIcon } from "lucide-react";
 // misma forma a las tarjetas, a los botones de quitar y de agregar.
 
 export function ProfileCard({
+  id,
   icon: Icon,
   title,
   description,
   count,
   children,
 }: {
+  id?: string;
   icon: LucideIcon;
   title: string;
   description?: string;
@@ -19,7 +21,7 @@ export function ProfileCard({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm">
+    <section id={id} className="scroll-mt-4 rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm">
       <header className="flex items-start gap-3">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
           <Icon className="h-5 w-5" aria-hidden="true" />

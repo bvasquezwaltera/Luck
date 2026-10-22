@@ -18,12 +18,15 @@ class AuthResponse(BaseModel):
     role: str | None = None
     accessToken: str | None = None
     refreshToken: str | None = None
+    # Entró con Google, es nueva y falta elegir el rol para crear su perfil.
+    needsRole: bool = False
 
 
 class ProfileOut(BaseModel):
     id: str
     rol: str
     nombre_completo: str
+    onboarding: str
 
 
 class ChangePasswordRequest(BaseModel):
@@ -32,3 +35,23 @@ class ChangePasswordRequest(BaseModel):
 
 class ActionResult(BaseModel):
     error: str | None = None
+
+
+class OAuthCompleteRequest(BaseModel):
+    role: str | None = None
+
+
+class GoogleUrl(BaseModel):
+    url: str
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+
+class RefreshRequest(BaseModel):
+    refreshToken: str
+
+
+class OnboardingRequest(BaseModel):
+    state: str

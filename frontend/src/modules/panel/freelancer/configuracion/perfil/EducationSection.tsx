@@ -4,6 +4,7 @@ import { AddItemButton, EntryCard, ProfileCard } from "@/modules/panel/freelance
 import { parsePeriod, formatPeriod } from "@/lib/periodFormat";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import { Input } from "@/ui/Input";
+import { useProfileErrors } from "@/modules/panel/profileErrors";
 import { Select } from "@/ui/Select";
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -17,6 +18,7 @@ export function EducationSection({
   setDraftProfile: Dispatch<SetStateAction<FreelancerProfile>>;
 }) {
   const { education } = draftProfile;
+  const errors = useProfileErrors();
 
   return (
     <ProfileCard
@@ -59,6 +61,7 @@ export function EducationSection({
                 <Select
                   label="Desde"
                   fieldSize="md"
+                  error={errors[`education.${index}.period`]}
                   value={from}
                   onChange={(event) => updatePeriod(event.target.value, to)}
                 >
@@ -88,6 +91,8 @@ export function EducationSection({
                 </Select>
                 <Input
                   label="Título"
+                  maxLength={100}
+                  error={errors[`education.${index}.degree`]}
                   placeholder="Ej.: Ingeniería de sistemas"
                   value={entry.degree}
                   onChange={(event) =>
@@ -101,6 +106,8 @@ export function EducationSection({
                 />
                 <Input
                   label="Institución"
+                  maxLength={100}
+                  error={errors[`education.${index}.institution`]}
                   value={entry.institution}
                   onChange={(event) =>
                     setDraftProfile((current) => ({
@@ -116,6 +123,8 @@ export function EducationSection({
           );
         })}
       </div>
+
+      {errors.education && <p className="mt-2 text-xs text-red-500">{errors.education}</p>}
 
       <div className="mt-3">
         <AddItemButton

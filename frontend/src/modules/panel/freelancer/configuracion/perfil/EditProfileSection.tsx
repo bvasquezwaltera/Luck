@@ -2,6 +2,7 @@ import type { Dispatch, SetStateAction } from "react";
 import { UserRound } from "lucide-react";
 import { ProfileCard } from "@/modules/panel/freelancer/configuracion/perfil/ProfileBlocks";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
+import { useProfileErrors } from "@/modules/panel/profileErrors";
 import { Input } from "@/ui/Input";
 import { Select } from "@/ui/Select";
 import { Textarea } from "@/ui/Textarea";
@@ -16,8 +17,11 @@ export function EditProfileSection({
   draftProfile: FreelancerProfile;
   setDraftProfile: Dispatch<SetStateAction<FreelancerProfile>>;
 }) {
+  const errors = useProfileErrors();
+
   return (
     <ProfileCard
+      id="onboarding-info"
       icon={UserRound}
       title="Información personal"
       description="Es lo primero que ven los clientes en tu perfil público."
@@ -25,12 +29,15 @@ export function EditProfileSection({
       <div className="grid gap-4 md:grid-cols-3">
         <Input
           label="Nombre"
+          maxLength={120}
+          error={errors.name}
           value={draftProfile.name}
           onChange={(event) => setDraftProfile((current) => ({ ...current, name: event.target.value }))}
         />
 
         <Select
           label="Categoría"
+          error={errors.category}
           fieldSize="md"
           value={draftProfile.category}
           onChange={(event) => setDraftProfile((current) => ({ ...current, category: event.target.value }))}
@@ -47,6 +54,8 @@ export function EditProfileSection({
 
         <Input
           label="Especialidad"
+          maxLength={100}
+          error={errors.specialty}
           placeholder="Ej.: Full Stack developer"
           value={draftProfile.specialty}
           onChange={(event) => setDraftProfile((current) => ({ ...current, specialty: event.target.value }))}
@@ -54,6 +63,7 @@ export function EditProfileSection({
 
         <Select
           label="País"
+          error={errors.countryCode}
           fieldSize="md"
           value={draftProfile.countryCode}
           onChange={(event) => {
@@ -77,6 +87,7 @@ export function EditProfileSection({
 
         <Select
           label="Zona horaria"
+          error={errors.timezone}
           fieldSize="md"
           value={draftProfile.timezone}
           onChange={(event) => setDraftProfile((current) => ({ ...current, timezone: event.target.value }))}
@@ -95,12 +106,14 @@ export function EditProfileSection({
       <div className="mt-4">
         <Textarea
           label="Sobre mí"
+          maxLength={1000}
+          error={errors.bio}
           placeholder="Cuéntales a tus clientes quién eres, cómo trabajas y qué te apasiona."
           value={draftProfile.bio}
           onChange={(event) => setDraftProfile((current) => ({ ...current, bio: event.target.value }))}
           rows={5}
         />
-        <p className="mt-1.5 text-right text-[11px] text-slate-400">{draftProfile.bio.length} caracteres</p>
+        <p className="mt-1.5 text-right text-[11px] text-slate-400">{draftProfile.bio.length} / 1000 caracteres</p>
       </div>
     </ProfileCard>
   );

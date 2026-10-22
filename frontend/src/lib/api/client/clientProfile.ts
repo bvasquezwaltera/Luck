@@ -10,7 +10,9 @@ export async function saveClientProfile(
   });
 
   if (!response.ok) {
-    return { error: "No se pudieron guardar los cambios." };
+    // Si el servidor explica qué falló (p. ej. un nombre inválido), se muestra tal cual.
+    const body = (await response.json().catch(() => null)) as { detail?: unknown } | null;
+    return { error: typeof body?.detail === "string" ? body.detail : "No se pudieron guardar los cambios." };
   }
   return {};
 }

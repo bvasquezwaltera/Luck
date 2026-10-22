@@ -27,9 +27,28 @@ export function hasSpecialChar(value: string): boolean {
 // field (login, register, and any future form), so each form's validate*Form
 // function doesn't redefine the same "required" / "valid format" rules.
 
+export const FULL_NAME_MIN_LENGTH = 3;
+export const FULL_NAME_MAX_LENGTH = 120;
+// Letras (con tildes, ñ, etc.), espacios y los signos de nombres reales: O'Brien, María-José, Jr.
+const FULL_NAME_REGEX = /^\p{L}[\p{L}\s'’.-]*$/u;
+
+// Misma regla que el backend (auth_validation.validate_full_name).
 export function validateFullNameField(value: string): string | undefined {
-  if (!value.trim()) {
+  const name = value.trim();
+  if (!name) {
     return "El nombre completo es obligatorio";
+  }
+  if (/\d/.test(name)) {
+    return "El nombre no puede contener números";
+  }
+  if (name.length < FULL_NAME_MIN_LENGTH) {
+    return `El nombre debe tener al menos ${FULL_NAME_MIN_LENGTH} caracteres`;
+  }
+  if (name.length > FULL_NAME_MAX_LENGTH) {
+    return `El nombre no puede superar los ${FULL_NAME_MAX_LENGTH} caracteres`;
+  }
+  if (!FULL_NAME_REGEX.test(name)) {
+    return "El nombre solo puede tener letras, espacios, apóstrofes, guiones y puntos";
   }
   return undefined;
 }
@@ -49,6 +68,21 @@ export function validatePasswordField(value: string): string | undefined {
     return "La contraseña es obligatoria";
   }
   return undefined;
+}
+
+export interface PasswordRule {
+  label: string;
+  met: boolean;
+}
+
+// Las mismas reglas que validateStrongPasswordField, una por una, para mostrar cuáles se cumplen mientras se escribe.
+export function getPasswordRules(value: string): PasswordRule[] {
+  return [
+    { label: "Mínimo 8 caracteres", met: hasMinLength(value, 8) },
+    { label: "Una letra mayúscula", met: hasUppercase(value) },
+    { label: "Un número", met: hasNumber(value) },
+    { label: "Un carácter especial", met: hasSpecialChar(value) },
+  ];
 }
 
 export function validateStrongPasswordField(value: string): string | undefined {

@@ -11,6 +11,68 @@ export interface PanelMenuItem<T extends string = string> {
   icon: LucideIcon;
   // Número pendiente (p. ej. mensajes sin leer); con 0 o sin valor no se muestra nada.
   badge?: number;
+  // Sección que todavía no tiene contenido: se ve en el menú, pero no se puede abrir.
+  disabled?: boolean;
+  // Globo que señala este elemento (p. ej. "Empieza aquí"): se ve debajo del botón, mientras exista.
+  hint?: string;
+}
+
+// Un elemento del menú; lo usan el menú lateral y el panel del menú móvil.
+export function PanelNavButton<T extends string>({
+  item,
+  active,
+  onClick,
+}: {
+  item: PanelMenuItem<T>;
+  active: boolean;
+  onClick: () => void;
+}) {
+  const Icon = item.icon;
+
+  return (
+    <div>
+    <button
+      type="button"
+      onClick={item.disabled ? undefined : onClick}
+      disabled={item.disabled}
+      className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-xs font-medium transition ${
+        item.disabled
+          ? "cursor-not-allowed text-gray-300"
+          : active
+            ? "bg-indigo-600 text-white"
+            : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+      }`}
+    >
+      <Icon className="h-4 w-4" />
+      <span className="flex-1">{item.label}</span>
+      {item.disabled && (
+        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold text-gray-400">Próximamente</span>
+      )}
+      {item.badge ? (
+        <span
+          aria-label={`${item.badge} sin leer`}
+          className={`flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold ${
+            active ? "bg-white text-indigo-600" : "bg-indigo-600 text-white"
+          }`}
+        >
+          {item.badge > 99 ? "99+" : item.badge}
+        </span>
+      ) : null}
+    </button>
+    {item.hint && !item.disabled && (
+      <p
+        role="note"
+        className="relative mx-1 mb-1 mt-2 flex items-center gap-2 rounded-lg bg-indigo-50 px-3 py-2 text-[11px] font-semibold leading-4 text-indigo-700 before:absolute before:-top-1 before:left-6 before:h-2 before:w-2 before:rotate-45 before:bg-indigo-50"
+      >
+        <span className="relative flex h-2 w-2 shrink-0">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-indigo-600" />
+        </span>
+        {item.hint}
+      </p>
+    )}
+    </div>
+  );
 }
 
 export function PanelSidebar<T extends string>({
@@ -29,37 +91,14 @@ export function PanelSidebar<T extends string>({
   const router = useRouter();
 
   return (
-    <aside className={`flex flex-col lg:sticky lg:top-0 lg:h-screen lg:self-start lg:overflow-y-auto ${className}`}>
+    <aside className={`${showHeader ? "hidden lg:flex" : "flex"} flex-col lg:sticky lg:top-0 lg:h-screen lg:self-start lg:overflow-y-auto ${className}`}>
       {showHeader && <PanelBrandHeader className="px-5 py-5" />}
 
       <nav className={showHeader ? "flex-1 space-y-1 px-3 pb-4" : "space-y-2"}>
         {menuItems.map((item) => {
-          const Icon = item.icon;
           const isActive = item.id === activeSection;
 
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => onSectionChange(item.id)}
-              className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-xs font-medium transition ${
-                isActive ? "bg-indigo-600 text-white" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-              }`}
-            >
-              <Icon className="h-4 w-4" />
-              <span className="flex-1">{item.label}</span>
-              {item.badge ? (
-                <span
-                  aria-label={`${item.badge} sin leer`}
-                  className={`flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold ${
-                    isActive ? "bg-white text-indigo-600" : "bg-indigo-600 text-white"
-                  }`}
-                >
-                  {item.badge > 99 ? "99+" : item.badge}
-                </span>
-              ) : null}
-            </button>
-          );
+          return <PanelNavButton key={item.id} item={item} active={isActive} onClick={() => onSectionChange(item.id)} />;
         })}
       </nav>
 

@@ -7,8 +7,9 @@ import { Input } from "@/ui/Input";
 import { Button } from "@/ui/Button";
 import { Checkbox } from "@/ui/Checkbox";
 import { GoogleIcon } from "@/modules/autenticacion/GoogleIcon";
+import { PasswordMatch, PasswordRules } from "@/modules/autenticacion/PasswordFeedback";
 import { RoleToggle, type Role } from "@/modules/autenticacion/RoleToggle";
-import { signUp } from "@/lib/api/client/auth";
+import { signUp, startGoogleSignIn } from "@/lib/api/client/auth";
 import { withNext } from "@/lib/safeNext";
 import {
   validateRegisterForm,
@@ -35,6 +36,23 @@ export function RegisterForm({ next = null }: { next?: string | null }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  async function handleGoogle() {
+    // Al entrar con Google también se aceptan los términos: se pide antes, como en el formulario.
+    if (!acceptedTerms) {
+      setFormError("Acepta los Términos y Condiciones para continuar con Google.");
+      return;
+    }
+    setFormError("");
+    setIsGoogleLoading(true);
+    const result = await startGoogleSignIn({ role: role === "cliente" ? "client" : "freelancer", next });
+    if (result.error) {
+      setFormError(result.error);
+      setIsGoogleLoading(false);
+    }
+  }
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -116,34 +134,41 @@ export function RegisterForm({ next = null }: { next?: string | null }) {
               </button>
             }
             value={values.password}
-            onChange={(e) => setValues({ ...values, password: e.target.value })}
+            onChange={(e) => {
+              setValues({ ...values, password: e.target.value });
+              setErrors((current) => ({ ...current, password: undefined, confirmPassword: undefined }));
+            }}
             error={errors.password}
           />
-          <p className="mt-1.5 text-xs text-gray-400">
-            Mínimo 8 caracteres, una letra mayúscula, un número y carácter especial.
-          </p>
+          <PasswordRules password={values.password} />
         </div>
 
-        <Input
-          label="Confirmar contraseña"
-          required
-          type={showConfirmPassword ? "text" : "password"}
-          name="confirmPassword"
-          placeholder="Confirma tu contraseña"
-          leftIcon={<Lock className="h-4 w-4" />}
-          rightSlot={
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword((prev) => !prev)}
-              className="text-gray-400"
-            >
-              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          }
-          value={values.confirmPassword}
-          onChange={(e) => setValues({ ...values, confirmPassword: e.target.value })}
-          error={errors.confirmPassword}
-        />
+        <div>
+          <Input
+            label="Confirmar contraseña"
+            required
+            type={showConfirmPassword ? "text" : "password"}
+            name="confirmPassword"
+            placeholder="Confirma tu contraseña"
+            leftIcon={<Lock className="h-4 w-4" />}
+            rightSlot={
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                className="text-gray-400"
+              >
+                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            }
+            value={values.confirmPassword}
+            onChange={(e) => {
+              setValues({ ...values, confirmPassword: e.target.value });
+              setErrors((current) => ({ ...current, confirmPassword: undefined }));
+            }}
+            error={errors.confirmPassword}
+          />
+          <PasswordMatch password={values.password} confirmation={values.confirmPassword} />
+        </div>
 
         <Checkbox
           name="acceptedTerms"
@@ -179,9 +204,9 @@ export function RegisterForm({ next = null }: { next?: string | null }) {
         <div className="h-px flex-1 bg-gray-200" />
       </div>
 
-      <Button variant="google" className="w-full !min-w-0 gap-2 !py-2.5">
+      <Button variant="google" className="w-full !min-w-0 gap-2 !py-2.5" onClick={handleGoogle} disabled={isGoogleLoading}>
         <GoogleIcon />
-        Registrarme con Google
+        {isGoogleLoading ? "Conectando con Google..." : "Registrarme con Google"}
       </Button>
 
       <p className="mt-6 text-center text-xs text-gray-500">

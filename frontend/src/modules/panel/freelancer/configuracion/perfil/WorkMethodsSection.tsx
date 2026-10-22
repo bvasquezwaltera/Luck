@@ -3,6 +3,7 @@ import { Layers, X } from "lucide-react";
 import { AddItemButton, EntryCard, ProfileCard } from "@/modules/panel/freelancer/configuracion/perfil/ProfileBlocks";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import { Button } from "@/ui/Button";
+import { useProfileErrors } from "@/modules/panel/profileErrors";
 import { Input } from "@/ui/Input";
 
 export function WorkMethodsSection({
@@ -14,6 +15,7 @@ export function WorkMethodsSection({
 }) {
   const [pendingItems, setPendingItems] = useState<Record<number, string>>({});
   const { workMethods } = draftProfile;
+  const errors = useProfileErrors();
 
   function addItem(categoryIndex: number) {
     const value = (pendingItems[categoryIndex] ?? "").trim();
@@ -63,6 +65,8 @@ export function WorkMethodsSection({
           >
             <Input
               label="Nombre de la categoría"
+              maxLength={50}
+              error={errors[`workMethods.${categoryIndex}.label`]}
               placeholder="Ej.: Comunicación"
               value={category.label}
               onChange={(event) =>
@@ -123,9 +127,22 @@ export function WorkMethodsSection({
                 Agregar
               </Button>
             </div>
+            {errors[`workMethods.${categoryIndex}.items`] && (
+              <p className="mt-2 text-xs text-red-500">{errors[`workMethods.${categoryIndex}.items`]}</p>
+            )}
+            {Object.keys(errors)
+              .filter((key) => key.startsWith(`workMethods.${categoryIndex}.items.`))
+              .slice(0, 1)
+              .map((key) => (
+                <p key={key} className="mt-2 text-xs text-red-500">
+                  {errors[key]}
+                </p>
+              ))}
           </EntryCard>
         ))}
       </div>
+
+      {errors.workMethods && <p className="mt-2 text-xs text-red-500">{errors.workMethods}</p>}
 
       <div className="mt-3">
         <AddItemButton

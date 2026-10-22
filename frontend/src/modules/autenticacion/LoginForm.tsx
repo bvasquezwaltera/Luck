@@ -6,7 +6,7 @@ import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Input } from "@/ui/Input";
 import { Button } from "@/ui/Button";
 import { GoogleIcon } from "@/modules/autenticacion/GoogleIcon";
-import { signIn } from "@/lib/api/client/auth";
+import { signIn, startGoogleSignIn } from "@/lib/api/client/auth";
 import { withNext } from "@/lib/safeNext";
 import { validateLoginForm, type LoginFormErrors } from "@/validators/authValidation";
 
@@ -15,13 +15,26 @@ const PANEL_PATH_BY_ROLE: Record<string, string> = {
   client: "/panel/cliente",
 };
 
-export function LoginForm({ next = null }: { next?: string | null }) {
+export function LoginForm({ next = null, expired = false }: { next?: string | null; expired?: boolean }) {
   const router = useRouter();
   const [values, setValues] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<LoginFormErrors>({});
   const [formError, setFormError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  async function handleGoogle() {
+    setFormError("");
+    setIsGoogleLoading(true);
+    const result = await startGoogleSignIn({ next });
+    // Si todo sale bien el navegador ya está yendo a Google; solo se vuelve aquí si hubo un error.
+    if (result.error) {
+      setFormError(result.error);
+      setIsGoogleLoading(false);
+    }
+  }
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -50,6 +63,12 @@ export function LoginForm({ next = null }: { next?: string | null }) {
         Ingresa a tu cuenta para continuar conectando con{" "}
         <span className="font-semibold text-indigo-600">talento</span> increíble.
       </p>
+
+      {expired && (
+        <p role="status" className="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-center text-xs text-amber-700">
+          Tu sesión venció. Inicia sesión de nuevo para continuar.
+        </p>
+      )}
 
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4" noValidate>
         <Input
@@ -105,9 +124,9 @@ export function LoginForm({ next = null }: { next?: string | null }) {
         <div className="h-px flex-1 bg-gray-200" />
       </div>
 
-      <Button variant="google" className="w-full !min-w-0 gap-2 !py-2.5">
+      <Button variant="google" className="w-full !min-w-0 gap-2 !py-2.5" onClick={handleGoogle} disabled={isGoogleLoading}>
         <GoogleIcon />
-        Continuar con Google
+        {isGoogleLoading ? "Conectando con Google..." : "Continuar con Google"}
       </Button>
 
       <p className="mt-6 text-center text-xs text-gray-500">

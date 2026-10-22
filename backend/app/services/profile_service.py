@@ -12,6 +12,7 @@ from app.models.item_metodo_trabajo import ItemMetodoTrabajo
 from app.models.perfil import Perfil
 from app.models.perfil_freelancer import PerfilFreelancer
 from app.schemas.freelancer_profile import FreelancerProfile
+from app.services import profile_validation
 from app.services.supabase_client import supabase_auth
 from app.services.utils import get_initials, is_recently_active, years_to_period, period_to_years
 
@@ -131,6 +132,12 @@ def save_freelancer_profile(db: Session, freelancer_id: str, profile: Freelancer
     perfil = db.get(Perfil, freelancer_id)
     if not perfil:
         return {"error": "No se encontró el perfil."}
+
+    # El formulario ya valida, pero la API no debe confiar en eso: aquí se valida y se limpia lo que llegue.
+    try:
+        profile = profile_validation.clean_freelancer_profile(profile)
+    except profile_validation.ProfileValidationError as exc:
+        return {"error": str(exc)}
 
     perfil.nombre_completo = profile.name
     perfil.pais = profile.country

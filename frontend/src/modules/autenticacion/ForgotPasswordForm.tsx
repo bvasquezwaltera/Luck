@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { Mail, MailCheck, ArrowLeft } from "lucide-react";
+import { requestPasswordReset } from "@/lib/api/client/auth";
 import { Input } from "@/ui/Input";
 import { Button } from "@/ui/Button";
 import {
@@ -13,14 +14,24 @@ export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<ForgotPasswordFormErrors>({});
   const [sent, setSent] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     const formErrors = validateForgotPasswordForm({ email });
     setErrors(formErrors);
-    if (Object.keys(formErrors).length === 0) {
-      setSent(true);
+    if (Object.keys(formErrors).length > 0) return;
+
+    setFormError("");
+    setIsSending(true);
+    const result = await requestPasswordReset(email.trim());
+    setIsSending(false);
+    if (result.error) {
+      setFormError(result.error);
+      return;
     }
+    setSent(true);
   }
 
   if (sent) {
@@ -33,7 +44,7 @@ export function ForgotPasswordForm() {
         <p className="mt-2 text-xs text-gray-500">
           Te enviamos un enlace a{" "}
           <span className="font-semibold text-gray-900">{email}</span> para
-          restablecer tu contraseña.
+          restablecer tu contraseña, si existe una cuenta con ese correo. Revisa también la carpeta de spam.
         </p>
         <Button href="/login" variant="primary" className="mt-6 w-full min-w-0">
           Volver a iniciar sesión
@@ -65,8 +76,10 @@ export function ForgotPasswordForm() {
           error={errors.email}
         />
 
-        <Button type="submit" variant="primary" className="w-full min-w-0">
-          Enviar enlace
+        {formError && <p className="text-center text-xs text-red-500">{formError}</p>}
+
+        <Button type="submit" variant="primary" disabled={isSending} className="w-full min-w-0">
+          {isSending ? "Enviando..." : "Enviar enlace"}
         </Button>
       </form>
 

@@ -7,11 +7,12 @@ export default async function LoginPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const next = getSafeNext((await searchParams).next);
+  const params = await searchParams;
+  const next = getSafeNext(params.next);
 
   return (
     <AuthLayout>
-      <LoginForm next={next} />
+      <LoginForm next={next} expired={params.expired === "1"} />
     </AuthLayout>
   );
 }

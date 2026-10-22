@@ -20,6 +20,7 @@ export function DifferentiatorsSection({
       addLabel="Agregar diferenciador"
       emptyText="Aún no agregaste ninguno."
       items={draftProfile.differentiators}
+      errorKey="differentiators"
       onChange={(differentiators) => setDraftProfile((current) => ({ ...current, differentiators }))}
     />
   );
