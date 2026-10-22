@@ -48,8 +48,8 @@ export function PortfolioProjectCard({ project }: { project: PortfolioProject })
           <p className="text-xs leading-relaxed text-gray-600">{project.description}</p>
 
           <div className="flex flex-wrap gap-1.5">
-            {project.techStack.map((tech) => (
-              <Badge key={tech} className="!px-2 !py-0.5 !text-[10px]">
+            {project.techStack.map((tech, index) => (
+              <Badge key={`${index}-${tech}`} className="!px-2 !py-0.5 !text-[10px]">
                 {tech}
               </Badge>
             ))}

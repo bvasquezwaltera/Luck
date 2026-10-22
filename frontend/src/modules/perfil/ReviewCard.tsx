@@ -44,8 +44,8 @@ export function ReviewCard({ review }: { review: ReviewEntry }) {
       <p className="text-xs leading-relaxed text-gray-600">{review.comment}</p>
 
       <div className="flex flex-wrap gap-2">
-        {review.tags.map((tag) => (
-          <Badge key={tag} className="!border !border-gray-200 !bg-white">
+        {review.tags.map((tag, index) => (
+          <Badge key={`${index}-${tag}`} className="!border !border-gray-200 !bg-white">
             {tag}
           </Badge>
         ))}
