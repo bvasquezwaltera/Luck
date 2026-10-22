@@ -48,6 +48,28 @@ describe("validateRegisterForm", () => {
     expect(errors.fullName).toBeDefined();
   });
 
+  it("rejects names that are too short or contain numbers or symbols", () => {
+    const cases: Array<[string, RegExp]> = [
+      ["   ", /obligatorio/],
+      ["Al", /al menos 3/],
+      ["Ana123", /números/],
+      ["123", /números/],
+      ["Ana #1", /números/],
+      ["Ana@Perez", /solo puede tener letras/],
+      ["-Ana", /solo puede tener letras/],
+      ["a".repeat(121), /superar/],
+    ];
+    for (const [fullName, message] of cases) {
+      expect(validateRegisterForm({ ...validValues, fullName }).fullName, fullName).toMatch(message);
+    }
+  });
+
+  it("accepts real names with accents, apostrophes, hyphens and dots", () => {
+    for (const fullName of ["Ana", "Ana Torres", "María-José Núñez", "Conan O'Brien", "Juan Pérez Jr.", "  Zoë Ñandú  "]) {
+      expect(validateRegisterForm({ ...validValues, fullName }).fullName, fullName).toBeUndefined();
+    }
+  });
+
   it("requires a valid email format", () => {
     const errors = validateRegisterForm({ ...validValues, email: "not-an-email" });
     expect(errors.email).toBeDefined();

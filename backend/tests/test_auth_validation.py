@@ -35,9 +35,32 @@ def test_email_and_name_rules():
     for bad in ("", "   ", "sin-arroba", "a@b", "a b@c.com", "a@" + "x" * 260 + ".com"):
         assert auth_validation.validate_email(bad), bad
 
-    assert auth_validation.validate_full_name("Ana Pérez") is None
     assert auth_validation.validate_full_name("   ")
-    assert auth_validation.validate_full_name("x" * 121)
+    assert "superar" in auth_validation.validate_full_name("x" * 121)
+
+
+@pytest.mark.parametrize(
+    "name", ["Ana", "Ana Pérez", "María-José Núñez", "Conan O'Brien", "Juan Pérez Jr.", "  Zoë Ñandú  ", "Ana María"]
+)
+def test_valid_names(name):
+    assert auth_validation.validate_full_name(name) is None
+
+
+@pytest.mark.parametrize(
+    "name, message",
+    [
+        ("Al", "al menos 3"),
+        ("Ana123", "números"),
+        ("123", "números"),
+        ("Ana #1", "números"),
+        ("Ana@Perez", "solo puede tener letras"),
+        ("-Ana", "solo puede tener letras"),
+        ("Ana\tPérez", "solo puede tener letras"),
+        ("???", "solo puede tener letras"),
+    ],
+)
+def test_invalid_names(name, message):
+    assert message in (auth_validation.validate_full_name(name) or "")
 
 
 @pytest.fixture
@@ -62,6 +85,8 @@ VALID = {"fullName": "Ana Pérez", "email": "ana@correo.com", "password": "Secre
         ({"password": "secret1!"}, "mayúscula"),
         ({"email": "no-es-correo"}, "correo"),
         ({"fullName": "   "}, "nombre"),
+        ({"fullName": "Ana123"}, "números"),
+        ({"fullName": "Al"}, "al menos 3"),
         ({"role": "admin"}, "Rol"),
     ],
 )
