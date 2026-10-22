@@ -51,6 +51,21 @@ export function validatePasswordField(value: string): string | undefined {
   return undefined;
 }
 
+export interface PasswordRule {
+  label: string;
+  met: boolean;
+}
+
+// Las mismas reglas que validateStrongPasswordField, una por una, para mostrar cuáles se cumplen mientras se escribe.
+export function getPasswordRules(value: string): PasswordRule[] {
+  return [
+    { label: "Mínimo 8 caracteres", met: hasMinLength(value, 8) },
+    { label: "Una letra mayúscula", met: hasUppercase(value) },
+    { label: "Un número", met: hasNumber(value) },
+    { label: "Un carácter especial", met: hasSpecialChar(value) },
+  ];
+}
+
 export function validateStrongPasswordField(value: string): string | undefined {
   const basicError = validatePasswordField(value);
   if (basicError) {

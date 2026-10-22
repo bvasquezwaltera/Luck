@@ -7,6 +7,7 @@ import { Input } from "@/ui/Input";
 import { Button } from "@/ui/Button";
 import { Checkbox } from "@/ui/Checkbox";
 import { GoogleIcon } from "@/modules/autenticacion/GoogleIcon";
+import { PasswordMatch, PasswordRules } from "@/modules/autenticacion/PasswordFeedback";
 import { RoleToggle, type Role } from "@/modules/autenticacion/RoleToggle";
 import { signUp } from "@/lib/api/client/auth";
 import { withNext } from "@/lib/safeNext";
@@ -116,34 +117,41 @@ export function RegisterForm({ next = null }: { next?: string | null }) {
               </button>
             }
             value={values.password}
-            onChange={(e) => setValues({ ...values, password: e.target.value })}
+            onChange={(e) => {
+              setValues({ ...values, password: e.target.value });
+              setErrors((current) => ({ ...current, password: undefined, confirmPassword: undefined }));
+            }}
             error={errors.password}
           />
-          <p className="mt-1.5 text-xs text-gray-400">
-            Mínimo 8 caracteres, una letra mayúscula, un número y carácter especial.
-          </p>
+          <PasswordRules password={values.password} />
         </div>
 
-        <Input
-          label="Confirmar contraseña"
-          required
-          type={showConfirmPassword ? "text" : "password"}
-          name="confirmPassword"
-          placeholder="Confirma tu contraseña"
-          leftIcon={<Lock className="h-4 w-4" />}
-          rightSlot={
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword((prev) => !prev)}
-              className="text-gray-400"
-            >
-              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          }
-          value={values.confirmPassword}
-          onChange={(e) => setValues({ ...values, confirmPassword: e.target.value })}
-          error={errors.confirmPassword}
-        />
+        <div>
+          <Input
+            label="Confirmar contraseña"
+            required
+            type={showConfirmPassword ? "text" : "password"}
+            name="confirmPassword"
+            placeholder="Confirma tu contraseña"
+            leftIcon={<Lock className="h-4 w-4" />}
+            rightSlot={
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                className="text-gray-400"
+              >
+                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            }
+            value={values.confirmPassword}
+            onChange={(e) => {
+              setValues({ ...values, confirmPassword: e.target.value });
+              setErrors((current) => ({ ...current, confirmPassword: undefined }));
+            }}
+            error={errors.confirmPassword}
+          />
+          <PasswordMatch password={values.password} confirmation={values.confirmPassword} />
+        </div>
 
         <Checkbox
           name="acceptedTerms"

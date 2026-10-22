@@ -1,0 +1,28 @@
+# Despliegue del backend (FastAPI) en Render. El frontend va en Vercel.
+# Render → New → Blueprint → elige este repositorio. Los valores marcados sync:false se escriben en el panel de Render
+# (nunca en el repositorio).
+services:
+  - type: web
+    name: luck-backend
+    runtime: python
+    rootDir: backend
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    # Primero se aplican las migraciones pendientes y luego arranca la API.
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      # La URL de Vercel del frontend (sin barra final), p. ej. https://luck.vercel.app
+      - key: FRONTEND_URL
+        sync: false

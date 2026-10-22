@@ -16,7 +16,7 @@ from app.models.plan_suscripcion import PlanSuscripcion
 from app.models.proyecto_portafolio import ProyectoPortafolio
 from app.models.resena import Resena
 from app.models.solicitud import Solicitud, SolicitudAdjunto
-from app.services import deliveries_service, messages_service, storage_service
+from app.services import auth_validation, deliveries_service, messages_service, storage_service
 from app.schemas.auth import ActionResult, AuthResponse, SignInRequest, SignUpRequest
 from app.services.supabase_client import create_auth_client, supabase_auth
 
@@ -31,8 +31,19 @@ def sign_up(db: Session, payload: SignUpRequest) -> AuthResponse:
     if payload.role not in ("freelancer", "client"):
         return AuthResponse(error="Rol inválido.")
 
+    # El formulario ya valida, pero la API no debe confiar en eso: cualquiera puede llamarla directamente.
+    error = (
+        auth_validation.validate_full_name(payload.fullName)
+        or auth_validation.validate_email(payload.email)
+        or auth_validation.validate_password(payload.password)
+    )
+    if error:
+        return AuthResponse(error=error)
+    email = payload.email.strip()
+    full_name = payload.fullName.strip()
+
     try:
-        result = create_auth_client().auth.sign_up({"email": payload.email, "password": payload.password})
+        result = create_auth_client().auth.sign_up({"email": email, "password": payload.password})
     except Exception as exc:
         return AuthResponse(error=str(exc))
 
@@ -42,7 +53,7 @@ def sign_up(db: Session, payload: SignUpRequest) -> AuthResponse:
     perfil = Perfil(
         id=result.user.id,
         rol=payload.role,
-        nombre_completo=payload.fullName,
+        nombre_completo=full_name,
         pais_codigo=DEFAULT_COUNTRY_CODE,
         pais=DEFAULT_COUNTRY,
         zona_horaria=DEFAULT_TIMEZONE,
@@ -82,6 +93,10 @@ def sign_in(db: Session, payload: SignInRequest) -> AuthResponse:
 
 
 def change_password(user_id: str, new_password: str) -> ActionResult:
+    error = auth_validation.validate_password(new_password)
+    if error:
+        return ActionResult(error=error)
+
     try:
         supabase_auth.auth.admin.update_user_by_id(user_id, {"password": new_password})
     except Exception as exc:
