@@ -10,6 +10,7 @@ import {
   Truck,
 } from "lucide-react";
 import { PanelBrandHeader } from "@/modules/panel/PanelBrandHeader";
+import { PanelMobileNav } from "@/modules/panel/PanelMobileNav";
 import { PanelSidebar } from "@/modules/panel/PanelSidebar";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { ConfigurationSection } from "@/modules/panel/client/configuracion/ConfigurationSection";
@@ -106,6 +107,7 @@ export function ClientDashboard({
   return (
     <div className="min-h-screen bg-indigo-50 text-slate-900">
       <div className="flex min-h-screen flex-col lg:flex-row">
+        <PanelMobileNav menuItems={sidebarItems} activeSection={activeSection} onSectionChange={setActiveSection} />
         <PanelSidebar
           menuItems={sidebarItems}
           activeSection={activeSection}

@@ -13,6 +13,42 @@ export interface PanelMenuItem<T extends string = string> {
   badge?: number;
 }
 
+// Un elemento del menú; lo usan el menú lateral y el panel del menú móvil.
+export function PanelNavButton<T extends string>({
+  item,
+  active,
+  onClick,
+}: {
+  item: PanelMenuItem<T>;
+  active: boolean;
+  onClick: () => void;
+}) {
+  const Icon = item.icon;
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-xs font-medium transition ${
+        active ? "bg-indigo-600 text-white" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+      }`}
+    >
+      <Icon className="h-4 w-4" />
+      <span className="flex-1">{item.label}</span>
+      {item.badge ? (
+        <span
+          aria-label={`${item.badge} sin leer`}
+          className={`flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold ${
+            active ? "bg-white text-indigo-600" : "bg-indigo-600 text-white"
+          }`}
+        >
+          {item.badge > 99 ? "99+" : item.badge}
+        </span>
+      ) : null}
+    </button>
+  );
+}
+
 export function PanelSidebar<T extends string>({
   menuItems,
   activeSection,
@@ -29,37 +65,14 @@ export function PanelSidebar<T extends string>({
   const router = useRouter();
 
   return (
-    <aside className={`flex flex-col lg:sticky lg:top-0 lg:h-screen lg:self-start lg:overflow-y-auto ${className}`}>
+    <aside className={`${showHeader ? "hidden lg:flex" : "flex"} flex-col lg:sticky lg:top-0 lg:h-screen lg:self-start lg:overflow-y-auto ${className}`}>
       {showHeader && <PanelBrandHeader className="px-5 py-5" />}
 
       <nav className={showHeader ? "flex-1 space-y-1 px-3 pb-4" : "space-y-2"}>
         {menuItems.map((item) => {
-          const Icon = item.icon;
           const isActive = item.id === activeSection;
 
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => onSectionChange(item.id)}
-              className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-xs font-medium transition ${
-                isActive ? "bg-indigo-600 text-white" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-              }`}
-            >
-              <Icon className="h-4 w-4" />
-              <span className="flex-1">{item.label}</span>
-              {item.badge ? (
-                <span
-                  aria-label={`${item.badge} sin leer`}
-                  className={`flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold ${
-                    isActive ? "bg-white text-indigo-600" : "bg-indigo-600 text-white"
-                  }`}
-                >
-                  {item.badge > 99 ? "99+" : item.badge}
-                </span>
-              ) : null}
-            </button>
-          );
+          return <PanelNavButton key={item.id} item={item} active={isActive} onClick={() => onSectionChange(item.id)} />;
         })}
       </nav>
 

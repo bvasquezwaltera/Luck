@@ -64,7 +64,7 @@ export function ChatView({ conversation, onBack }: { conversation: Conversation;
   const lastSeenId = [...(messages ?? [])].reverse().find((message) => message.mine && message.read)?.id;
 
   return (
-    <Card className="flex h-[calc(100vh-48px)] flex-col overflow-hidden !p-0">
+    <Card className="flex h-[calc(100dvh-7rem)] flex-col overflow-hidden lg:h-[calc(100vh-48px)] !p-0">
       <div className="flex items-center gap-3 border-b border-slate-100 bg-white px-4 py-3 sm:px-5">
         <button
           type="button"

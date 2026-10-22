@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { PanelBrandHeader } from "@/modules/panel/PanelBrandHeader";
 import { PaymentsSection } from "@/modules/panel/freelancer/payments/PaymentsSection";
+import { PanelMobileNav } from "@/modules/panel/PanelMobileNav";
 import { PanelSidebar } from "@/modules/panel/PanelSidebar";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { ConfigurationSection } from "@/modules/panel/freelancer/configuracion/ConfigurationSection";
@@ -122,6 +123,7 @@ export function FreelancerDashboard({
   return (
     <div className="min-h-screen bg-indigo-50 text-slate-900">
       <div className="flex min-h-screen flex-col lg:flex-row">
+        <PanelMobileNav menuItems={sidebarItems} activeSection={activeSection} onSectionChange={setActiveSection} />
         <PanelSidebar
           menuItems={sidebarItems}
           activeSection={activeSection}
