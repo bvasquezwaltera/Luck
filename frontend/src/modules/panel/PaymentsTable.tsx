@@ -51,7 +51,34 @@ export function PaymentsTable({
           </span>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* En pantallas chicas cada pago es una tarjeta: una tabla de 780 px obligaría a deslizar de lado. */}
+        <ul className="divide-y divide-slate-100 md:hidden">
+          {visible.map((payment) => (
+            <PaymentCard key={payment.id} payment={payment} isFreelancer={isFreelancer} onOpen={() => setSelected(payment)} />
+          ))}
+          <li className="space-y-1.5 bg-slate-50 px-4 py-3.5 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                {isFreelancer ? "Total cobrado" : "Total pagado"}
+              </span>
+              <span className="font-semibold text-slate-900 tabular-nums">{formatMoney(totalAmount, currency)}</span>
+            </div>
+            {isFreelancer && (
+              <>
+                <div className="flex items-center justify-between text-slate-500">
+                  <span>Comisión</span>
+                  <span className="tabular-nums">- {formatMoney(totalCommission, currency)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-slate-600">Neto</span>
+                  <span className="font-bold text-slate-900 tabular-nums">{formatMoney(totalNet, currency)}</span>
+                </div>
+              </>
+            )}
+          </li>
+        </ul>
+
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[780px] text-left">
             <thead className="bg-slate-50 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
               <tr>
@@ -105,15 +132,8 @@ export function PaymentsTable({
   );
 }
 
-function PaymentRow({
-  payment,
-  isFreelancer,
-  onOpen,
-}: {
-  payment: PaymentRecord;
-  isFreelancer: boolean;
-  onOpen: () => void;
-}) {
+// Descarga del comprobante en PDF, con su estado de "descargando" y el error si falla.
+function useReceiptDownload(payment: PaymentRecord) {
   const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState("");
 
@@ -124,6 +144,98 @@ function PaymentRow({
     setIsDownloading(false);
     if (result.error) setError(result.error);
   }
+
+  return { isDownloading, error, handleDownload };
+}
+
+// Un pago como tarjeta, para pantallas chicas.
+function PaymentCard({
+  payment,
+  isFreelancer,
+  onOpen,
+}: {
+  payment: PaymentRecord;
+  isFreelancer: boolean;
+  onOpen: () => void;
+}) {
+  const { isDownloading, error, handleDownload } = useReceiptDownload(payment);
+  const canDownload = payment.status === "aprobado";
+  const action =
+    "inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2 text-xs font-semibold text-slate-600 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-40";
+
+  return (
+    <li className="space-y-3 px-4 py-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold text-slate-800">{formatSolicitudDate(payment.createdAt)}</p>
+          <p className="mt-0.5 font-mono text-[11px] text-slate-400">{payment.reference}</p>
+        </div>
+        <PaymentStatusBadge status={payment.status} />
+      </div>
+
+      <div className="flex items-center gap-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-600">
+          {payment.counterpart.initials}
+        </span>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-slate-800">{payment.counterpart.name}</p>
+          <p className="truncate text-xs text-slate-500">
+            Plan {payment.planName} · {payment.solicitudTitle}
+          </p>
+        </div>
+      </div>
+
+      {isFreelancer ? (
+        <dl className="grid grid-cols-3 gap-2 rounded-xl bg-slate-50 px-3 py-2.5 text-xs">
+          <div>
+            <dt className="text-slate-500">Monto</dt>
+            <dd className="mt-0.5 font-semibold text-slate-900 tabular-nums">{formatMoney(payment.amount, payment.currency)}</dd>
+          </div>
+          <div>
+            <dt className="text-slate-500">Comisión</dt>
+            <dd className="mt-0.5 text-slate-600 tabular-nums">
+              {payment.commission !== null ? `- ${formatMoney(payment.commission, payment.currency)}` : "—"}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-slate-500">Neto</dt>
+            <dd className="mt-0.5 font-bold text-slate-900 tabular-nums">
+              {payment.net !== null ? formatMoney(payment.net, payment.currency) : "—"}
+            </dd>
+          </div>
+        </dl>
+      ) : (
+        <div className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2.5 text-sm">
+          <span className="text-xs text-slate-500">Total</span>
+          <span className="font-semibold text-slate-900 tabular-nums">{formatMoney(payment.amount, payment.currency)}</span>
+        </div>
+      )}
+
+      <div className="flex gap-2">
+        <button type="button" className={action} onClick={onOpen}>
+          <Eye className="h-3.5 w-3.5" />
+          Ver detalle
+        </button>
+        <button type="button" className={action} onClick={handleDownload} disabled={isDownloading || !canDownload}>
+          <Download className={`h-3.5 w-3.5 ${isDownloading ? "animate-pulse" : ""}`} />
+          Comprobante
+        </button>
+      </div>
+      {error && <p className="text-[11px] text-red-500">{error}</p>}
+    </li>
+  );
+}
+
+function PaymentRow({
+  payment,
+  isFreelancer,
+  onOpen,
+}: {
+  payment: PaymentRecord;
+  isFreelancer: boolean;
+  onOpen: () => void;
+}) {
+  const { isDownloading, error, handleDownload } = useReceiptDownload(payment);
 
   const iconButton =
     "inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-40";

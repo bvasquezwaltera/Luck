@@ -157,7 +157,7 @@ export function PaymentReceiptModal({
               Cerrar
             </Button>
             {payment.status === "aprobado" && (
-              <Button onClick={() => handleDownload(payment)} disabled={isDownloading} className="flex-1 gap-1.5">
+              <Button onClick={() => handleDownload(payment)} disabled={isDownloading} className="flex-1 gap-1.5 whitespace-nowrap">
                 <Download className="h-3.5 w-3.5" />
                 {isDownloading ? "Descargando..." : "Descargar PDF"}
               </Button>

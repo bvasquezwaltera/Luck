@@ -56,18 +56,18 @@ export function SolicitudRowCard({
   const colors = ROW_TONES[tone];
 
   return (
-    <article className="relative border-b border-slate-100 py-6 pl-6 pr-4 transition last:border-b-0 hover:bg-slate-50/50 sm:pr-6">
+    <article className="relative border-b border-slate-100 py-5 pl-5 pr-4 transition last:border-b-0 hover:bg-slate-50/50 sm:py-6 sm:pl-6 sm:pr-6">
       <span className={`absolute left-0 top-0 h-full w-1 ${colors.bar}`} aria-hidden="true" />
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_17rem]">
-        <div className="flex min-w-0 gap-4">
-          <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${categoryClassName}`}>
+        <div className="flex min-w-0 gap-3 sm:gap-4">
+          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl sm:h-12 sm:w-12 ${categoryClassName}`}>
             <CategoryIcon className="h-5 w-5" aria-hidden="true" />
           </div>
 
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-              <h3 className="min-w-0 truncate text-base font-semibold text-slate-900 sm:text-lg">{title}</h3>
+              <h3 className="min-w-0 text-base font-semibold text-slate-900 sm:truncate sm:text-lg">{title}</h3>
               <span
                 className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${colors.pill}`}
               >
