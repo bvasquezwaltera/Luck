@@ -20,6 +20,7 @@ export function ToolsSection({
       addLabel="Agregar herramienta"
       emptyText="Aún no agregaste ninguna."
       items={draftProfile.tools}
+      errorKey="tools"
       onChange={(tools) => setDraftProfile((current) => ({ ...current, tools }))}
     />
   );

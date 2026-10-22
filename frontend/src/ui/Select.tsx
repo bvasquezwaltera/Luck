@@ -6,9 +6,10 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   icon?: ReactNode;
   // "md" iguala la altura de un Input (formularios); "sm" es el tamaño compacto de siempre (filtros).
   fieldSize?: "sm" | "md";
+  error?: string;
 }
 
-export function Select({ label, icon, fieldSize = "sm", className = "", id, name, children, ...props }: SelectProps) {
+export function Select({ label, icon, fieldSize = "sm", error, className = "", id, name, children, ...props }: SelectProps) {
   const selectId = id ?? name ?? label;
 
   const select = (
@@ -21,7 +22,7 @@ export function Select({ label, icon, fieldSize = "sm", className = "", id, name
       <select
         id={selectId}
         name={name}
-        className={`w-full appearance-none rounded-lg border border-gray-200 bg-white ${fieldSize === "md" ? "py-2.5" : "py-1.5"} text-xs ${icon ? "pl-7" : "pl-3"} pr-7`}
+        className={`w-full appearance-none rounded-lg border ${error ? "border-red-400" : "border-gray-200"} bg-white ${fieldSize === "md" ? "py-2.5" : "py-1.5"} text-xs ${icon ? "pl-7" : "pl-3"} pr-7`}
         {...props}
       >
         {children}
@@ -42,6 +43,7 @@ export function Select({ label, icon, fieldSize = "sm", className = "", id, name
         {label}
       </label>
       {select}
+      {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   );
 }

@@ -20,6 +20,7 @@ export function SkillsSection({
       addLabel="Agregar habilidad"
       emptyText="Aún no agregaste ninguna."
       items={draftProfile.skills}
+      errorKey="skills"
       onChange={(skills) => setDraftProfile((current) => ({ ...current, skills }))}
     />
   );

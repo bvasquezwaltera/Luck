@@ -3,12 +3,22 @@
 import { Lock, Settings, UserRound } from "lucide-react";
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
+import { ProfileErrorsProvider } from "@/modules/panel/profileErrors";
 import { ProfileSection } from "@/modules/panel/client/configuracion/perfil/ProfileSection";
 import { UserSection } from "@/modules/panel/client/configuracion/usuario/UserSection";
 import { saveClientProfile } from "@/lib/api/client/clientProfile";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import { Button } from "@/ui/Button";
 import { Tabs, type TabItem } from "@/ui/Tabs";
+import { validateClientProfile } from "@/validators/profileValidation";
+
+// Lleva la vista al primer campo con error, una vez que la pantalla ya lo dibujó.
+function scrollToFirstError() {
+  requestAnimationFrame(() => {
+    document.querySelector("[data-field-error], p.text-red-500")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+}
+
 
 type ConfigTab = "perfil" | "usuario";
 
@@ -28,7 +38,19 @@ export function ConfigurationSection({
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+  // Hasta el primer intento de guardar no se marca nada; después los errores se actualizan mientras se corrige.
+  const [showErrors, setShowErrors] = useState(false);
+  const errors = showErrors ? validateClientProfile(draftProfile) : {};
+  const errorCount = Object.keys(errors).length;
+
   async function handleSave() {
+    setShowErrors(true);
+    if (Object.keys(validateClientProfile(draftProfile)).length > 0) {
+      setSaveMessage(null);
+      scrollToFirstError();
+      return;
+    }
+
     setIsSaving(true);
     setSaveMessage(null);
 
@@ -54,10 +76,17 @@ export function ConfigurationSection({
 
       {activeTab === "perfil" && (
         <>
-          <ProfileSection draftProfile={draftProfile} setDraftProfile={setDraftProfile} />
+          <ProfileErrorsProvider errors={errors}>
+            <ProfileSection draftProfile={draftProfile} setDraftProfile={setDraftProfile} />
+          </ProfileErrorsProvider>
 
           <div className="flex items-center justify-end gap-3">
-            {saveMessage && (
+            {errorCount > 0 && (
+              <p className="text-xs text-red-500">
+                {errorCount === 1 ? "Corrige 1 campo para poder guardar." : `Corrige ${errorCount} campos para poder guardar.`}
+              </p>
+            )}
+            {errorCount === 0 && saveMessage && (
               <p className={`text-xs ${saveMessage.type === "error" ? "text-red-500" : "text-emerald-600"}`}>
                 {saveMessage.text}
               </p>

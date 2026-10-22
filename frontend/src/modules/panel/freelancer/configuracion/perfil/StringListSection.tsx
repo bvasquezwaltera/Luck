@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import { AddItemButton, ProfileCard, RemoveIconButton } from "@/modules/panel/freelancer/configuracion/perfil/ProfileBlocks";
+import { useProfileErrors } from "@/modules/panel/profileErrors";
 import { Input } from "@/ui/Input";
 
 // Lista de textos cortos que se agregan y se quitan (diferenciadores, habilidades, herramientas).
@@ -17,6 +18,7 @@ export function StringListSection({
   emptyText,
   items,
   onChange,
+  errorKey,
 }: {
   icon: LucideIcon;
   title: string;
@@ -27,7 +29,10 @@ export function StringListSection({
   emptyText: string;
   items: string[];
   onChange: (items: string[]) => void;
+  // Prefijo de los errores de esta lista: "skills" (la lista) y "skills.2" (el elemento 3).
+  errorKey: string;
 }) {
+  const errors = useProfileErrors();
   // La fila recién agregada recibe el cursor, para escribir directo.
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
 
@@ -38,7 +43,8 @@ export function StringListSection({
           <p className="rounded-xl bg-slate-50 px-3 py-3 text-center text-xs text-slate-500">{emptyText}</p>
         )}
         {items.map((item, index) => (
-          <div key={index} className="flex items-center gap-1.5">
+          <div key={index}>
+          <div className="flex items-center gap-1.5">
             <Input
               label={`${itemLabel} ${index + 1}`}
               hideLabel
@@ -55,8 +61,14 @@ export function StringListSection({
               onClick={() => onChange(items.filter((_, valueIndex) => valueIndex !== index))}
             />
           </div>
+          {errors[`${errorKey}.${index}`] && (
+            <p className="mt-1 text-xs text-red-500">{errors[`${errorKey}.${index}`]}</p>
+          )}
+          </div>
         ))}
       </div>
+
+      {errors[errorKey] && <p className="mt-2 text-xs text-red-500">{errors[errorKey]}</p>}
 
       <div className="mt-3">
         <AddItemButton

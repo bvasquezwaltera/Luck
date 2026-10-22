@@ -4,6 +4,7 @@ import { AddItemButton, EntryCard, ProfileCard } from "@/modules/panel/freelance
 import { parsePeriod, formatPeriod, PRESENT } from "@/lib/periodFormat";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import { Input } from "@/ui/Input";
+import { useProfileErrors } from "@/modules/panel/profileErrors";
 import { Select } from "@/ui/Select";
 import { Textarea } from "@/ui/Textarea";
 
@@ -18,6 +19,7 @@ export function ExperienceSection({
   setDraftProfile: Dispatch<SetStateAction<FreelancerProfile>>;
 }) {
   const { experience } = draftProfile;
+  const errors = useProfileErrors();
 
   return (
     <ProfileCard
@@ -60,6 +62,7 @@ export function ExperienceSection({
                 <Select
                   label="Desde"
                   fieldSize="md"
+                  error={errors[`experience.${index}.period`]}
                   value={from}
                   onChange={(event) => updatePeriod(event.target.value, to)}
                 >
@@ -87,6 +90,8 @@ export function ExperienceSection({
                 </Select>
                 <Input
                   label="Rol"
+                  maxLength={100}
+                  error={errors[`experience.${index}.role`]}
                   placeholder="Ej.: Desarrollador full stack"
                   value={entry.role}
                   onChange={(event) =>
@@ -100,6 +105,8 @@ export function ExperienceSection({
                 />
                 <Input
                   label="Empresa"
+                  maxLength={100}
+                  error={errors[`experience.${index}.company`]}
                   value={entry.company}
                   onChange={(event) =>
                     setDraftProfile((current) => ({
@@ -114,6 +121,8 @@ export function ExperienceSection({
               <div className="mt-3">
                 <Textarea
                   label="Descripción"
+                  maxLength={1000}
+                  error={errors[`experience.${index}.description`]}
                   placeholder="Qué hacías y qué lograste."
                   value={entry.description}
                   onChange={(event) =>
@@ -131,6 +140,8 @@ export function ExperienceSection({
           );
         })}
       </div>
+
+      {errors.experience && <p className="mt-2 text-xs text-red-500">{errors.experience}</p>}
 
       <div className="mt-3">
         <AddItemButton

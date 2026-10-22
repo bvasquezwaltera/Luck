@@ -4,6 +4,7 @@ import { useState, type Dispatch, type SetStateAction } from "react";
 import { Languages } from "lucide-react";
 import { AddItemButton, ProfileCard, RemoveIconButton } from "@/modules/panel/freelancer/configuracion/perfil/ProfileBlocks";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
+import { useProfileErrors } from "@/modules/panel/profileErrors";
 import { Input } from "@/ui/Input";
 import { Select } from "@/ui/Select";
 
@@ -19,6 +20,7 @@ export function LanguagesSection({
   // La fila recién agregada recibe el cursor, para escribir directo.
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
   const { languages } = draftProfile;
+  const errors = useProfileErrors();
 
   return (
     <ProfileCard icon={Languages} title="Idiomas" description="Los que hablas y su nivel." count={languages.length}>
@@ -29,13 +31,15 @@ export function LanguagesSection({
           </p>
         )}
         {languages.map((language, index) => (
-          <div key={index} className="flex items-center gap-1.5">
+          <div key={index}>
+          <div className="flex items-center gap-1.5">
             <Input
               id={`language-name-${index}`}
               label={`Idioma ${index + 1}`}
               hideLabel
               className="min-w-0 flex-1"
               placeholder="Idioma"
+              maxLength={40}
               autoFocus={focusIndex === index}
               value={language.name}
               onChange={(event) =>
@@ -81,8 +85,16 @@ export function LanguagesSection({
               }
             />
           </div>
+          {(errors[`languages.${index}.name`] || errors[`languages.${index}.level`]) && (
+            <p className="mt-1 text-xs text-red-500">
+              {errors[`languages.${index}.name`] ?? errors[`languages.${index}.level`]}
+            </p>
+          )}
+          </div>
         ))}
       </div>
+
+      {errors.languages && <p className="mt-2 text-xs text-red-500">{errors.languages}</p>}
 
       <div className="mt-3">
         <AddItemButton

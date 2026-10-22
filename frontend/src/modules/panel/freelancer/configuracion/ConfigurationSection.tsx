@@ -3,6 +3,7 @@
 import { CreditCard, Settings, FolderKanban, Lock, UserRound } from "lucide-react";
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
+import { ProfileErrorsProvider } from "@/modules/panel/profileErrors";
 import { ProfileSection } from "@/modules/panel/freelancer/configuracion/perfil/ProfileSection";
 import { ProjectsSection } from "@/modules/panel/freelancer/configuracion/proyecto/ProjectsSection";
 import { SubscriptionSection } from "@/modules/panel/freelancer/configuracion/suscripcion/SubscriptionSection";
@@ -11,6 +12,15 @@ import { saveFreelancerProfile } from "@/lib/api/client/profile";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import { Button } from "@/ui/Button";
 import { Tabs, type TabItem } from "@/ui/Tabs";
+import { validateFreelancerProfile } from "@/validators/profileValidation";
+
+// Lleva la vista al primer campo con error, una vez que la pantalla ya lo dibujó.
+function scrollToFirstError() {
+  requestAnimationFrame(() => {
+    document.querySelector("[data-field-error], p.text-red-500")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+}
+
 
 type ConfigTab = "perfil" | "usuario" | "proyectos" | "suscripcion";
 
@@ -35,7 +45,19 @@ export function ConfigurationSection({
   const [savedSnapshot, setSavedSnapshot] = useState(() => JSON.stringify(draftProfile));
   const isDirty = JSON.stringify(draftProfile) !== savedSnapshot;
 
+  // Hasta el primer intento de guardar no se marca nada; después los errores se actualizan mientras se corrige.
+  const [showErrors, setShowErrors] = useState(false);
+  const errors = showErrors ? validateFreelancerProfile(draftProfile) : {};
+  const errorCount = Object.keys(errors).length;
+
   async function handleSave() {
+    setShowErrors(true);
+    if (Object.keys(validateFreelancerProfile(draftProfile)).length > 0) {
+      setSaveMessage(null);
+      scrollToFirstError();
+      return;
+    }
+
     setIsSaving(true);
     setSaveMessage(null);
 
@@ -63,11 +85,17 @@ export function ConfigurationSection({
 
       {activeTab === "perfil" && (
         <>
-          <ProfileSection draftProfile={draftProfile} setDraftProfile={setDraftProfile} />
+          <ProfileErrorsProvider errors={errors}>
+            <ProfileSection draftProfile={draftProfile} setDraftProfile={setDraftProfile} />
+          </ProfileErrorsProvider>
 
           <div className="sticky bottom-4 z-10 flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-lg backdrop-blur">
             <div className="min-w-0 text-xs">
-              {saveMessage?.type === "error" ? (
+              {errorCount > 0 ? (
+                <p className="text-red-500">
+                  {errorCount === 1 ? "Corrige 1 campo para poder guardar." : `Corrige ${errorCount} campos para poder guardar.`}
+                </p>
+              ) : saveMessage?.type === "error" ? (
                 <p className="text-red-500">{saveMessage.text}</p>
               ) : isDirty ? (
                 <p className="flex items-center gap-2 text-amber-600">
