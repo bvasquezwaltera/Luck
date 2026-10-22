@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Filter } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Filter, Inbox } from "lucide-react";
 import { PanelSectionHeader } from "@/modules/panel/PanelSectionHeader";
 import { SolicitudCard } from "@/modules/panel/freelancer/solicitudes/SolicitudCard";
 import { Pagination } from "@/ui/Pagination";
@@ -9,18 +9,16 @@ import { Card } from "@/ui/Card";
 import { Search } from "@/ui/Search";
 import { Select } from "@/ui/Select";
 import type { Solicitud, SolicitudCategory, SolicitudStatus } from "@/types/solicitud";
-import solicitudesData from "@/data/solicitudes.json";
-import { loadStoredSolicitudes } from "@/lib/solicitudStorage";
+import { toPanelSolicitud } from "@/lib/receivedSolicitudAdapter";
+import type { ReceivedSolicitud } from "@/types/receivedSolicitud";
 
-const defaultSolicitudes = solicitudesData.solicitudes as Solicitud[];
 const ITEMS_PER_PAGE = 5;
 type TabType = SolicitudStatus | "todas";
 
 const tabs: Array<{ id: TabType; label: string }> = [
   { id: "todas", label: "Todas" },
   { id: "nueva", label: "Nuevas" },
-  { id: "sin_responder", label: "Sin responder" },
-  { id: "respondida", label: "Respondidas" },
+  { id: "respondida", label: "Aceptadas" },
   { id: "archivada", label: "Archivadas" },
 ];
 
@@ -42,19 +40,26 @@ function countByStatus(solicitudes: Solicitud[], status: SolicitudStatus) {
   return solicitudes.filter((solicitud) => solicitud.status === status).length;
 }
 
-export function SolicitudesSection() {
+export function SolicitudesSection({
+  solicitudes,
+  onGoToDeliveries,
+}: {
+  solicitudes: ReceivedSolicitud[];
+  onGoToDeliveries?: () => void;
+}) {
   const [activeTab, setActiveTab] = useState<TabType>("todas");
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState<SolicitudCategory | "">("");
   const [plan, setPlan] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [storedSolicitudes, setStoredSolicitudes] = useState<Solicitud[]>([]);
+  const [items, setItems] = useState(solicitudes);
 
-  useEffect(() => {
-    setStoredSolicitudes(loadStoredSolicitudes());
-  }, []);
+  const combinedSolicitudes = useMemo(() => items.map(toPanelSolicitud), [items]);
 
-  const combinedSolicitudes = useMemo(() => [...storedSolicitudes, ...defaultSolicitudes], [storedSolicitudes]);
+  // Cuando el freelancer acepta o rechaza, el servidor devuelve la solicitud actualizada.
+  function handleDecision(updated: ReceivedSolicitud) {
+    setItems((current) => current.map((item) => (item.id === updated.id ? updated : item)));
+  }
 
   const filteredSolicitudes = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -90,10 +95,16 @@ export function SolicitudesSection() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl bg-white p-5 shadow-sm sm:p-6">
+      <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
         <PanelSectionHeader
-          subtitle="Revisa el alcance, los anexos y responde con un calendario que puedas cumplir."
+          icon={Inbox}
+          subtitle="Revisa el alcance y los anexos, y acepta o rechaza. Si aceptas, el cliente pasa al pago."
           title="Solicitudes"
+          stats={[
+            { label: "por responder", value: items.filter((item) => item.status === "enviada").length, tone: "amber" },
+            { label: "aceptadas", value: items.filter((item) => item.status === "aceptada").length, tone: "indigo" },
+            { label: "contratadas", value: items.filter((item) => item.status === "contratada").length, tone: "emerald" },
+          ]}
         />
       </div>
 
@@ -179,7 +190,12 @@ export function SolicitudesSection() {
           <>
            <Card className="overflow-hidden">
               {paginatedSolicitudes.map((solicitud) => (
-                <SolicitudCard key={solicitud.id} solicitud={solicitud} />
+                <SolicitudCard
+                  key={solicitud.id}
+                  solicitud={solicitud}
+                  onDecision={handleDecision}
+                  onGoToDeliveries={onGoToDeliveries}
+                />
               ))}
            </Card>
             {totalPages > 1 && (
@@ -191,7 +207,14 @@ export function SolicitudesSection() {
         ) : (
           <div className="rounded-2xl bg-white p-10 text-center shadow-sm">
             <Filter className="mx-auto h-8 w-8 text-slate-300" />
-            <p className="mt-3 text-sm font-medium text-slate-700">No se encontraron solicitudes</p>
+            <p className="mt-3 text-sm font-medium text-slate-700">
+              {items.length === 0 ? "Aún no has recibido solicitudes" : "No se encontraron solicitudes"}
+            </p>
+            {items.length === 0 && (
+              <p className="mt-1 text-xs text-slate-500">
+                Cuando un cliente elija uno de tus planes, su solicitud aparecerá aquí.
+              </p>
+            )}
             <button type="button" onClick={clearFilters} className="mt-2 text-xs font-medium text-indigo-600 hover:text-indigo-700">
               Limpiar filtros
             </button>

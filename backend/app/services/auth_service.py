@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.caracteristica_plan import CaracteristicaPlan
@@ -14,8 +15,16 @@ from app.models.perfil_freelancer import PerfilFreelancer
 from app.models.plan_suscripcion import PlanSuscripcion
 from app.models.proyecto_portafolio import ProyectoPortafolio
 from app.models.resena import Resena
+from app.models.solicitud import Solicitud, SolicitudAdjunto
+from app.services import deliveries_service, messages_service, storage_service
 from app.schemas.auth import ActionResult, AuthResponse, SignInRequest, SignUpRequest
 from app.services.supabase_client import create_auth_client, supabase_auth
+
+
+# La plataforma está orientada a Perú: valores iniciales hasta que el usuario los cambie.
+DEFAULT_COUNTRY_CODE = "PE"
+DEFAULT_COUNTRY = "Perú"
+DEFAULT_TIMEZONE = "GMT-5 (Lima)"
 
 
 def sign_up(db: Session, payload: SignUpRequest) -> AuthResponse:
@@ -30,7 +39,14 @@ def sign_up(db: Session, payload: SignUpRequest) -> AuthResponse:
     if not result.user:
         return AuthResponse(error="No se pudo crear la cuenta.")
 
-    perfil = Perfil(id=result.user.id, rol=payload.role, nombre_completo=payload.fullName)
+    perfil = Perfil(
+        id=result.user.id,
+        rol=payload.role,
+        nombre_completo=payload.fullName,
+        pais_codigo=DEFAULT_COUNTRY_CODE,
+        pais=DEFAULT_COUNTRY,
+        zona_horaria=DEFAULT_TIMEZONE,
+    )
     db.add(perfil)
     db.commit()
 
@@ -65,21 +81,7 @@ def sign_in(db: Session, payload: SignInRequest) -> AuthResponse:
     )
 
 
-def change_password(user_id: str, current_password: str, new_password: str) -> ActionResult:
-    try:
-        auth_user = supabase_auth.auth.admin.get_user_by_id(user_id)
-        email = auth_user.user.email if auth_user and auth_user.user else None
-    except Exception as exc:
-        return ActionResult(error=str(exc))
-
-    if not email:
-        return ActionResult(error="No se pudo verificar la cuenta.")
-
-    try:
-        create_auth_client().auth.sign_in_with_password({"email": email, "password": current_password})
-    except Exception:
-        return ActionResult(error="La contraseña actual no es correcta.")
-
+def change_password(user_id: str, new_password: str) -> ActionResult:
     try:
         supabase_auth.auth.admin.update_user_by_id(user_id, {"password": new_password})
     except Exception as exc:
@@ -117,11 +119,27 @@ def delete_account(db: Session, freelancer_id: str) -> ActionResult:
     db.query(Experiencia).filter(Experiencia.freelancer_id == freelancer_id).delete()
     db.query(Educacion).filter(Educacion.freelancer_id == freelancer_id).delete()
     db.query(PlanSuscripcion).filter(PlanSuscripcion.freelancer_id == freelancer_id).delete()
+    # Los archivos viven en Storage, fuera de la base: se recogen sus rutas antes de borrar las filas.
+    entrega_paths = deliveries_service.attachment_paths_for_user(db, freelancer_id) + messages_service.attachment_paths_for_user(
+        db, freelancer_id
+    )
+    adjunto_paths = list(
+        db.scalars(
+            select(SolicitudAdjunto.ruta)
+            .join(Solicitud, Solicitud.id == SolicitudAdjunto.solicitud_id)
+            .where((Solicitud.cliente_id == freelancer_id) | (Solicitud.freelancer_id == freelancer_id))
+        )
+    )
+    db.query(Solicitud).filter(
+        (Solicitud.cliente_id == freelancer_id) | (Solicitud.freelancer_id == freelancer_id)
+    ).delete(synchronize_session=False)
     db.query(Resena).filter(Resena.freelancer_id == freelancer_id).delete()
     db.query(ProyectoPortafolio).filter(ProyectoPortafolio.freelancer_id == freelancer_id).delete()
     db.query(PerfilFreelancer).filter(PerfilFreelancer.perfil_id == freelancer_id).delete()
     db.query(Perfil).filter(Perfil.id == freelancer_id).delete()
     db.commit()
+    storage_service.remove(adjunto_paths)
+    storage_service.remove(entrega_paths, bucket=storage_service.DELIVERY_BUCKET)
 
     try:
         supabase_auth.auth.admin.delete_user(freelancer_id)

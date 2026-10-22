@@ -3,7 +3,13 @@ import type { SubscriptionPlan } from "@/types/subscriptionPlan";
 import { SubscriptionPlanCard } from "@/modules/perfil/SubscriptionPlanCard";
 import { Card } from "@/ui/Card";
 
-export function SubscriptionsTab({ plans }: { plans: SubscriptionPlan[] }) {
+export function SubscriptionsTab({
+  plans,
+  onChoosePlan,
+}: {
+  plans: SubscriptionPlan[];
+  onChoosePlan: (plan: SubscriptionPlan) => void;
+}) {
   const activePlans = plans.filter((plan) => plan.active);
 
   if (activePlans.length === 0) {
@@ -26,7 +32,7 @@ export function SubscriptionsTab({ plans }: { plans: SubscriptionPlan[] }) {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {activePlans.map((plan) => (
-          <SubscriptionPlanCard key={plan.id} plan={plan} />
+          <SubscriptionPlanCard key={plan.id} plan={plan} onChoose={onChoosePlan} />
         ))}
       </div>
 
@@ -34,17 +40,17 @@ export function SubscriptionsTab({ plans }: { plans: SubscriptionPlan[] }) {
         <div className="flex items-start gap-2">
           <ShieldCheck className="h-5 w-5 shrink-0 text-gray-400" />
           <div>
-            <p className="text-xs font-bold text-gray-900">Pago seguro con escrow</p>
+            <p className="text-xs font-bold text-gray-900">Pagas solo si te aceptan</p>
             <p className="text-xs text-gray-500">
-              Tu pago está protegido hasta que apruebes el trabajo.
+              El freelancer revisa tu solicitud primero; no se te cobra hasta que la acepte.
             </p>
           </div>
         </div>
         <div className="flex items-start gap-2">
           <CheckCircle2 className="h-5 w-5 shrink-0 text-gray-400" />
           <div>
-            <p className="text-xs font-bold text-gray-900">100% satisfacción garantizada</p>
-            <p className="text-xs text-gray-500">Si no estás satisfecho, te reembolsamos.</p>
+            <p className="text-xs font-bold text-gray-900">Sin compromiso al solicitar</p>
+            <p className="text-xs text-gray-500">Enviar una solicitud no te obliga a contratar.</p>
           </div>
         </div>
       </div>

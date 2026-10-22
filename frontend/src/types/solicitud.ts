@@ -1,3 +1,5 @@
+import type { SolicitudPaymentInfo } from "@/types/payment";
+
 export type SolicitudStatus = "nueva" | "sin_responder" | "respondida" | "archivada";
 export type SolicitudCategory =
   | "desarrollo"
@@ -44,4 +46,14 @@ export interface Solicitud {
   targetFreelancerRole?: string;
   // Optional fixed date requested by client (ISO yyyy-mm-dd)
   desiredDate?: string;
+  // Datos de solicitudes reales (backend): texto original de la categoría, proyectos activos
+  // del plan y, si el freelancer la rechazó, el motivo.
+  categoryLabel?: string;
+  planProjects?: string;
+  planPrice?: number;
+  rejected?: boolean;
+  rejectionReason?: string;
+  // Solicitud ya pagada: el contrato está activo.
+  contracted?: boolean;
+  payment?: SolicitudPaymentInfo;
 }

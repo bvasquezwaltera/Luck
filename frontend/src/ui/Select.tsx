@@ -4,9 +4,11 @@ import { ChevronDown } from "lucide-react";
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   icon?: ReactNode;
+  // "md" iguala la altura de un Input (formularios); "sm" es el tamaño compacto de siempre (filtros).
+  fieldSize?: "sm" | "md";
 }
 
-export function Select({ label, icon, className = "", id, name, children, ...props }: SelectProps) {
+export function Select({ label, icon, fieldSize = "sm", className = "", id, name, children, ...props }: SelectProps) {
   const selectId = id ?? name ?? label;
 
   const select = (
@@ -19,7 +21,7 @@ export function Select({ label, icon, className = "", id, name, children, ...pro
       <select
         id={selectId}
         name={name}
-        className={`w-full appearance-none rounded-lg border border-gray-200 bg-white py-1.5 text-xs ${icon ? "pl-7" : "pl-3"} pr-7`}
+        className={`w-full appearance-none rounded-lg border border-gray-200 bg-white ${fieldSize === "md" ? "py-2.5" : "py-1.5"} text-xs ${icon ? "pl-7" : "pl-3"} pr-7`}
         {...props}
       >
         {children}

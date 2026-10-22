@@ -1,8 +1,8 @@
 import type { Dispatch, SetStateAction } from "react";
+import { GraduationCap } from "lucide-react";
+import { AddItemButton, EntryCard, ProfileCard } from "@/modules/panel/freelancer/configuracion/perfil/ProfileBlocks";
 import { parsePeriod, formatPeriod } from "@/lib/periodFormat";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
-import { Button } from "@/ui/Button";
-import { Card } from "@/ui/Card";
 import { Input } from "@/ui/Input";
 import { Select } from "@/ui/Select";
 
@@ -16,11 +16,23 @@ export function EducationSection({
   draftProfile: FreelancerProfile;
   setDraftProfile: Dispatch<SetStateAction<FreelancerProfile>>;
 }) {
+  const { education } = draftProfile;
+
   return (
-    <Card className="space-y-3">
-      <h4 className="text-sm font-semibold text-gray-900">Educación</h4>
+    <ProfileCard
+      icon={GraduationCap}
+      title="Educación"
+      description="Tu formación académica."
+      count={education.length}
+    >
       <div className="space-y-3">
-        {draftProfile.education.map((entry, index) => {
+        {education.length === 0 && (
+          <p className="rounded-xl bg-slate-50 px-3 py-4 text-center text-xs text-slate-500">
+            Aún no agregaste formación académica.
+          </p>
+        )}
+
+        {education.map((entry, index) => {
           const { from, to } = parsePeriod(entry.period);
 
           const updatePeriod = (nextFrom: string, nextTo: string) =>
@@ -32,9 +44,24 @@ export function EducationSection({
             }));
 
           return (
-            <div key={index} className="rounded-lg border border-gray-200 p-3">
-              <div className="grid gap-3 md:grid-cols-4">
-                <Select label="Desde" value={from} onChange={(event) => updatePeriod(event.target.value, to)}>
+            <EntryCard
+              key={index}
+              title={`Formación ${index + 1}`}
+              removeLabel={`Eliminar educación ${index + 1}`}
+              onRemove={() =>
+                setDraftProfile((current) => ({
+                  ...current,
+                  education: current.education.filter((_, valueIndex) => valueIndex !== index),
+                }))
+              }
+            >
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[7.5rem_7.5rem_minmax(0,1fr)_minmax(0,1fr)]">
+                <Select
+                  label="Desde"
+                  fieldSize="md"
+                  value={from}
+                  onChange={(event) => updatePeriod(event.target.value, to)}
+                >
                   <option value="" disabled>
                     Año
                   </option>
@@ -44,7 +71,12 @@ export function EducationSection({
                     </option>
                   ))}
                 </Select>
-                <Select label="Hasta" value={to} onChange={(event) => updatePeriod(from, event.target.value)}>
+                <Select
+                  label="Hasta"
+                  fieldSize="md"
+                  value={to}
+                  onChange={(event) => updatePeriod(from, event.target.value)}
+                >
                   <option value="" disabled>
                     Año
                   </option>
@@ -56,6 +88,7 @@ export function EducationSection({
                 </Select>
                 <Input
                   label="Título"
+                  placeholder="Ej.: Ingeniería de sistemas"
                   value={entry.degree}
                   onChange={(event) =>
                     setDraftProfile((current) => ({
@@ -79,43 +112,23 @@ export function EducationSection({
                   }
                 />
               </div>
-              <div className="mt-3 flex justify-end">
-                <Button
-                  variant="outline-neutral"
-                  className="!min-w-0 !border-red-200 !px-3 !text-red-600"
-                  onClick={() =>
-                    setDraftProfile((current) => ({
-                      ...current,
-                      education: current.education.filter((_, valueIndex) => valueIndex !== index),
-                    }))
-                  }
-                >
-                  Eliminar educación
-                </Button>
-              </div>
-            </div>
+            </EntryCard>
           );
         })}
       </div>
-      <Button
-        variant="outline-neutral"
-        className="!min-w-0 !px-3"
-        onClick={() =>
-          setDraftProfile((current) => ({
-            ...current,
-            education: [
-              ...current.education,
-              {
-                period: "",
-                degree: "",
-                institution: "",
-              },
-            ],
-          }))
-        }
-      >
-        + Agregar educación
-      </Button>
-    </Card>
+
+      <div className="mt-3">
+        <AddItemButton
+          onClick={() =>
+            setDraftProfile((current) => ({
+              ...current,
+              education: [...current.education, { period: "", degree: "", institution: "" }],
+            }))
+          }
+        >
+          Agregar educación
+        </AddItemButton>
+      </div>
+    </ProfileCard>
   );
 }

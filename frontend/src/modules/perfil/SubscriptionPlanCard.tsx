@@ -14,7 +14,13 @@ const TIER_BUTTON_CLASSES: Record<SubscriptionPlan["tier"], string> = {
   premium: "!bg-orange-500 hover:!bg-orange-600",
 };
 
-export function SubscriptionPlanCard({ plan }: { plan: SubscriptionPlan }) {
+export function SubscriptionPlanCard({
+  plan,
+  onChoose,
+}: {
+  plan: SubscriptionPlan;
+  onChoose: (plan: SubscriptionPlan) => void;
+}) {
   const features = [
     plan.activeProjects,
     plan.revisions,
@@ -45,7 +51,7 @@ export function SubscriptionPlanCard({ plan }: { plan: SubscriptionPlan }) {
       </ul>
 
       <Button
-        href="/login"
+        onClick={() => onChoose(plan)}
         variant={plan.tier === "basico" ? "outline" : "primary"}
         className={`w-full min-w-0 ${TIER_BUTTON_CLASSES[plan.tier]}`}
       >

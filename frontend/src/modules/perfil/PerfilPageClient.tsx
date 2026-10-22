@@ -9,6 +9,7 @@ import { AboutTab } from "@/modules/perfil/AboutTab";
 import { ProfileSidebar } from "@/modules/perfil/ProfileSidebar";
 import { PortfolioTab } from "@/modules/perfil/PortfolioTab";
 import { ReviewsTab } from "@/modules/perfil/ReviewsTab";
+import { RequestPlanDrawer, type ViewerRole } from "@/modules/perfil/RequestPlanDrawer";
 import { SubscriptionsTab } from "@/modules/perfil/SubscriptionsTab";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import type { PortfolioProject } from "@/types/portfolioProject";
@@ -21,13 +22,20 @@ export function PerfilPageClient({
   reviews,
   projects,
   plans,
+  viewerRole,
+  initialPlanId = null,
 }: {
   profile: FreelancerProfile;
   reviews: ReviewEntry[];
   projects: PortfolioProject[];
   plans: SubscriptionPlan[];
+  viewerRole: ViewerRole;
+  initialPlanId?: string | null;
 }) {
-  const [activeTab, setActiveTab] = useState<ProfileTab>("sobre-mi");
+  // Si se llegó con ?plan= (p. ej. al volver del login), se abre ese plan directamente.
+  const initialPlan = plans.find((plan) => plan.id === initialPlanId) ?? null;
+  const [activeTab, setActiveTab] = useState<ProfileTab>(initialPlan ? "suscripciones" : "sobre-mi");
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(initialPlan);
 
   return (
     <div className="min-h-screen">
@@ -54,9 +62,16 @@ export function PerfilPageClient({
             <PortfolioTab projects={projects} email={profile.email} />
           )}
           {activeTab === "resenas" && <ReviewsTab reviews={reviews} rating={profile.rating} />}
-          {activeTab === "suscripciones" && <SubscriptionsTab plans={plans} />}
+          {activeTab === "suscripciones" && <SubscriptionsTab plans={plans} onChoosePlan={setSelectedPlan} />}
         </div>
       </main>
+
+      <RequestPlanDrawer
+        plan={selectedPlan}
+        freelancer={profile}
+        viewerRole={viewerRole}
+        onClose={() => setSelectedPlan(null)}
+      />
     </div>
   );
 }

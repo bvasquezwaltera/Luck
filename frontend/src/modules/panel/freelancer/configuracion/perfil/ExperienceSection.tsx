@@ -1,8 +1,8 @@
 import type { Dispatch, SetStateAction } from "react";
+import { Briefcase } from "lucide-react";
+import { AddItemButton, EntryCard, ProfileCard } from "@/modules/panel/freelancer/configuracion/perfil/ProfileBlocks";
 import { parsePeriod, formatPeriod, PRESENT } from "@/lib/periodFormat";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
-import { Button } from "@/ui/Button";
-import { Card } from "@/ui/Card";
 import { Input } from "@/ui/Input";
 import { Select } from "@/ui/Select";
 import { Textarea } from "@/ui/Textarea";
@@ -17,11 +17,23 @@ export function ExperienceSection({
   draftProfile: FreelancerProfile;
   setDraftProfile: Dispatch<SetStateAction<FreelancerProfile>>;
 }) {
+  const { experience } = draftProfile;
+
   return (
-    <Card className="space-y-3">
-      <h4 className="text-sm font-semibold text-gray-900">Experiencia</h4>
+    <ProfileCard
+      icon={Briefcase}
+      title="Experiencia"
+      description="Dónde has trabajado, en orden de tu preferencia."
+      count={experience.length}
+    >
       <div className="space-y-3">
-        {draftProfile.experience.map((entry, index) => {
+        {experience.length === 0 && (
+          <p className="rounded-xl bg-slate-50 px-3 py-4 text-center text-xs text-slate-500">
+            Aún no agregaste experiencia. Cuéntales a tus clientes dónde has trabajado.
+          </p>
+        )}
+
+        {experience.map((entry, index) => {
           const { from, to } = parsePeriod(entry.period);
 
           const updatePeriod = (nextFrom: string, nextTo: string) =>
@@ -33,9 +45,24 @@ export function ExperienceSection({
             }));
 
           return (
-            <div key={index} className="rounded-lg border border-gray-200 p-3">
-              <div className="grid gap-3 md:grid-cols-4">
-                <Select label="Desde" value={from} onChange={(event) => updatePeriod(event.target.value, to)}>
+            <EntryCard
+              key={index}
+              title={`Experiencia ${index + 1}`}
+              removeLabel={`Eliminar experiencia ${index + 1}`}
+              onRemove={() =>
+                setDraftProfile((current) => ({
+                  ...current,
+                  experience: current.experience.filter((_, valueIndex) => valueIndex !== index),
+                }))
+              }
+            >
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[7.5rem_7.5rem_minmax(0,1fr)_minmax(0,1fr)]">
+                <Select
+                  label="Desde"
+                  fieldSize="md"
+                  value={from}
+                  onChange={(event) => updatePeriod(event.target.value, to)}
+                >
                   <option value="" disabled>
                     Año
                   </option>
@@ -45,7 +72,12 @@ export function ExperienceSection({
                     </option>
                   ))}
                 </Select>
-                <Select label="Hasta" value={to} onChange={(event) => updatePeriod(from, event.target.value)}>
+                <Select
+                  label="Hasta"
+                  fieldSize="md"
+                  value={to}
+                  onChange={(event) => updatePeriod(from, event.target.value)}
+                >
                   <option value={PRESENT}>Presente</option>
                   {YEARS.map((year) => (
                     <option key={year} value={year}>
@@ -55,6 +87,7 @@ export function ExperienceSection({
                 </Select>
                 <Input
                   label="Rol"
+                  placeholder="Ej.: Desarrollador full stack"
                   value={entry.role}
                   onChange={(event) =>
                     setDraftProfile((current) => ({
@@ -81,6 +114,7 @@ export function ExperienceSection({
               <div className="mt-3">
                 <Textarea
                   label="Descripción"
+                  placeholder="Qué hacías y qué lograste."
                   value={entry.description}
                   onChange={(event) =>
                     setDraftProfile((current) => ({
@@ -93,44 +127,23 @@ export function ExperienceSection({
                   rows={3}
                 />
               </div>
-              <div className="mt-3 flex justify-end">
-                <Button
-                  variant="outline-neutral"
-                  className="!min-w-0 !border-red-200 !px-3 !text-red-600"
-                  onClick={() =>
-                    setDraftProfile((current) => ({
-                      ...current,
-                      experience: current.experience.filter((_, valueIndex) => valueIndex !== index),
-                    }))
-                  }
-                >
-                  Eliminar experiencia
-                </Button>
-              </div>
-            </div>
+            </EntryCard>
           );
         })}
       </div>
-      <Button
-        variant="outline-neutral"
-        className="!min-w-0 !px-3"
-        onClick={() =>
-          setDraftProfile((current) => ({
-            ...current,
-            experience: [
-              ...current.experience,
-              {
-                period: "",
-                role: "",
-                company: "",
-                description: "",
-              },
-            ],
-          }))
-        }
-      >
-        + Agregar experiencia
-      </Button>
-    </Card>
+
+      <div className="mt-3">
+        <AddItemButton
+          onClick={() =>
+            setDraftProfile((current) => ({
+              ...current,
+              experience: [...current.experience, { period: "", role: "", company: "", description: "" }],
+            }))
+          }
+        >
+          Agregar experiencia
+        </AddItemButton>
+      </div>
+    </ProfileCard>
   );
 }

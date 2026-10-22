@@ -1,3 +1,5 @@
+import type { DeliveryApiStatus } from "@/types/deliveryApi";
+
 export interface DeliveryAttachment {
   id: string;
   name: string;
@@ -7,6 +9,7 @@ export interface DeliveryAttachment {
 
 export interface ClientFeedbackEntry {
   id: string;
+  createdAt?: string; // fecha real (ISO), para ordenar el hilo
   type: "approved" | "changes-requested";
   comment: string;
   attachments: DeliveryAttachment[];
@@ -15,6 +18,8 @@ export interface ClientFeedbackEntry {
 
 export interface AdvanceEntry {
   id: string;
+  createdAt?: string; // fecha real (ISO), para ordenar el hilo
+  progress?: number;
   note: string;
   attachments: DeliveryAttachment[];
   timestamp: string;
@@ -36,4 +41,7 @@ export interface DeliveryModule {
   objectives: string[];
   advanceHistory?: AdvanceEntry[];
   clientFeedback?: ClientFeedbackEntry[];
+  // Solo en entregas reales (backend): a qué contrato pertenece y su estado exacto.
+  contractId?: string;
+  apiStatus?: DeliveryApiStatus;
 }

@@ -1,7 +1,9 @@
-import type { Dispatch, SetStateAction } from "react";
+"use client";
+
+import { useState, type Dispatch, type SetStateAction } from "react";
+import { Languages } from "lucide-react";
+import { AddItemButton, ProfileCard, RemoveIconButton } from "@/modules/panel/freelancer/configuracion/perfil/ProfileBlocks";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
-import { Button } from "@/ui/Button";
-import { Card } from "@/ui/Card";
 import { Input } from "@/ui/Input";
 import { Select } from "@/ui/Select";
 
@@ -14,19 +16,27 @@ export function LanguagesSection({
   draftProfile: FreelancerProfile;
   setDraftProfile: Dispatch<SetStateAction<FreelancerProfile>>;
 }) {
-  return (
-    <Card className="space-y-3">
-      <h4 className="text-sm font-semibold text-gray-900">Idiomas</h4>
+  // La fila recién agregada recibe el cursor, para escribir directo.
+  const [focusIndex, setFocusIndex] = useState<number | null>(null);
+  const { languages } = draftProfile;
 
-      <div className="space-y-3">
-        {draftProfile.languages.map((language, index) => (
-          <div key={index} className="flex items-center gap-2">
+  return (
+    <ProfileCard icon={Languages} title="Idiomas" description="Los que hablas y su nivel." count={languages.length}>
+      <div className="space-y-2">
+        {languages.length === 0 && (
+          <p className="rounded-xl bg-slate-50 px-3 py-3 text-center text-xs text-slate-500">
+            Aún no agregaste ninguno.
+          </p>
+        )}
+        {languages.map((language, index) => (
+          <div key={index} className="flex items-center gap-1.5">
             <Input
               id={`language-name-${index}`}
-              label=""
+              label={`Idioma ${index + 1}`}
               hideLabel
-              className="flex-1"
+              className="min-w-0 flex-1"
               placeholder="Idioma"
+              autoFocus={focusIndex === index}
               value={language.name}
               onChange={(event) =>
                 setDraftProfile((current) => ({
@@ -39,6 +49,9 @@ export function LanguagesSection({
             />
             <Select
               id={`language-level-${index}`}
+              aria-label={`Nivel del idioma ${index + 1}`}
+              fieldSize="md"
+              className="w-28 shrink-0"
               value={language.level}
               onChange={(event) =>
                 setDraftProfile((current) => ({
@@ -58,34 +71,32 @@ export function LanguagesSection({
                 </option>
               ))}
             </Select>
-            <Button
-              variant="outline-neutral"
-              className="!min-w-0 !border-red-200 !px-3 !text-red-600"
+            <RemoveIconButton
+              label={`Quitar idioma ${index + 1}`}
               onClick={() =>
                 setDraftProfile((current) => ({
                   ...current,
                   languages: current.languages.filter((_, valueIndex) => valueIndex !== index),
                 }))
               }
-            >
-              Quitar
-            </Button>
+            />
           </div>
         ))}
       </div>
 
-      <Button
-        variant="outline-neutral"
-        className="!min-w-0 !px-3"
-        onClick={() =>
-          setDraftProfile((current) => ({
-            ...current,
-            languages: [...current.languages, { name: "", level: "" }],
-          }))
-        }
-      >
-        + Agregar idioma
-      </Button>
-    </Card>
+      <div className="mt-3">
+        <AddItemButton
+          onClick={() => {
+            setFocusIndex(languages.length);
+            setDraftProfile((current) => ({
+              ...current,
+              languages: [...current.languages, { name: "", level: "" }],
+            }));
+          }}
+        >
+          Agregar idioma
+        </AddItemButton>
+      </div>
+    </ProfileCard>
   );
 }

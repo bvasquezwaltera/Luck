@@ -9,6 +9,7 @@ import { Checkbox } from "@/ui/Checkbox";
 import { GoogleIcon } from "@/modules/autenticacion/GoogleIcon";
 import { RoleToggle, type Role } from "@/modules/autenticacion/RoleToggle";
 import { signUp } from "@/lib/api/client/auth";
+import { withNext } from "@/lib/safeNext";
 import {
   validateRegisterForm,
   type RegisterFormErrors,
@@ -19,9 +20,9 @@ const PANEL_PATH_BY_ROLE: Record<string, string> = {
   client: "/panel/cliente",
 };
 
-export function RegisterForm() {
+export function RegisterForm({ next = null }: { next?: string | null }) {
   const router = useRouter();
-  const [role, setRole] = useState<Role>("freelancer");
+  const [role, setRole] = useState<Role>(next ? "cliente" : "freelancer");
   const [values, setValues] = useState({
     fullName: "",
     email: "",
@@ -56,7 +57,7 @@ export function RegisterForm() {
       return;
     }
     if (result?.role) {
-      router.push(PANEL_PATH_BY_ROLE[result.role] ?? "/");
+      router.push(next ?? PANEL_PATH_BY_ROLE[result.role] ?? "/");
     }
   }
 
@@ -185,7 +186,7 @@ export function RegisterForm() {
 
       <p className="mt-6 text-center text-xs text-gray-500">
         ¿Ya tienes una cuenta?{" "}
-        <a href="/login" className="font-semibold text-indigo-600">
+        <a href={withNext("/login", next)} className="font-semibold text-indigo-600">
           Iniciar sesión
         </a>
       </p>

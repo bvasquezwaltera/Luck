@@ -27,7 +27,6 @@ class ProfileOut(BaseModel):
 
 
 class ChangePasswordRequest(BaseModel):
-    currentPassword: str
     newPassword: str
 
 

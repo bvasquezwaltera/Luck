@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import {
+  CreditCard,
   Inbox,
   LayoutGrid,
   MessageCircle,
@@ -10,7 +11,9 @@ import {
   Truck,
 } from "lucide-react";
 import { PanelBrandHeader } from "@/modules/panel/PanelBrandHeader";
+import { PaymentsSection } from "@/modules/panel/freelancer/payments/PaymentsSection";
 import { PanelSidebar } from "@/modules/panel/PanelSidebar";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { ConfigurationSection } from "@/modules/panel/freelancer/configuracion/ConfigurationSection";
 import { DeliveriesSection } from "@/modules/panel/freelancer/deliveries/DeliveriesSection";
 import { HomeSection } from "@/modules/panel/freelancer/home/HomeSection";
@@ -19,6 +22,9 @@ import { SolicitudesSection } from "@/modules/panel/freelancer/solicitudes/Solic
 import { ReviewsSection } from "@/modules/panel/freelancer/reviews/ReviewsSection";
 import type { FreelancerProfile } from "@/types/freelancerProfile";
 import type { FreelancerSectionId } from "@/types/freelancerSection";
+import type { ContractDeliveries } from "@/types/deliveryApi";
+import type { FreelancerPaymentSummary, PaymentRecord } from "@/types/payment";
+import type { ReceivedSolicitud } from "@/types/receivedSolicitud";
 import type { ReviewEntry } from "@/types/review";
 import { useDraftProfile } from "@/hooks/useDraftProfile";
 import fallbackProfileData from "@/data/exampleFreelancerProfile.json";
@@ -28,20 +34,43 @@ const menuItems: Array<{ id: FreelancerSectionId; label: string; icon: typeof La
   { id: "solicitudes", label: "Solicitudes", icon: Inbox },
   { id: "mensajes", label: "Mensajes", icon: MessageCircle },
   { id: "entregas", label: "Entregas", icon: Truck },
+  { id: "pagos", label: "Pagos", icon: CreditCard },
   { id: "reseñas", label: "Reseñas", icon: Star },
   { id: "configuracion", label: "Configuración", icon: Settings },
 ];
+
+const EMPTY_SUMMARY: FreelancerPaymentSummary = {
+  commissionRate: 5,
+  totalGross: 0,
+  totalCommission: 0,
+  totalNet: 0,
+  activeContracts: 0,
+  monthlyNet: 0,
+  nextChargeAt: null,
+};
 
 export function FreelancerDashboard({
   embedded = false,
   profile,
   reviews = [],
+  solicitudes = [],
+  payments = [],
+  paymentSummary = EMPTY_SUMMARY,
+  deliveries = [],
 }: {
   embedded?: boolean;
   profile?: FreelancerProfile;
   reviews?: ReviewEntry[];
+  solicitudes?: ReceivedSolicitud[];
+  // null = el servidor falló al cargarlos (la sección lo avisa); si no se pasan, se muestran vacíos.
+  payments?: PaymentRecord[] | null;
+  paymentSummary?: FreelancerPaymentSummary | null;
+  deliveries?: ContractDeliveries[] | null;
 }) {
   const [activeSection, setActiveSection] = useState<FreelancerSectionId>("inicio");
+  // Sin sesión real (la vista de ejemplo incrustada) no hay mensajes que consultar.
+  const unreadMessages = useUnreadMessages(!embedded);
+  const sidebarItems = menuItems.map((item) => (item.id === "mensajes" ? { ...item, badge: unreadMessages } : item));
 
   const { safeProfile, draftProfile, setDraftProfile } = useDraftProfile(
     profile,
@@ -53,11 +82,13 @@ export function FreelancerDashboard({
       case "inicio":
         return <HomeSection profile={safeProfile} />;
       case "solicitudes":
-        return <SolicitudesSection />;
+        return <SolicitudesSection solicitudes={solicitudes} onGoToDeliveries={() => setActiveSection("entregas")} />;
       case "mensajes":
         return <MessagesSection />;
       case "entregas":
-        return <DeliveriesSection />;
+        return <DeliveriesSection contracts={deliveries} />;
+      case "pagos":
+        return <PaymentsSection payments={payments} summary={paymentSummary} />;
       case "reseñas":
         return <ReviewsSection reviews={reviews} />;
       case "configuracion":
@@ -65,7 +96,7 @@ export function FreelancerDashboard({
       default:
         return null;
     }
-  }, [activeSection, safeProfile, reviews, draftProfile]);
+  }, [activeSection, safeProfile, reviews, draftProfile, solicitudes, payments, paymentSummary, deliveries]);
 
   if (embedded) {
     return (
@@ -74,7 +105,7 @@ export function FreelancerDashboard({
 
         <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
           <PanelSidebar
-            menuItems={menuItems}
+            menuItems={sidebarItems}
             activeSection={activeSection}
             onSectionChange={setActiveSection}
             className="rounded-xl bg-indigo-50 p-3"
@@ -92,7 +123,7 @@ export function FreelancerDashboard({
     <div className="min-h-screen bg-indigo-50 text-slate-900">
       <div className="flex min-h-screen flex-col lg:flex-row">
         <PanelSidebar
-          menuItems={menuItems}
+          menuItems={sidebarItems}
           activeSection={activeSection}
           onSectionChange={setActiveSection}
           showHeader

@@ -43,8 +43,8 @@ export function ReviewsSection({ reviews }: { reviews: ReviewEntry[] }) {
   if (reviews.length === 0) {
     return (
       <div className="space-y-4">
-        <div className="rounded-2xl bg-white p-5 shadow-sm">
-          <PanelSectionHeader subtitle="Bienvenido de nuevo" title="Reseñas" />
+        <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
+          <PanelSectionHeader icon={Star} subtitle="Lo que opinan tus clientes de tu trabajo." title="Reseñas" />
         </div>
         <Card className="flex flex-col items-center justify-center gap-2 py-12 text-center">
           <Star className="h-8 w-8 text-gray-300" />
@@ -56,8 +56,8 @@ export function ReviewsSection({ reviews }: { reviews: ReviewEntry[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl bg-white p-5 shadow-sm">
-        <PanelSectionHeader subtitle="Bienvenido de nuevo" title="Reseñas" />
+      <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
+        <PanelSectionHeader icon={Star} subtitle="Lo que opinan tus clientes de tu trabajo." title="Reseñas" />
       </div>
 
       <div className="flex flex-wrap justify-end gap-2">
