@@ -62,8 +62,8 @@ export function ProfileHeader({ profile }: { profile: FreelancerProfile }) {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {profile.skills.slice(0, SKILLS_LIMIT).map((skill) => (
-              <Badge key={skill}>{skill}</Badge>
+            {profile.skills.slice(0, SKILLS_LIMIT).map((skill, index) => (
+              <Badge key={`${index}-${skill}`}>{skill}</Badge>
             ))}
             {profile.skills.length > SKILLS_LIMIT && (
               <Badge>+{profile.skills.length - SKILLS_LIMIT} más</Badge>

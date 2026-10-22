@@ -49,7 +49,7 @@ export function HomeClient({ freelancers }: { freelancers: Freelancer[] }) {
           countries={countries}
         />
         <div className="w-full max-w-6xl">
-          <FreelancerGrid freelancers={pageFreelancers} />
+          <FreelancerGrid freelancers={pageFreelancers} total={filtered.length} />
         </div>
         <Pagination
           currentPage={currentPage}

@@ -16,8 +16,8 @@ export function ProfileSidebar({ profile }: { profile: FreelancerProfile }) {
         <Card className="flex flex-col gap-4">
           <p className="text-sm font-bold text-gray-900">Métodos de trabajo</p>
 
-          {profile.workMethods.map((category) => (
-            <div key={category.label}>
+          {profile.workMethods.map((category, index) => (
+            <div key={`${index}-${category.label}`}>
               <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
                 <Layers className="h-3.5 w-3.5" />
                 {category.label}

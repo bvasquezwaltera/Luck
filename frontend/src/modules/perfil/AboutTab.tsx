@@ -39,8 +39,8 @@ export function AboutTab({ profile }: { profile: FreelancerProfile }) {
             Lo que me diferencia
           </h3>
           <ul className="flex flex-col gap-2">
-            {profile.differentiators.map((item) => (
-              <li key={item} className="flex items-start gap-2 text-xs text-gray-600">
+            {profile.differentiators.map((item, index) => (
+              <li key={`${index}-${item}`} className="flex items-start gap-2 text-xs text-gray-600">
                 <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500" />
                 {item}
               </li>
@@ -56,8 +56,8 @@ export function AboutTab({ profile }: { profile: FreelancerProfile }) {
             Experiencia
           </h3>
           <ul className="flex flex-col gap-4 border-l border-gray-200 pl-4">
-            {profile.experience.map((entry) => (
-              <li key={`${entry.role}-${entry.period}`} className="relative">
+            {profile.experience.map((entry, index) => (
+              <li key={`${index}-${entry.role}-${entry.period}`} className="relative">
                 <span className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-indigo-500" />
                 <p className="text-[11px] text-gray-400">{entry.period}</p>
                 <p className="text-xs font-semibold text-gray-900">{entry.role}</p>
@@ -76,8 +76,8 @@ export function AboutTab({ profile }: { profile: FreelancerProfile }) {
             Educación
           </h3>
           <ul className="flex flex-col gap-4 border-l border-gray-200 pl-4">
-            {profile.education.map((entry) => (
-              <li key={`${entry.degree}-${entry.period}`} className="relative">
+            {profile.education.map((entry, index) => (
+              <li key={`${index}-${entry.degree}-${entry.period}`} className="relative">
                 <span className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-indigo-500" />
                 <p className="text-[11px] text-gray-400">{entry.period}</p>
                 <p className="text-xs font-semibold text-gray-900">{entry.degree}</p>
@@ -93,8 +93,8 @@ export function AboutTab({ profile }: { profile: FreelancerProfile }) {
             Herramientas y tecnologías
           </h3>
           <div className="flex flex-wrap gap-1.5">
-            {profile.tools.map((tool) => (
-              <Badge key={tool} className="!px-2 !py-0.5 !text-[10px]">
+            {profile.tools.map((tool, index) => (
+              <Badge key={`${index}-${tool}`} className="!px-2 !py-0.5 !text-[10px]">
                 {tool}
               </Badge>
             ))}
