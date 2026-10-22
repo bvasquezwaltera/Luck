@@ -34,7 +34,7 @@ PRESENT = "Presente"
 MIN_YEAR = 1950
 
 SPECIALTY_MAX = 100
-BIO_MAX = 1000
+BIO_MAX = 2000
 AVAILABILITY_MAX = 100
 DESCRIPTION_MAX = 1000
 TEXT_MAX = 100  # rol, empresa, título, institución

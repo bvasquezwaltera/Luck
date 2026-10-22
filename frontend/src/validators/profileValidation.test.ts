@@ -47,7 +47,7 @@ describe("validateFreelancerProfile", () => {
 
   it("limits the length of specialty and bio", () => {
     expect(errorsFor({ specialty: "x".repeat(101) }).specialty).toMatch(/100/);
-    expect(errorsFor({ bio: "x".repeat(1001) }).bio).toMatch(/1000/);
+    expect(errorsFor({ bio: "x".repeat(2001) }).bio).toMatch(/2000/);
   });
 
   it("requires location and category to come from the lists", () => {

@@ -4,6 +4,7 @@ import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Info, Paperclip, X } from "lucide-react";
 import { signOut } from "@/lib/api/client/auth";
+import { planFeatureLines } from "@/lib/planLabels";
 import { createSolicitud } from "@/lib/api/client/solicitudes";
 import { withNext } from "@/lib/safeNext";
 import {
@@ -138,11 +139,7 @@ function FreelancerSummary({ freelancer }: { freelancer: FreelancerProfile }) {
 }
 
 function PlanSummary({ plan }: { plan: SubscriptionPlan }) {
-  const features = [
-    plan.activeProjects,
-    plan.revisions,
-    ...plan.features.map((feature) => `${feature.label}: ${feature.value}`),
-  ];
+  const features = planFeatureLines(plan);
 
   return (
     <div className="rounded-xl border border-gray-200 p-4">

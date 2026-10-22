@@ -1,5 +1,6 @@
 import { Star, Briefcase } from "lucide-react";
 import * as Flags from "country-flag-icons/react/3x2";
+import { visibleSkills } from "@/lib/visibleSkills";
 import type { Freelancer } from "@/types/freelancer";
 import { Card } from "@/ui/Card";
 import { Avatar } from "@/ui/Avatar";
@@ -8,6 +9,8 @@ import { Button } from "@/ui/Button";
 
 export function FreelancerCard({ freelancer }: { freelancer: Freelancer }) {
   const Flag = Flags[freelancer.countryCode as keyof typeof Flags];
+  // Solo las primeras habilidades: si se mostraran todas, la tarjeta crecería con cada una que se agregue.
+  const { shown, hidden } = visibleSkills(freelancer.skills);
 
   return (
     <Card className="flex h-full flex-col gap-3">
@@ -30,11 +33,18 @@ export function FreelancerCard({ freelancer }: { freelancer: Freelancer }) {
         </div>
 
         <div className="flex flex-wrap gap-1.5">
-          {freelancer.skills.map((skill) => (
-            <Badge key={skill} className="!px-2 !py-0.5 !text-[10px]">
-              {skill}
+          {shown.map((skill) => (
+            <Badge key={skill} className="max-w-full !px-2 !py-0.5 !text-[10px]">
+              <span className="block truncate" title={skill}>
+                {skill}
+              </span>
             </Badge>
           ))}
+          {hidden.length > 0 && (
+            <Badge className="!bg-indigo-50 !px-2 !py-0.5 !text-[10px] !text-indigo-600">
+              <span title={hidden.join(", ")}>+{hidden.length} más</span>
+            </Badge>
+          )}
         </div>
       </div>
 

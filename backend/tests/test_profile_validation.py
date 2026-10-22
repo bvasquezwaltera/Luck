@@ -93,7 +93,7 @@ def test_country_is_fixed_by_code_and_must_be_in_the_list():
         ({"name": "Ana123"}, "números"),
         ({"name": "Al"}, "al menos 3"),
         ({"specialty": "x" * 101}, "Especialidad"),
-        ({"bio": "x" * 1001}, "Sobre mí"),
+        ({"bio": "x" * 2001}, "Sobre mí"),
         ({"skills": [f"h{i}" for i in range(31)]}, "hasta 30"),
         ({"skills": ["x" * 51]}, "supera"),
         ({"differentiators": ["d"] * 11}, "hasta 10"),

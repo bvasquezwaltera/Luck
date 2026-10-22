@@ -1,3 +1,4 @@
+import { planFeatureLines } from "@/lib/planLabels";
 import type { SubscriptionPlan } from "@/types/subscriptionPlan";
 import { Card } from "@/ui/Card";
 import { Button } from "@/ui/Button";
@@ -21,11 +22,7 @@ export function SubscriptionPlanCard({
   plan: SubscriptionPlan;
   onChoose: (plan: SubscriptionPlan) => void;
 }) {
-  const features = [
-    plan.activeProjects,
-    plan.revisions,
-    ...plan.features.map((feature) => `${feature.label}: ${feature.value}`),
-  ];
+  const features = planFeatureLines(plan);
 
   return (
     <Card className="flex h-full flex-col gap-4">
