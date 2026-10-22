@@ -9,10 +9,8 @@ from app.services.supabase_client import supabase_auth
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
-def get_current_profile(
-    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
-    db: Session = Depends(get_db),
-) -> Perfil:
+def get_current_user(credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme)):
+    """El usuario de Supabase dueño del token, aunque todavía no tenga perfil (p. ej. recién llegado de Google)."""
     if credentials is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "No autenticado.")
 
@@ -24,7 +22,13 @@ def get_current_profile(
     user = user_response.user if user_response else None
     if not user:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Sesión inválida.")
+    return user
 
+
+def get_current_profile(
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> Perfil:
     profile = db.get(Perfil, user.id)
     if not profile:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "No se encontró el perfil de esta cuenta.")

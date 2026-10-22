@@ -54,10 +54,15 @@ export function ClientDashboard({
   paymentSummary?: ClientPaymentSummary | null;
   deliveries?: ContractDeliveries[] | null;
 }) {
-  const [activeSection, setActiveSection] = useState<ClientSectionId>("inicio");
+  const [activeSection, setActiveSection] = useState<ClientSectionId>("solicitudes");
   // Sin sesión real (la vista de ejemplo incrustada) no hay mensajes que consultar.
   const unreadMessages = useUnreadMessages(!embedded);
-  const sidebarItems = menuItems.map((item) => (item.id === "mensajes" ? { ...item, badge: unreadMessages } : item));
+  // Las secciones sin contenido todavía se ven en el menú pero no se pueden abrir.
+  const sidebarItems = menuItems.map((item) => ({
+    ...item,
+    ...(item.id === "mensajes" ? { badge: unreadMessages } : {}),
+    disabled: ["inicio"].includes(item.id),
+  }));
 
   const { safeProfile, draftProfile, setDraftProfile } = useDraftProfile(
     profile,

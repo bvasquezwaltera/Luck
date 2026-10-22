@@ -2,17 +2,19 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.security import get_current_profile
+from app.core.security import get_current_profile, get_current_user
 from app.models.perfil import Perfil
 from app.schemas.auth import (
     ActionResult,
     AuthResponse,
     ChangePasswordRequest,
+    GoogleUrl,
+    OAuthCompleteRequest,
     ProfileOut,
     SignInRequest,
     SignUpRequest,
 )
-from app.services import auth_service
+from app.services import auth_service, oauth_service
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -25,6 +27,17 @@ def sign_up(payload: SignUpRequest, db: Session = Depends(get_db)):
 @router.post("/sign-in", response_model=AuthResponse)
 def sign_in(payload: SignInRequest, db: Session = Depends(get_db)):
     return auth_service.sign_in(db, payload)
+
+
+@router.get("/google-url", response_model=GoogleUrl)
+def google_url():
+    return GoogleUrl(url=oauth_service.google_authorize_url())
+
+
+# Al volver de Google el frontend ya tiene el token; aquí se crea el perfil si es una cuenta nueva.
+@router.post("/oauth/complete", response_model=AuthResponse)
+def oauth_complete(payload: OAuthCompleteRequest, db: Session = Depends(get_db), user=Depends(get_current_user)):
+    return oauth_service.complete_sign_in(db, user, payload.role)
 
 
 @router.post("/sign-out")

@@ -11,6 +11,8 @@ export interface PanelMenuItem<T extends string = string> {
   icon: LucideIcon;
   // Número pendiente (p. ej. mensajes sin leer); con 0 o sin valor no se muestra nada.
   badge?: number;
+  // Sección que todavía no tiene contenido: se ve en el menú, pero no se puede abrir.
+  disabled?: boolean;
 }
 
 // Un elemento del menú; lo usan el menú lateral y el panel del menú móvil.
@@ -28,13 +30,21 @@ export function PanelNavButton<T extends string>({
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={item.disabled ? undefined : onClick}
+      disabled={item.disabled}
       className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-xs font-medium transition ${
-        active ? "bg-indigo-600 text-white" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+        item.disabled
+          ? "cursor-not-allowed text-gray-300"
+          : active
+            ? "bg-indigo-600 text-white"
+            : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
       }`}
     >
       <Icon className="h-4 w-4" />
       <span className="flex-1">{item.label}</span>
+      {item.disabled && (
+        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold text-gray-400">Próximamente</span>
+      )}
       {item.badge ? (
         <span
           aria-label={`${item.badge} sin leer`}
