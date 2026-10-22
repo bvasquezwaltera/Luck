@@ -9,7 +9,7 @@ import { validateFullNameField } from "@/validators/validators";
 // edita, y allá no se pueden saltar llamando a la API directamente. Si cambias un límite, cámbialo en los dos.
 export const PROFILE_LIMITS = {
   specialty: 100,
-  bio: 1000,
+  bio: 2000,
   text: 100, // rol, empresa, título, institución
   description: 1000,
   languageName: 40,

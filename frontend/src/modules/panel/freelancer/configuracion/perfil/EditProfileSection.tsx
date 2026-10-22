@@ -106,14 +106,14 @@ export function EditProfileSection({
       <div className="mt-4">
         <Textarea
           label="Sobre mí"
-          maxLength={1000}
+          maxLength={2000}
           error={errors.bio}
           placeholder="Cuéntales a tus clientes quién eres, cómo trabajas y qué te apasiona."
           value={draftProfile.bio}
           onChange={(event) => setDraftProfile((current) => ({ ...current, bio: event.target.value }))}
           rows={5}
         />
-        <p className="mt-1.5 text-right text-[11px] text-slate-400">{draftProfile.bio.length} / 1000 caracteres</p>
+        <p className="mt-1.5 text-right text-[11px] text-slate-400">{draftProfile.bio.length} / 2000 caracteres</p>
       </div>
     </ProfileCard>
   );
